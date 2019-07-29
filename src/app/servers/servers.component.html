@@ -1,7 +1,20 @@
+<label>Server Name</label>
+
+<!-- input text -->
+<!-- when typing, call onUpdateServerName() and pass in as an argument the event object with the $event reserved keyword -->
+<input 
+    type="text" 
+    class="form-control"
+    (input)="onUpdateServerName($event)">
+
+<!-- print out the server name -->
+<p>{{ serverName }}</p>
+
 <!-- button to add a server -->
 <!-- property binding with the disabled property: activate it or not according to the allowNewServer component property -->
 <!-- binding the button to a click event: execute normally a method we want to execute -->
-<button class="btn btn-primary" 
+<button 
+        class="btn btn-primary" 
         [disabled]="!allowNewServer"
         (click)="onCreateServer()">
     Add Server

@@ -18,6 +18,9 @@ export class ServersComponent implements OnInit {
     // string property
     serverCreationStatus: string = 'No server was created!';
 
+    // server name property
+    serverName: string = '';
+
     // constructor: after 2 seconds, set the boolean field to true
     constructor() { 
         setTimeout(() => {
@@ -30,8 +33,15 @@ export class ServersComponent implements OnInit {
     }
 
     // event handler: set the serverCreationStatus text
-    onCreateServer() {
+    onCreateServer(): void {
         this.serverCreationStatus = 'Server was created!';
+    }
+
+    // event handler: receives the event object (similar to vanilla JS)
+    // (<HTMLInputElement>event.target).value: inform the event comes from an input elements
+    // so we can access the value
+    onUpdateServerName(event: Event): void {
+        this.serverName = (<HTMLInputElement>event.target).value;
     }
 
 }
