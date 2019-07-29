@@ -1,6 +1,14 @@
 <!-- button to add a server -->
 <!-- property binding with the disabled property: activate it or not according to the allowNewServer component property -->
-<button class="btn btn-primary" [disabled]="!allowNewServer">Add Server</button>
+<!-- binding the button to a click event: execute normally a method we want to execute -->
+<button class="btn btn-primary" 
+        [disabled]="!allowNewServer"
+        (click)="onCreateServer()">
+    Add Server
+</button>
+
+<!-- regular string interpolation -->
+<p>{{ serverCreationStatus }}</p>
 
 <!-- Servers Component HTML: place inside two instances of the Server Component -->
 <app-server></app-server>

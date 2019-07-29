@@ -15,6 +15,9 @@ export class ServersComponent implements OnInit {
     // new boolean property: will be bind to the 'disabled' property of the button element
     allowNewServer: boolean = false;
 
+    // string property
+    serverCreationStatus: string = 'No server was created!';
+
     // constructor: after 2 seconds, set the boolean field to true
     constructor() { 
         setTimeout(() => {
@@ -24,6 +27,11 @@ export class ServersComponent implements OnInit {
 
     ngOnInit() {
 
+    }
+
+    // event handler: set the serverCreationStatus text
+    onCreateServer() {
+        this.serverCreationStatus = 'Server was created!';
     }
 
 }
