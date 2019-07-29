@@ -1,0 +1,8 @@
+/* warning alert component styling */
+.text {
+    font-size: 2rem;
+}
+
+.text-warn {
+    color: darkred;
+}
