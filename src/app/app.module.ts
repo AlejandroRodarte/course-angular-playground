@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { ServerComponent } from './server/server.component';
 import { ServersComponent } from './servers/servers.component';
-import { UserComponent } from './user/user.component';
 
 // here go the components/modules we will implement on our app
 // declarations : declare all components 
@@ -21,8 +20,7 @@ import { UserComponent } from './user/user.component';
   declarations: [
     AppComponent,
     ServerComponent,
-    ServersComponent,
-    UserComponent
+    ServersComponent
   ],
   imports: [
     BrowserModule,

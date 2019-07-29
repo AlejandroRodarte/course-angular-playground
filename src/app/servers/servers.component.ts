@@ -21,6 +21,9 @@ export class ServersComponent implements OnInit {
     // server name property
     serverName: string = 'Testserver';
 
+    // server created flas
+    serverCreated: boolean = false;
+
     // constructor: after 2 seconds, set the boolean field to true
     constructor() { 
         setTimeout(() => {
@@ -33,7 +36,9 @@ export class ServersComponent implements OnInit {
     }
 
     // event handler: set the serverCreationStatus text
+    // set the serverCreated flag to true
     onCreateServer(): void {
+        this.serverCreated = true;
         this.serverCreationStatus = 'Server was created! Name is ' + this.serverName;
     }
 

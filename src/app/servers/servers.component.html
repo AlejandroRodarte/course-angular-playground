@@ -28,7 +28,10 @@
 </button>
 
 <!-- regular string interpolation -->
-<p>{{ serverCreationStatus }}</p>
+<!-- <p>{{ serverCreationStatus }}</p> -->
+
+<!-- ngIf directive: will display this paragraph based on a boolean property or method -->
+<p *ngIf="serverCreated">Server was created, server name is {{ serverName }}</p>
 
 <!-- Servers Component HTML: place inside two instances of the Server Component -->
 <app-server></app-server>
