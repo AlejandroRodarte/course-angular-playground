@@ -1,13 +1,15 @@
+// component parent node selector goes here
+// component class definition goes here
+
 import { Component } from '@angular/core';
 
-// define a custom <app-root> html tag for our index.html file
+// this component will go inside an <app-root> html tag found on the index.html page
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 
-// export the component with a name property
+// component class definition
 export class AppComponent {
-  name = 'Alejandro';
 }

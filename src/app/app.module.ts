@@ -1,13 +1,14 @@
+// required imports for the app go here
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-// required imports for the app go here
 // FormsModule enables directives to set model attributes
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 
-// on the imports property we place all the required angular sub-modules we need to make our app work
+// here go the components/modules we will implement on our app 
 @NgModule({
   declarations: [
     AppComponent
