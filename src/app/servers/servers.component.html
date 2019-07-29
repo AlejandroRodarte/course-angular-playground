@@ -31,7 +31,14 @@
 <!-- <p>{{ serverCreationStatus }}</p> -->
 
 <!-- ngIf directive: will display this paragraph based on a boolean property or method -->
-<p *ngIf="serverCreated">Server was created, server name is {{ serverName }}</p>
+<!-- using ngIf with an else statement, accessing the noServer id -->
+<p *ngIf="serverCreated; else noServer">Server was created, server name is {{ serverName }}</p>
+
+<!-- else template that will be printed if the ngIf directive falls to the 'else' state -->
+<!-- should have an id so the ngIf statement knows where to find the content to display in this case -->
+<ng-template #noServer>
+    No server was created
+</ng-template>
 
 <!-- Servers Component HTML: place inside two instances of the Server Component -->
 <app-server></app-server>
