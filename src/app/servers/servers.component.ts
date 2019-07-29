@@ -34,7 +34,7 @@ export class ServersComponent implements OnInit {
 
     // event handler: set the serverCreationStatus text
     onCreateServer(): void {
-        this.serverCreationStatus = 'Server was created!';
+        this.serverCreationStatus = 'Server was created! Name is ' + this.serverName;
     }
 
     // event handler: receives the event object (similar to vanilla JS)
