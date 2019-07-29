@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 // import root and custom components
 import { AppComponent } from './app.component';
 import { ServerComponent } from './server/server.component';
+import { ServersComponent } from './servers/servers.component';
 
 // here go the components/modules we will implement on our app
 // declarations : declare all components 
@@ -18,7 +19,8 @@ import { ServerComponent } from './server/server.component';
 @NgModule({
   declarations: [
     AppComponent,
-    ServerComponent
+    ServerComponent,
+    ServersComponent
   ],
   imports: [
     BrowserModule,
