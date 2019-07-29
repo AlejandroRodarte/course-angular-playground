@@ -2,10 +2,17 @@
 
 <!-- input text -->
 <!-- when typing, call onUpdateServerName() and pass in as an argument the event object with the $event reserved keyword -->
+<!-- <input 
+    type="text" 
+    class="form-control"
+    (input)="onUpdateServerName($event)"> -->
+
+<!-- input text with two-way data binding -->
+<!-- when input text is writte, it will update the serverName, but this also reacts and updates the input element text -->
 <input 
     type="text" 
     class="form-control"
-    (input)="onUpdateServerName($event)">
+    [(ngModel)]="serverName">
 
 <!-- print out the server name -->
 <p>{{ serverName }}</p>

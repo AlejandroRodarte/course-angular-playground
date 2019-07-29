@@ -19,7 +19,7 @@ export class ServersComponent implements OnInit {
     serverCreationStatus: string = 'No server was created!';
 
     // server name property
-    serverName: string = '';
+    serverName: string = 'Testserver';
 
     // constructor: after 2 seconds, set the boolean field to true
     constructor() { 
