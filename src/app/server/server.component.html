@@ -1,2 +1,7 @@
 <!-- server component html template -->
-<p>The Server Component</p>
+
+<!-- string interpolation: type a TS expression -> refer to a property or a method inside the ServerComponent class -->
+<!-- the only condition is that what it's inside the curly braces resolves to return a string -->
+<p>
+    Server with ID {{ serverId }} is {{ getServerStatus() }}
+</p>
