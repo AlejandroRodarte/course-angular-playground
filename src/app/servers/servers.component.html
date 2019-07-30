@@ -40,6 +40,7 @@
     No server was created
 </ng-template>
 
-<!-- Servers Component HTML: place inside two instances of the Server Component -->
-<app-server></app-server>
-<app-server></app-server>
+<!-- Servers Component HTML -->
+
+<!-- use the *ngFor directive to loop through the servers array property in the component class and create all the present server components -->
+<app-server *ngFor="let server of servers"></app-server>

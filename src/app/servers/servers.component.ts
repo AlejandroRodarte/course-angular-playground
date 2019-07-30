@@ -21,8 +21,11 @@ export class ServersComponent implements OnInit {
     // server name property
     serverName: string = 'Testserver';
 
-    // server created flas
+    // server created flag
     serverCreated: boolean = false;
+
+    // array of servers
+    servers: string[] = ['Testserver', 'Testserver 2'];
 
     // constructor: after 2 seconds, set the boolean field to true
     constructor() { 
@@ -36,9 +39,11 @@ export class ServersComponent implements OnInit {
     }
 
     // event handler: set the serverCreationStatus text
+    // push the new server to the array
     // set the serverCreated flag to true
     onCreateServer(): void {
         this.serverCreated = true;
+        this.servers.push(this.serverName);
         this.serverCreationStatus = 'Server was created! Name is ' + this.serverName;
     }
 
