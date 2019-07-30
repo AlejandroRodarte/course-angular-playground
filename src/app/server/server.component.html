@@ -5,7 +5,11 @@
 
 <!-- [ngStyle] : we will bind a property on the ngStyle directive, where the property name happens to also be named ngStyle -->
 <!-- set background color: call getColor() method which returns the color to set -->
+
+<!-- [ngClass] : bing a property on the ngClass directive, where the property name happens to also be named ngClass -->
+<!-- set the .online class on this elements when the serverStatus property on the component class happens to be set to online  -->
 <p
-    [ngStyle]="{backgroundColor: getColor()}">
+    [ngStyle]="{backgroundColor: getColor()}"
+    [ngClass]="{online: serverStatus === 'online'}">
     Server with ID {{ serverId }} is {{ getServerStatus() }}
 </p>
