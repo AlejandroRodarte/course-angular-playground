@@ -2,6 +2,10 @@
 
 <!-- string interpolation: type a TS expression -> refer to a property or a method inside the ServerComponent class -->
 <!-- the only condition is that what it's inside the curly braces resolves to return a string -->
-<p>
+
+<!-- [ngStyle] : we will bind a property on the ngStyle directive, where the property name happens to also be named ngStyle -->
+<!-- set background color: call getColor() method which returns the color to set -->
+<p
+    [ngStyle]="{backgroundColor: getColor()}">
     Server with ID {{ serverId }} is {{ getServerStatus() }}
 </p>
