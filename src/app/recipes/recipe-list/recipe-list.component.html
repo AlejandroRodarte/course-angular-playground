@@ -15,16 +15,19 @@
 
 </div>
 
+<hr>
+
 <!-- grid -->
 <div class="row">
 
     <!-- first column -->
     <!-- loop through each recipe in the recipes array field of the recipe list component -->
-    <div class="col-xs-12"
-         *ngFor="let recipe of recipes">
+    <div class="col-xs-12">
 
         <!-- link -->
-        <a href="#" class="list-group-item clearfix">
+        <a  href="#" 
+            class="list-group-item clearfix"
+            *ngFor="let recipe of recipes">
 
             <!-- content of link pulled to the left -->
             <div class="pull-left">
@@ -44,7 +47,12 @@
             <!-- recipe image -->
             <!-- property binding: bind 'src' image property to the current recipe image path url -->
             <span class="pull-right">
-                <img [src]="recipe.imagePath" alt="" class="img-responsive" style="max-height: 50px;">
+
+                <img [src]="recipe.imagePath" 
+                    alt="{{recipe.name}}" 
+                    class="img-responsive" 
+                    style="max-height: 50px;">
+
             </span>
 
         </a>
