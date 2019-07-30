@@ -6,13 +6,23 @@
     <!-- first column: shopping edit component and a paragraph that resembles the current shopping list -->
     <div class="col-xs-10">
 
+        <!-- shopping edit component -->
         <app-shopping-edit></app-shopping-edit>
 
         <hr>
 
+        <!-- list of... -->
         <ul class="list-group">
-            
-            <a class="list-group-item" style="cursor: pointer;"></a>
+
+            <!-- links, using *ngFor to create multiple links of each ingredient model on the ingredients array field -->
+            <!-- of the shopping list component -->
+            <a  class="list-group-item" 
+                style="cursor: pointer;"
+                *ngFor="let ingredient of ingredients">
+
+                {{ ingredient.name }} {{ ingredient.amount }}
+
+            </a>
 
         </ul>
         
