@@ -9,9 +9,6 @@ import { FormsModule } from '@angular/forms';
 
 // import root and custom components
 import { AppComponent } from './app.component';
-import { ServerComponent } from './server/server.component';
-import { ServersComponent } from './servers/servers.component';
-import { DetailsComponent } from './details/details.component';
 
 // here go the components/modules we will implement on our app
 // declarations : declare all components 
@@ -19,10 +16,7 @@ import { DetailsComponent } from './details/details.component';
 // bootstrap : component to load when kickstarting app
 @NgModule({
   declarations: [
-    AppComponent,
-    ServerComponent,
-    ServersComponent,
-    DetailsComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
