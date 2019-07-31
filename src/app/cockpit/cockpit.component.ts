@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 
 // cockpit component
 @Component({
@@ -18,8 +18,10 @@ export class CockpitComponent implements OnInit {
 	@Output('bpCreated')
 	blueprintCreated = new EventEmitter<{serverName: string, serverContent: string}>();
 
-	// server name and server content
-	newServerContent = '';
+	// @ViewChild: access a local reference from our component template
+	// static: true: when we will access it on the ngOnInit() method, static: false when not
+	@ViewChild('serverContentInput', { static: false })
+	serverContentInput: ElementRef;
 
 	constructor() { }
 
@@ -34,10 +36,14 @@ export class CockpitComponent implements OnInit {
 	// to some parent component
 
 	// using local reference of an html input element to access the input's value that holds the name
+
+	// using the serverContentInput property which holds caught the local reference from the template
+	// since this is of type ElementRef, we can access the nativeElement property to access the real html element properties
+	// so we access the value property to catch the input string
   	onAddServer(nameInput: HTMLInputElement) {
 		this.serverCreated.emit({
 			serverName: nameInput.value,
-			serverContent: this.newServerContent
+			serverContent: this.serverContentInput.nativeElement.value
 		});
 	}
 
@@ -52,7 +58,7 @@ export class CockpitComponent implements OnInit {
 	onAddBlueprint(nameInput: HTMLInputElement) {
 		this.blueprintCreated.emit({
 			serverName: nameInput.value,
-			serverContent: this.newServerContent
+			serverContent: this.serverContentInput.nativeElement.value
 		});
 	}
 

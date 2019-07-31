@@ -18,15 +18,20 @@
         <!-- #serverNameInput holds a reference to the input html element -->
         <input  type="text" 
                 class="form-control" 
-                [(ngModel)]="newServerName"
                 #serverNameInput>
             
         <label>
             Server Content
         </label>
         
-        <!-- input to add server content -->
-        <input type="text" class="form-control" [(ngModel)]="newServerContent">
+        <!-- input to add server content (two-way data-binding) -->
+        <!-- <input type="text" class="form-control" [(ngModel)]="newServerContent"> -->
+
+        <!-- input to add server content (two-way data-binding) -->
+        <!-- #serverContentInput: our local reference -->
+        <input  type="text" 
+                class="form-control" 
+                #serverContentInput>
             
         <br>
         
