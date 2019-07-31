@@ -1,15 +1,14 @@
-// component parent node selector goes here
-// component class definition goes here
-
 import { Component } from '@angular/core';
 
-// this component will go inside an <app-root> html tag found on the index.html page
+// app component
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.css']
 })
-
-// component class definition
 export class AppComponent {
+
+	// array of server elements (the cockpit component requires it)
+	serverElements = [];
+
 }

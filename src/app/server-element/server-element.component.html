@@ -1,0 +1,29 @@
+<!-- single server element component -->
+<div
+    class="panel panel-default">
+    
+    <!-- server name -->
+    <!-- how can we access the current element from here? since the *ngFor statement is applied to the root component tag -->
+    <div class="panel-heading">
+        {{ element.name }}
+    </div>
+    
+    <div class="panel-body">
+
+        <!-- server content: displayed differently in dependence of the type of server element -->
+        <!-- how can we access the current element from here? since the *ngFor statement is applied to the root component tag -->
+        <p>
+
+            <strong *ngIf="element.type === 'server'" style="color: red">
+                {{ element.content }}
+            </strong>
+            
+            <em *ngIf="element.type === 'blueprint'">
+                {{ element.content }}
+            </em>
+        
+        </p>
+    
+    </div>
+    
+</div>

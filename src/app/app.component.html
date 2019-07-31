@@ -1,23 +1,21 @@
-<!-- root component html -->
-
-<!-- the header component -->
-<app-header></app-header>
-
-<!-- main container -->
+<!-- root component -->
 <div class="container">
 
-    <!-- grid -->
-    <div class="row">
+	<!-- cockpit component: inputs and action buttons -->
+	<app-cockpit></app-cockpit>
 
-        <!-- first column: recipes component and shopping list component beneath -->
-        <div class="col-md-12">
+  	<hr>
 
-            <app-recipes></app-recipes>
+	<div class="row">
 
-            <app-shopping-list></app-shopping-list>
-            
-        </div>
+		<div class="col-xs-12">
 
-    </div>
+			<!-- loop through all server elements we have as an array on the root component -->
+			<!-- but to add content, we need the cockpit component to be able to access that array to push new servers/blueprints -->
+			<app-server-element *ngFor="let serverElement of serverElements"></app-server-element>
+
+		</div>
+		
+	</div>
 
 </div>
