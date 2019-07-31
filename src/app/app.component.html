@@ -1,10 +1,10 @@
 <!-- root component html -->
 
 <!-- the header component -->
-<!-- listen for the sectionToDisplay found on the header component, trigger setSection() root component method -->
-<!-- to set the new section string value -->
+<!-- listen for the featureToDisplay found on the header component, trigger setFeature() root component method -->
+<!-- to set the new feature string value -->
 <app-header
-    (sectionToDisplay)="setSection($event)">
+    (featureToDisplay)="setFeature($event)">
 
 </app-header>
 
@@ -17,15 +17,15 @@
         <!-- first column: recipes component and shopping list component beneath -->
         <div class="col-md-12">
 
-            <!-- display app recipes component if the actual section value is 'recipes' -->
+            <!-- display app recipes component if the actual feature value is 'recipes' -->
             <app-recipes
-                *ngIf="section === 'recipes'">
+                *ngIf="feature === 'recipes'">
 
             </app-recipes>
 
-            <!-- display app recipes component if the actual section value is 'shopping list' -->
+            <!-- display app recipes component if the actual feature value is 'shopping list' -->
             <app-shopping-list
-                *ngIf="section === 'shoppingList'">
+                *ngIf="feature === 'shoppingList'">
 
             </app-shopping-list>
             

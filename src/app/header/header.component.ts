@@ -9,17 +9,11 @@ export class HeaderComponent {
 
     // event emitter to send the section we want to display
     @Output()
-    sectionToDisplay = new EventEmitter<{ section: string }>();
+    featureToDisplay = new EventEmitter<string>();
 
-    // when clicking 'recipes' on the header, send an object with the section to display (recipes section)
-    onRecipesClick(): void {
-        this.sectionToDisplay.emit({ section: 'recipes' });
+    // onSectorChange event handler, emit the feature to display on the root component
+    onFeatureChange(feature: string): void {
+        this.featureToDisplay.emit(feature);
     }
-
-    // when clicking 'shopping list' on the header, send an object with the section to display (shopping list section)
-    onShoppingListClick(): void {
-        this.sectionToDisplay.emit({ section: 'shoppingList' });
-    }
-
 
 }

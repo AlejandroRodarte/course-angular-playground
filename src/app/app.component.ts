@@ -13,18 +13,13 @@ import { Component } from '@angular/core';
 // component class definition
 export class AppComponent {
 	
-	// property that holds the current section
-	section: string;
-
-	// display the recipes section by default
-	constructor() {
-		this.section = 'recipes';
-	}
+	// property that holds the current feature
+	feature: string = 'recipes';
 
 	// event handler triggered when data is emitted from the header
-	// set the new section to display
-	setSection(data: { section: string }): void {
-		this.section = data.section;
+	// set the new feature to display
+	setFeature(feature: string): void {
+		this.feature = feature;
 	}
 
 }
