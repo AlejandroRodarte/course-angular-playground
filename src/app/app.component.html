@@ -27,6 +27,24 @@
 			<!-- [element]="serverElement": access the 'element' field from the ServerElement component and assign it the current iteration value -->
 			<app-server-element *ngFor="let serverElement of serverElements"
 								[srvElement]="serverElement">
+				
+				<!-- server content: displayed differently in dependence of the type of server element -->
+				<!-- how can we access the current element from here? since the *ngFor statement is applied to the root component tag -->
+
+				<!-- this content is inside the opening and enclosing tags of the server-element component -->
+				<!-- to project this content into the server-element component html, use <ng-content> -->
+				<p>
+
+					<strong *ngIf="serverElement.type === 'server'" style="color: red">
+						{{ serverElement.content }}
+					</strong>
+					
+					<em *ngIf="serverElement.type === 'blueprint'">
+						{{ serverElement.content }}
+					</em>
+			
+				</p>
+
 			</app-server-element>
 
 		</div>

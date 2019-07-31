@@ -10,20 +10,11 @@
     
     <div class="panel-body">
 
-        <!-- server content: displayed differently in dependence of the type of server element -->
-        <!-- how can we access the current element from here? since the *ngFor statement is applied to the root component tag -->
-        <p>
+        <!-- project the content we declared on the root component inside the <app-server-element></app-server-element> tags -->
+        <ng-content>
 
-            <strong *ngIf="element.type === 'server'" style="color: red">
-                {{ element.content }}
-            </strong>
-            
-            <em *ngIf="element.type === 'blueprint'">
-                {{ element.content }}
-            </em>
-        
-        </p>
-    
+        </ng-content>
+
     </div>
     
 </div>
