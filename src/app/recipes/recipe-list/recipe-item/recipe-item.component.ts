@@ -15,7 +15,7 @@ export class RecipeItemComponent implements OnInit {
 
 	// event emitter to send RecipeItemComponent data to RecipeListComponent
 	@Output()
-	recipeSelected = new EventEmitter<Recipe>();
+	recipeSelected = new EventEmitter<void>();
 
 	constructor() { 
 
@@ -27,7 +27,7 @@ export class RecipeItemComponent implements OnInit {
 	// event handler when clicking on a recipe item
 	// load the recipe data and emit it throut the recipeSelected event emitter
 	onRecipeItemClick(): void {
-		this.recipeSelected.emit(this.recipe);
+		this.recipeSelected.emit();
 	}
 
 }
