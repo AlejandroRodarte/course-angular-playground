@@ -1,71 +1,33 @@
-<!-- root component -->
-<div class="container">
+<!-- root component markup -->
 
-	<!-- cockpit component: inputs and action buttons -->
+<!-- game control component -->
+<!-- listen for the onIncrement event emitter declared on the game control component  -->
+<!-- when it emit() data, call onCounterIncrement() method found on the root component -->
+<!-- $events the actual data that is emitted from the child component to the parent component -->
+<!-- which is the current timer value -->
+<app-game-control
+    (onIncrement)="onCounterIncrement($event)">
+</app-game-control>
 
-	<!-- serverCreated: event emitter that comes from cockpit.component.ts -->
-	<!-- when calling emit() from the child component, it will pass the emitted data -->
-	<!-- to the onServerAdded() method found on the parent component, labeled $event -->
+<!-- container -->
+<!-- loop through the timerValues array found on this root component definition -->
+<div class="container"
+     *ngFor="let timerValue of timerValues">
 
-	<!-- blueprintCreated: event emitter that comes from cockpit.component.ts -->
-	<!-- when calling emit() from the child component, it will pass the emitted data -->
-	<!-- to the onServerAdded() method found on the parent component, labeled $event -->
-	<app-cockpit
-		(serverCreated)="onServerAdded($event)"
-		(bpCreated)="onBlueprintAdded($event)">
-	</app-cockpit>
+     <!-- if the current timer value is even, display a new even component -->
+     <!-- send to the @Input value found on the even component the current timer value to render -->
+     <app-even
+        *ngIf="timerValue % 2 === 0"
+        [value]="timerValue">
 
-  	<hr>
+     </app-even>
 
-	<div class="row">
+     <!-- if the current timer value is odd, display a new odd component -->
+     <!-- send to the @Input value found on the odd component the current timer value to render -->
+     <app-odd
+        *ngIf="timerValue % 2 !== 0"
+        [value]="timerValue">
 
-		<div class="col-xs-12">
-
-			<!-- component lifecycle demo: change first element when clicked -->
-			<button class="btn btn-primary"
-					(click)="onChangeFirst()">
-				Change First Element
-			</button>
-
-			<!-- component lifecycle demo: destroy first element when clicked -->
-			<button class="btn btn-danger"
-					(click)="onDestroyFirst()">
-				Destroy First Component
-			</button>
-
-			<!-- loop through all server elements we have as an array on the root component -->
-			<!-- but to add content, we need the cockpit component to be able to access that array to push new servers/blueprints -->
-
-			<!-- [element]="serverElement": access the 'element' field from the ServerElement component and assign it the current iteration value -->
-
-			<!-- component lifecycle demo: bind the name @Input from server-element component to the current server element name -->
-			<app-server-element *ngFor="let serverElement of serverElements"
-								[srvElement]="serverElement"
-								[name]="serverElement.name">
-				
-				<!-- server content: displayed differently in dependence of the type of server element -->
-				<!-- how can we access the current element from here? since the *ngFor statement is applied to the root component tag -->
-
-				<!-- this content is inside the opening and enclosing tags of the server-element component -->
-				<!-- to project this content into the server-element component html, use <ng-content> -->
-
-				<!-- apply a local reference to use on our server element component -->
-				<p #contentParagraph>
-
-					<strong *ngIf="serverElement.type === 'server'" style="color: red">
-						{{ serverElement.content }}
-					</strong>
-					
-					<em *ngIf="serverElement.type === 'blueprint'">
-						{{ serverElement.content }}
-					</em>
-			
-				</p>
-
-			</app-server-element>
-
-		</div>
-		
-	</div>
+     </app-odd>
 
 </div>
