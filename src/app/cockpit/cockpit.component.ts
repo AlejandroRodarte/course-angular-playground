@@ -15,7 +15,7 @@ export class CockpitComponent implements OnInit {
 
 	// blueprintCreated: event emitter that will be used on the parent component to communicate information
 	// @Output: allows us to output this property from this class for parent components to use
-	@Output()
+	@Output('bpCreated')
 	blueprintCreated = new EventEmitter<{serverName: string, serverContent: string}>();
 
 	// server name and server content
