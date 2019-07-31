@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewChecked, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewChecked, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 
 // interface for object literals that represent single server element
 export interface ServerElement {
@@ -24,6 +24,10 @@ export class ServerElementComponent implements OnInit, OnChanges, DoCheck, After
 	@Input()
 	name: string;
 
+	// accessing html element with local reference #header
+	@ViewChild('heading', { static : true })
+	header: ElementRef;
+
 	// 1. constructor is called (once)
     constructor() {
 		console.log('constructor called');
@@ -37,8 +41,10 @@ export class ServerElementComponent implements OnInit, OnChanges, DoCheck, After
 	}
 
 	// 3. onInit is called (once)
+	// text content is still not available
     ngOnInit() {
 		console.log('ngOnInit called');
+		console.log('Text Content: ' + this.header.nativeElement.textContent);
 	}
 	
 	// 4. doCheck is called (and each time a change occurs according to Angular standards, which is a lot)
@@ -57,8 +63,10 @@ export class ServerElementComponent implements OnInit, OnChanges, DoCheck, After
 	}
 
 	// 7. afterViewInit is called (once)
+	// text content from template is now available
 	ngAfterViewInit() {
 		console.log('ngAfterViewInit called');
+		console.log('Text Content: ' + this.header.nativeElement.textContent);
 	}
 
 	// 8. afterViewChecked is called (and each time the component template changes)

@@ -4,7 +4,10 @@
     
     <!-- server name -->
     <!-- how can we access the current element from here? since the *ngFor statement is applied to the root component tag -->
-    <div class="panel-heading">
+
+    <!-- using a local reference to access the html element from the .ts file -->
+    <div class="panel-heading"
+         #heading>
         {{ name }}
     </div>
     
