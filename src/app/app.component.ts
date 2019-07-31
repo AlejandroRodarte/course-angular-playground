@@ -44,4 +44,14 @@ export class AppComponent {
 		});
 	}
 
+	// component lifecycle demo: change first server element
+	onChangeFirst(): void {
+		this.serverElements[0].name = 'Changed';
+	}
+
+	// component lifecycle demo: delete first server element
+	onDestroyFirst(): void {
+		this.serverElements.splice(0, 1);
+	}
+
 }
