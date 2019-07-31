@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ServerElement } from './server-element/server-element.component';
 
 // app component
 @Component({
@@ -9,6 +10,10 @@ import { Component } from '@angular/core';
 export class AppComponent {
 
 	// array of server elements (the cockpit component requires it)
-	serverElements = [];
+	serverElements: ServerElement[] = [{
+		type: 'server',
+		name: 'TestServer',
+		content: 'Just a test!'
+	}];
 
 }

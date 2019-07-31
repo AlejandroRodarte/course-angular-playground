@@ -1,15 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+// interface for object literals that represent single server element
+export interface ServerElement {
+	type: string;
+	name: string;
+	content: string;
+}
 
 @Component({
-  selector: 'app-server-element',
-  templateUrl: './server-element.component.html',
-  styleUrls: ['./server-element.component.css']
+	selector: 'app-server-element',
+	templateUrl: './server-element.component.html',
+	styleUrls: ['./server-element.component.css']
 })
 export class ServerElementComponent implements OnInit {
 
-  constructor() { }
+	// element of type ServerElement
+	// @Input: make this field public for parent components to access and pass in values
+	@Input()
+	element: ServerElement;
 
-  ngOnInit() {
-  }
+    constructor() { }
+
+    ngOnInit() {
+    }
 
 }

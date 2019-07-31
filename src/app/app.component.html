@@ -12,7 +12,11 @@
 
 			<!-- loop through all server elements we have as an array on the root component -->
 			<!-- but to add content, we need the cockpit component to be able to access that array to push new servers/blueprints -->
-			<app-server-element *ngFor="let serverElement of serverElements"></app-server-element>
+
+			<!-- [element]="serverElement": access the 'element' field from the ServerElement component and assign it the current iteration value -->
+			<app-server-element *ngFor="let serverElement of serverElements"
+								[element]="serverElement">
+			</app-server-element>
 
 		</div>
 		

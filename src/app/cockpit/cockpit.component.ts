@@ -20,21 +20,21 @@ export class CockpitComponent implements OnInit {
 	// add a server to the servers array (on app root component)
 	// how can we access it so we can push?
   	onAddServer() {
-		this.serverElements.push({
-			type: 'server',
-			name: this.newServerName,
-			content: this.newServerContent
-		});
+		// this.serverElements.push({
+		// 	type: 'server',
+		// 	name: this.newServerName,
+		// 	content: this.newServerContent
+		// });
 	}
 
 	// add a new blueprint to the servers array (on app root component)
 	// how can we access it so we can push?
 	onAddBlueprint() {
-		this.serverElements.push({
-			type: 'blueprint',
-			name: this.newServerName,
-			content: this.newServerContent
-		});
+		// this.serverElements.push({
+		// 	type: 'blueprint',
+		// 	name: this.newServerName,
+		// 	content: this.newServerContent
+		// });
 	}
 
 }
