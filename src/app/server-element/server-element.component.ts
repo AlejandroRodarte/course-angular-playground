@@ -16,7 +16,7 @@ export class ServerElementComponent implements OnInit {
 
 	// element of type ServerElement
 	// @Input: make this field public for parent components to access and pass in values
-	@Input()
+	@Input('srvElement')
 	element: ServerElement;
 
     constructor() { }
