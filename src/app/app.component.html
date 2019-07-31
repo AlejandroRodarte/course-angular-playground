@@ -2,7 +2,18 @@
 <div class="container">
 
 	<!-- cockpit component: inputs and action buttons -->
-	<app-cockpit></app-cockpit>
+
+	<!-- serverCreated: event emitter that comes from cockpit.component.ts -->
+	<!-- when calling emit() from the child component, it will pass the emitted data -->
+	<!-- to the onServerAdded() method found on the parent component, labeled $event -->
+
+	<!-- blueprintCreated: event emitter that comes from cockpit.component.ts -->
+	<!-- when calling emit() from the child component, it will pass the emitted data -->
+	<!-- to the onServerAdded() method found on the parent component, labeled $event -->
+	<app-cockpit
+		(serverCreated)="onServerAdded($event)"
+		(blueprintCreated)="onBlueprintAdded($event)">
+	</app-cockpit>
 
   	<hr>
 

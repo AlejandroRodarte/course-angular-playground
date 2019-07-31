@@ -16,4 +16,32 @@ export class AppComponent {
 		content: 'Just a test!'
 	}];
 
+	// add a server to the servers array (on app root component)
+	// how can we access it so we can push?
+
+	// when serverCreated() from the child component emits data, it will be caught by this
+	// method, labeled as 'serverData': now we can use that caught data from the child component
+	// to push it to our array
+	onServerAdded(serverData: {serverName: string, serverContent: string}) {
+		this.serverElements.push({
+			type: 'server',
+			name: serverData.serverName,
+			content: serverData.serverContent
+		});
+	}
+
+	// add a new blueprint to the servers array (on app root component)
+	// how can we access it so we can push?
+
+	// when blueprintCreated() from the child component emits data, it will be caught by this
+	// method, labeled as 'blueprintData': now we can use that caught data from the child component
+	// to push it to our array
+	onBlueprintAdded(blueprintData: {serverName: string, serverContent: string}) {
+		this.serverElements.push({
+			type: 'blueprint',
+			name: blueprintData.serverName,
+			content: blueprintData.serverContent
+		});
+	}
+
 }
