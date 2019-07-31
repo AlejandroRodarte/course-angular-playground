@@ -1,7 +1,12 @@
 <!-- root component html -->
 
 <!-- the header component -->
-<app-header></app-header>
+<!-- listen for the sectionToDisplay found on the header component, trigger setSection() root component method -->
+<!-- to set the new section string value -->
+<app-header
+    (sectionToDisplay)="setSection($event)">
+
+</app-header>
 
 <!-- main container -->
 <div class="container">
@@ -12,9 +17,17 @@
         <!-- first column: recipes component and shopping list component beneath -->
         <div class="col-md-12">
 
-            <app-recipes></app-recipes>
+            <!-- display app recipes component if the actual section value is 'recipes' -->
+            <app-recipes
+                *ngIf="section === 'recipes'">
 
-            <app-shopping-list></app-shopping-list>
+            </app-recipes>
+
+            <!-- display app recipes component if the actual section value is 'shopping list' -->
+            <app-shopping-list
+                *ngIf="section === 'shoppingList'">
+
+            </app-shopping-list>
             
         </div>
 

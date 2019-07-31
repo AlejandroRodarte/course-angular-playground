@@ -18,13 +18,21 @@
             <ul class="nav navbar-nav">
 
                 <!-- link to recipes -->
+                <!-- on click, call event handler -->
                 <li>
-                    <a href="#">Recipes</a>
+                    <a  href="#"
+                        (click)=onRecipesClick()>
+                        Recipes
+                    </a>
                 </li>
 
                 <!-- link to shopping list -->
+                <!-- on click, call event handler -->
                 <li>
-                    <a href="#">Shopping List</a>
+                    <a  href="#"
+                        (click)="onShoppingListClick()">
+                        Shopping List
+                    </a>
                 </li>
 
             </ul>
