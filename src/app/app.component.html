@@ -1,33 +1,23 @@
-<!-- root component markup -->
+<!-- root component html -->
 
-<!-- game control component -->
-<!-- listen for the onIncrement event emitter declared on the game control component  -->
-<!-- when it emit() data, call onCounterIncrement() method found on the root component -->
-<!-- $events the actual data that is emitted from the child component to the parent component -->
-<!-- which is the current timer value -->
-<app-game-control
-    (onIncrement)="onCounterIncrement($event)">
-</app-game-control>
+<!-- the header component -->
+<app-header></app-header>
 
-<!-- container -->
-<!-- loop through the timerValues array found on this root component definition -->
-<div class="container"
-     *ngFor="let timerValue of timerValues">
+<!-- main container -->
+<div class="container">
 
-     <!-- if the current timer value is even, display a new even component -->
-     <!-- send to the @Input value found on the even component the current timer value to render -->
-     <app-even
-        *ngIf="timerValue % 2 === 0"
-        [value]="timerValue">
+    <!-- grid -->
+    <div class="row">
 
-     </app-even>
+        <!-- first column: recipes component and shopping list component beneath -->
+        <div class="col-md-12">
 
-     <!-- if the current timer value is odd, display a new odd component -->
-     <!-- send to the @Input value found on the odd component the current timer value to render -->
-     <app-odd
-        *ngIf="timerValue % 2 !== 0"
-        [value]="timerValue">
+            <app-recipes></app-recipes>
 
-     </app-odd>
+            <app-shopping-list></app-shopping-list>
+            
+        </div>
+
+    </div>
 
 </div>
