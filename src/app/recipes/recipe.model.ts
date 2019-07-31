@@ -17,4 +17,11 @@ export class Recipe {
         this.imagePath = imagePath;
     }
 
+    // equals() method: compare two recipes and check if their primitive properties are equal
+    equals(recipe: Recipe): boolean {
+        return this.name === recipe.name &&
+        this.description === recipe.description &&
+        this.imagePath  === recipe.imagePath;
+    }
+
 }
