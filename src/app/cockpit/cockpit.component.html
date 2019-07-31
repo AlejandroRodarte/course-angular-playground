@@ -11,8 +11,15 @@
             Server Name
         </label>
 
-        <!-- input to add server name -->
-        <input type="text" class="form-control" [(ngModel)]="newServerName">
+        <!-- input to add server name (two-way data-binding) -->
+        <!-- <input type="text" class="form-control" [(ngModel)]="newServerName"> -->
+
+        <!-- input to add server name (local reference) -->
+        <!-- #serverNameInput holds a reference to the input html element -->
+        <input  type="text" 
+                class="form-control" 
+                [(ngModel)]="newServerName"
+                #serverNameInput>
             
         <label>
             Server Content
@@ -24,16 +31,18 @@
         <br>
         
         <!-- button to add server -->
+        <!-- pass in the local reference to the html input element -->
         <button
             class="btn btn-primary"
-            (click)="onAddServer()">
+            (click)="onAddServer(serverNameInput)">
             Add Server
         </button>
 
         <!-- button to add blueprint -->
+        <!-- pass in the local reference to the html input element -->
         <button
             class="btn btn-primary"
-            (click)="onAddBlueprint()">
+            (click)="onAddBlueprint(serverNameInput)">
             Add Server Blueprint
         </button>
     
