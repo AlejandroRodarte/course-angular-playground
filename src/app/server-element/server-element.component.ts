@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewChecked, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewChecked, AfterViewInit, OnDestroy, ViewChild, ElementRef, ContentChild } from '@angular/core';
 
 // interface for object literals that represent single server element
 export interface ServerElement {
@@ -28,6 +28,11 @@ export class ServerElementComponent implements OnInit, OnChanges, DoCheck, After
 	@ViewChild('heading', { static : true })
 	header: ElementRef;
 
+	// accessing the #contentParagraph local reference of the projected content from the <app-server-element> tags
+	// found on the parent component and projected with the <ng-content> directive
+	@ContentChild('contentParagraph', { static : true })
+	paragraph: ElementRef;
+
 	// 1. constructor is called (once)
     constructor() {
 		console.log('constructor called');
@@ -45,6 +50,7 @@ export class ServerElementComponent implements OnInit, OnChanges, DoCheck, After
     ngOnInit() {
 		console.log('ngOnInit called');
 		console.log('Text Content: ' + this.header.nativeElement.textContent);
+		console.log('Paragraph: ' + this.paragraph.nativeElement.textContent);
 	}
 	
 	// 4. doCheck is called (and each time a change occurs according to Angular standards, which is a lot)
@@ -67,6 +73,7 @@ export class ServerElementComponent implements OnInit, OnChanges, DoCheck, After
 	ngAfterViewInit() {
 		console.log('ngAfterViewInit called');
 		console.log('Text Content: ' + this.header.nativeElement.textContent);
+		console.log('Paragraph: ' + this.paragraph.nativeElement.textContent);
 	}
 
 	// 8. afterViewChecked is called (and each time the component template changes)
