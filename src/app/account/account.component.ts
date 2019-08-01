@@ -1,13 +1,15 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LoggingService } from '../logging.service';
+import { AccountsService } from '../accounts.service';
 
 // account component
 // requiring to inject LoggingService to constructor
+// also inject the AccountsService
 @Component({
     selector: 'app-account',
     templateUrl: './account.component.html',
     styleUrls: ['./account.component.css'],
-    providers: [LoggingService]
+    providers: [LoggingService, AccountsService]
 })
 export class AccountComponent {
 
@@ -20,22 +22,17 @@ export class AccountComponent {
     id: number;
 
     // constructor: required to inject to this component the logging service
-    constructor(private loggingService: LoggingService) {
+    // also inject an instance of the accountsService
+    constructor(private loggingService: LoggingService, 
+                private accountsService: AccountsService) {
 
     }
 
-    // event emitter: root component will listen for this statusChanged emitter
-    @Output() 
-    statusChanged = new EventEmitter<{id: number, newStatus: string}>();
-
-    // onSetTo() event handler: emit data through the statusChanged emitter
+    // onSetTo() event handler
     onSetTo(status: string) {
-
-        // send the target accout id and the new status value
-        this.statusChanged.emit({
-            id: this.id, 
-            newStatus: status}
-        );
+        
+        // use the accountsService instance to update the status with the id and the new status
+        this.accountsService.updateStatus(this.id, status);
 
         // using the injected service to log data
         this.loggingService.logStatusChange(status);

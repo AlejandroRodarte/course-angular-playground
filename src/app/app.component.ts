@@ -1,39 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AccountsService } from './accounts.service';
 
 // root component
+// inject the AccountsService dependency
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
-	styleUrls: ['./app.component.css']
+	styleUrls: ['./app.component.css'],
+	providers: [AccountsService]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-	// array of account object literals
-	accounts = [
-		{
-			name: 'Master Account',
-			status: 'active'
-		},
-		{
-			name: 'Testaccount',
-			status: 'inactive'
-		},
-		{
-			name: 'Hidden Account',
-			status: 'unknown'
-		}
-	];
+	// array of accounts
+	accounts: { name : string, status: string }[] = [];
 
-	// onAccountAdded() handler: receive account name and status
-	// push the new account to the accounts array
-	onAccountAdded(newAccount: {name: string, status: string}) {
-		this.accounts.push(newAccount);
+	// inject an AccountsService instance to this component
+	constructor(private accountsService: AccountsService) {
+
 	}
 
-	// onStatusChanged() handler: receive the account id and new status
-	// target the account by the index (id) and set the status property to the new status value
-	onStatusChanged(updateInfo: { id: number, newStatus: string }) {
-		this.accounts[updateInfo.id].status = updateInfo.newStatus;
+	// on initializing: make the accounts array point to the same location in memory
+	// as the accounts array in the AccountsService
+	// remember: arrays are reference types, so the equal operator just makes these two point
+	// to the same place in memory
+	ngOnInit() {
+		this.accounts = this.accountsService.accounts;
 	}
 
 }
