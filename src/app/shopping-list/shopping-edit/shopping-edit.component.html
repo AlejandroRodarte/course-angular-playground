@@ -20,7 +20,12 @@
                         Name
                     </label>
 
-                    <input type="text" id="name" class="form-control">
+                    <!-- place a local reference to use on the .ts file -->
+                    <input 
+                        type="text" 
+                        id="name" 
+                        class="form-control"
+                        #ingredientNameInput>
 
                 </div>
 
@@ -31,7 +36,12 @@
                         Amount
                     </label>
 
-                    <input type="number" id="amount" class="form-control">
+                    <!-- place a local reference to use on the .ts file -->
+                    <input 
+                        type="number" 
+                        id="amount" 
+                        class="form-control"
+                        #ingredientAmountInput>
 
                 </div>
 
@@ -44,7 +54,10 @@
                 <div class="col-xs-12">
 
                     <!-- add an ingredient to shopping list -->
-                    <button type="submit" class="btn btn-success">
+                    <!-- on click, call onSubmitClick() event handler -->
+                    <button type="submit" 
+                            class="btn btn-success"
+                            (click)="onSubmitClick()">
                         Add
                     </button>
 

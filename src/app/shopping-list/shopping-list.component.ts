@@ -23,4 +23,10 @@ export class ShoppingListComponent implements OnInit {
 
 	}
 
+	// add new ingredient handler: triggers when sendNewIngredient emitter from shopping edit component
+	// emits a new ingredient from the form
+	addNewIngredient(ingredient: Ingredient): void {
+		this.ingredients.push(ingredient);
+	}
+
 }
