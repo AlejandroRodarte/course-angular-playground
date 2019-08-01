@@ -55,7 +55,13 @@
 			</p>
 
 			<!-- apply to the paragraph element the appBetterHighlight directive -->
-			<p appBetterHighlight>
+
+			<!-- [appBetterHighlight]="'red'": property binding to the highlightColor property on our directive class -->
+			<!-- since it has an alias that matches the directive selector name -->
+
+			<!-- [defaultColor]="'yellow'": property binding to the defaultColor property on our directive class -->
+			<p  [appBetterHighlight]="'red'"
+				[defaultColor]="'yellow'">
 				Style me with the better highlight directive!
 			</p>
 
