@@ -16,7 +16,7 @@ export class DropdownDirective {
 
     // listen for a click on the document itself, capture the event object
     @HostListener('document:click', ['$event'])
-    mouseenter(event: Event): void {
+    toggleOpen(event: Event): void {
 
         // switch toggle logic: we will use event delegation
         // we will condition if what the user clicked happens to be the first child of the html element that has this directive
