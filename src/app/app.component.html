@@ -1,36 +1,64 @@
-<!-- root component html -->
-
-<!-- the header component -->
-<!-- listen for the featureToDisplay found on the header component, trigger setFeature() root component method -->
-<!-- to set the new feature string value -->
-<app-header
-    (featureToDisplay)="setFeature($event)">
-
-</app-header>
-
-<!-- main container -->
+<!-- container -->
 <div class="container">
 
-    <!-- grid -->
-    <div class="row">
+	<!-- grid -->
+	<div class="row">
 
-        <!-- first column: recipes component and shopping list component beneath -->
-        <div class="col-md-12">
+		<!-- one column -->
+		<div class="col-xs-12">
 
-            <!-- display app recipes component if the actual feature value is 'recipes' -->
-            <app-recipes
-                *ngIf="feature === 'recipes'">
+			<!-- button: on click, toggle the onlyOdd property -->
+			<button
+				class="btn btn-primary"
+				(click)="onlyOdd = !onlyOdd">
+				Only show odd numbers
+			</button>
 
-            </app-recipes>
+			<br><br>
 
-            <!-- display app recipes component if the actual feature value is 'shopping list' -->
-            <app-shopping-list
-                *ngIf="feature === 'shoppingList'">
+			<!-- unordered list -->
+			<ul class="list-group">
 
-            </app-shopping-list>
-            
-        </div>
+				<!-- div: will only display if odd toggle is true -->
+				<div
+					*ngIf="onlyOdd">
 
-    </div>
+					<!-- display the array of odd numbers found on the component class -->
+					<li class="list-group-item"
+						[ngClass]="{ odd: odd % 2 !== 0 }"
+						[ngStyle]="{ backgroundColor: odd % 2 !== 0 ? 'yellow' : 'transparent' }"
+						*ngFor="let odd of oddNumbers">
+						{{ odd }}
+					</li>
+
+				</div>
+
+				<!-- div: will only display if odd toggle is off (even) -->
+				<div
+					*ngIf="!onlyOdd">
+
+					<!-- display the array of even numbers found on the component class -->
+					<li class="list-group-item"
+						[ngClass]="{ odd: even % 2 !== 0 }"
+						[ngStyle]="{ backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent' }"
+						*ngFor="let even of evenNumbers">
+						{{ even }}
+					</li>
+
+				</div>
+
+
+			</ul>
+
+			<!-- ngIf as attribute directive: display this template only when the toggle is true -->
+			<ng-template [ngIf]="onlyOdd">
+				<p>
+					Only odd
+				</p>
+			</ng-template>
+
+		</div>
+
+	</div>
 
 </div>
