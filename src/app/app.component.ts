@@ -19,5 +19,7 @@ export class AppComponent {
 	
 	// toggle for only odd numbers
 	onlyOdd = false;
+
+	value = 5;
 	
 }
