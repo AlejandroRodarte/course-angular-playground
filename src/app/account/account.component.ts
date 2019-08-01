@@ -4,12 +4,12 @@ import { AccountsService } from '../accounts.service';
 
 // account component
 // requiring to inject LoggingService to constructor
-// also inject the AccountsService
+// do not place the AccountsService dependency, since we will receive the singleton instance from the parent component
 @Component({
     selector: 'app-account',
     templateUrl: './account.component.html',
     styleUrls: ['./account.component.css'],
-    providers: [LoggingService, AccountsService]
+    providers: [LoggingService]
 })
 export class AccountComponent {
 
@@ -22,7 +22,7 @@ export class AccountComponent {
     id: number;
 
     // constructor: required to inject to this component the logging service
-    // also inject an instance of the accountsService
+    // also inject an AccountsService instance coming from parent component (hierarchical injector)
     constructor(private loggingService: LoggingService, 
                 private accountsService: AccountsService) {
 
