@@ -1,126 +1,36 @@
-<!-- container -->
+<!-- root component html -->
+
+<!-- the header component -->
+<!-- listen for the featureToDisplay found on the header component, trigger setFeature() root component method -->
+<!-- to set the new feature string value -->
+<app-header
+    (featureToDisplay)="setFeature($event)">
+
+</app-header>
+
+<!-- main container -->
 <div class="container">
 
-	<!-- grid -->
-	<div class="row">
+    <!-- grid -->
+    <div class="row">
 
-		<!-- one column -->
-		<div class="col-xs-12">
+        <!-- first column: recipes component and shopping list component beneath -->
+        <div class="col-md-12">
 
-			<!-- button: on click, toggle the onlyOdd property -->
-			<button
-				class="btn btn-primary"
-				(click)="onlyOdd = !onlyOdd">
-				Only show odd numbers
-			</button>
+            <!-- display app recipes component if the actual feature value is 'recipes' -->
+            <app-recipes
+                *ngIf="feature === 'recipes'">
 
-			<br><br>
+            </app-recipes>
 
-			<!-- unordered list -->
-			<ul class="list-group">
+            <!-- display app recipes component if the actual feature value is 'shopping list' -->
+            <app-shopping-list
+                *ngIf="feature === 'shoppingList'">
 
-				<!-- div: will only display if odd toggle is true -->
-				<div
-					*ngIf="onlyOdd">
+            </app-shopping-list>
+            
+        </div>
 
-					<!-- display the array of odd numbers found on the component class -->
-					<li class="list-group-item"
-						[ngClass]="{ odd: odd % 2 !== 0 }"
-						[ngStyle]="{ backgroundColor: odd % 2 !== 0 ? 'yellow' : 'transparent' }"
-						*ngFor="let odd of oddNumbers">
-						{{ odd }}
-					</li>
-
-				</div>
-
-				<!-- div: will only display if odd toggle is off (even) -->
-				<!-- <div
-					*ngIf="!onlyOdd"> -->
-
-					<!-- display the array of even numbers found on the component class -->
-					<!-- <li class="list-group-item"
-						[ngClass]="{ odd: even % 2 !== 0 }"
-						[ngStyle]="{ backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent' }"
-						*ngFor="let even of evenNumbers">
-						{{ even }}
-					</li>
-
-				</div> -->
-
-				<!-- same as the div content above: angular converts the * structural directive to this: -->
-				<!-- into a template that has in itself the ngIf attribute directive that decides the condition to render this content or not -->
-				<!-- <ng-template
-					[ngIf]="!onlyOdd"> -->
-
-					<!-- display the array of even numbers found on the component class -->
-					<!-- <li class="list-group-item"
-						[ngClass]="{ odd: even % 2 !== 0 }"
-						[ngStyle]="{ backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent' }"
-						*ngFor="let even of evenNumbers">
-						{{ even }}
-					</li>
-
-				</ng-template> -->
-
-				<!-- div: will only display if odd toggle is off (even) -->
-				<div
-					*appUnless="onlyOdd">
-
-					<!-- display the array of even numbers found on the component class -->
-					<li class="list-group-item"
-						[ngClass]="{ odd: even % 2 !== 0 }"
-						[ngStyle]="{ backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent' }"
-						*ngFor="let even of evenNumbers">
-						{{ even }}
-					</li>
-
-				</div>
-
-			</ul>
-
-			<!-- apply to the paragraph element the appBasicHighlight directive -->
-			<p appBasicHighlight>
-				Style me with the basic highlight directive!
-			</p>
-
-			<!-- apply to the paragraph element the appBetterHighlight directive -->
-
-			<!-- [appBetterHighlight]="'red'": property binding to the highlightColor property on our directive class -->
-			<!-- since it has an alias that matches the directive selector name -->
-
-			<!-- [defaultColor]="'yellow'": property binding to the defaultColor property on our directive class -->
-			<p  [appBetterHighlight]="'red'"
-				[defaultColor]="'yellow'">
-				Style me with the better highlight directive!
-			</p>
-
-			<div
-				[ngSwitch]="value">
-
-				<p
-					*ngSwitchCase="5">
-					Value is 5
-				</p>
-
-				<p
-					*ngSwitchCase="10">
-					Value is 10
-				</p>
-
-				<p
-					*ngSwitchCase="100">
-					Value is 100
-				</p>
-
-				<p
-					*ngSwitchDefault>
-					Value is default
-				</p>
-
-			</div>
-
-		</div>
-
-	</div>
+    </div>
 
 </div>

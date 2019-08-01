@@ -1,0 +1,81 @@
+<!-- recipe detail html -->
+
+<!-- grid: recipe image -->
+<div class="row">
+
+    <div class="col-xs-12">
+        <img [src]="recipe.imagePath" alt="" class="img-responsive" style="max-height: 300px;">
+    </div>
+
+</div>
+
+<!-- grid: recipe name -->
+<div class="row">
+
+    <div class="col-xs-12">
+        <h1>
+            {{ recipe.name }}
+        </h1>
+    </div>
+
+</div>
+
+<!-- grid -->
+<div class="row">
+
+    <!-- column -->
+    <div class="col-xs-12">
+
+        <!-- dropdown -->
+        <div class="btn-group">
+
+            <!-- dropdown button -->
+            <button type="button" class="btn btn-primary dropdown toggle">
+                Manage Recipe <span class="caret"></span>
+            </button>
+
+            <!-- dropdown meny -->
+            <ul class="dropdown-menu">
+
+                <!-- add to shopping list -->
+                <li>
+                    <a href="">
+                        To Shopping List
+                    </a>
+                </li>
+
+                <!-- edit the recipe -->
+                <li>
+                    <a href="">
+                        Edit Recipe
+                    </a>
+                </li>
+
+                <!-- delete the recipe -->
+                <li>
+                    <a href="">
+                        Delete Recipe
+                    </a>
+                </li>
+                
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- grid: recipe description -->
+<div class="row">
+    <div class="col-xs-12">
+        {{ recipe.description }}
+    </div>
+</div>
+
+<!-- grid: recipe ingredients -->
+<div class="row">
+    <div class="col-xs-12">
+        Ingredients
+    </div>
+</div>

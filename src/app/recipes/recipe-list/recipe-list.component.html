@@ -1,0 +1,42 @@
+<!-- recipe list html -->
+
+<!-- grid -->
+<div class="row">
+
+    <!-- first column -->
+    <div class="col-xs-12">
+
+        <!-- button to add a new recipe -->
+        <button class="btn btn-success">
+            New Recipe
+        </button>
+
+    </div>
+
+</div>
+
+<hr>
+
+<!-- grid -->
+<div class="row">
+
+    <!-- first column -->
+    <!-- loop through each recipe in the recipes array field of the recipe list component -->
+    <div class="col-xs-12">
+
+        <!-- recipe item component -->
+        <!-- create recipe item components as long as there are recipes to loop in the array -->
+        <!-- access the 'recipe' property from RecipeItemComponent and provide it with the curren recipe iteration value -->
+
+        <!-- this <app-recipe-item> will listen for the recipeSelected event emitter: when it receives data, it will call -->
+        <!-- the onRecipeSelected event emitter -->
+        <app-recipe-item
+            *ngFor="let recipe of recipes"
+            [recipe]="recipe"
+            (recipeSelected)="onRecipeSelected(recipe)">
+
+        </app-recipe-item>
+
+    </div>
+
+</div>
