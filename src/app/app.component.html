@@ -34,8 +34,37 @@
 				</div>
 
 				<!-- div: will only display if odd toggle is off (even) -->
+				<!-- <div
+					*ngIf="!onlyOdd"> -->
+
+					<!-- display the array of even numbers found on the component class -->
+					<!-- <li class="list-group-item"
+						[ngClass]="{ odd: even % 2 !== 0 }"
+						[ngStyle]="{ backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent' }"
+						*ngFor="let even of evenNumbers">
+						{{ even }}
+					</li>
+
+				</div> -->
+
+				<!-- same as the div content above: angular converts the * structural directive to this: -->
+				<!-- into a template that has in itself the ngIf attribute directive that decides the condition to render this content or not -->
+				<!-- <ng-template
+					[ngIf]="!onlyOdd"> -->
+
+					<!-- display the array of even numbers found on the component class -->
+					<!-- <li class="list-group-item"
+						[ngClass]="{ odd: even % 2 !== 0 }"
+						[ngStyle]="{ backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent' }"
+						*ngFor="let even of evenNumbers">
+						{{ even }}
+					</li>
+
+				</ng-template> -->
+
+				<!-- div: will only display if odd toggle is off (even) -->
 				<div
-					*ngIf="!onlyOdd">
+					*appUnless="onlyOdd">
 
 					<!-- display the array of even numbers found on the component class -->
 					<li class="list-group-item"
@@ -46,21 +75,6 @@
 					</li>
 
 				</div>
-
-				<!-- same as the div content above: angular converts the * structural directive to this: -->
-				<!-- into a template that has in itself the ngIf attribute directive that decides the condition to render this content or not -->
-				<ng-template
-					[ngIf]="!onlyOdd">
-
-					<!-- display the array of even numbers found on the component class -->
-					<li class="list-group-item"
-						[ngClass]="{ odd: even % 2 !== 0 }"
-						[ngStyle]="{ backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent' }"
-						*ngFor="let even of evenNumbers">
-						{{ even }}
-					</li>
-
-				</ng-template>
 
 			</ul>
 
