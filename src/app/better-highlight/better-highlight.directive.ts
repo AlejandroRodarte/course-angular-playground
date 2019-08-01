@@ -1,4 +1,4 @@
-import { Directive, Renderer2, OnInit, ElementRef } from '@angular/core';
+import { Directive, Renderer2, OnInit, ElementRef, HostListener } from '@angular/core';
 
 // better highlight directive
 @Directive({
@@ -15,7 +15,17 @@ export class BetterHighlightDirective implements OnInit {
 	// to apply a style to the element, use the renderer instance (has the usual DOM manipulation methods)
 	// and call setStyle(), where we can pass the native element, the property css name and the value
 	ngOnInit(): void {
+		// this.renderer.setStyle(this.elementRef.nativeElement, 'background-color', 'blue');
+	}
+
+	@HostListener('mouseenter')
+	mouseenter(eventData: Event): void {
 		this.renderer.setStyle(this.elementRef.nativeElement, 'background-color', 'blue');
+	}
+
+	@HostListener('mouseleave')
+	mouseleave(eventData: Event): void {
+		this.renderer.setStyle(this.elementRef.nativeElement, 'background-color', 'transparent');
 	}
 
 }
