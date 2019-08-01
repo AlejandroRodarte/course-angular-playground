@@ -1,0 +1,39 @@
+<!-- account component html -->
+
+<!-- grid -->
+<div class="row">
+
+	<!-- column -->
+	<div class="col-xs-12 col-md-8 col-md-offset-2">
+
+		<!-- print account name -->
+		<h5>
+			{{ account.name }}
+		</h5>
+
+		<hr>
+
+		<!-- print account status -->
+		<p>
+			This account is {{ account.status }}
+		</p>
+
+		<!-- set account status to 'active', call onSetTo() with the appropate string -->
+		<button class="btn btn-default" (click)="onSetTo('active')">
+			Set to 'active'
+		</button>
+
+		<!-- set account status to 'inactive', call onSetTo() with the appropate string -->
+		<button class="btn btn-default" (click)="onSetTo('inactive')">
+			Set to 'inactive'
+		</button>
+
+		<!-- set account status to 'unknown', call onSetTo() with the appropate string -->
+		<button class="btn btn-default" (click)="onSetTo('unknown')">
+			Set to 'unknown'
+		</button>
+
+	</div>
+
+</div>
+

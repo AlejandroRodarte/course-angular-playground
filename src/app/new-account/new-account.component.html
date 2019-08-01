@@ -1,0 +1,47 @@
+<!-- new account component html -->
+
+<!-- grid -->
+<div class="row">
+
+	<!-- column -->
+	<div class="col-xs-12 col-md-8 col-md-offset-2">
+
+		<!-- first form input: new account name -->
+		<div class="form-group">
+
+			<label>
+				Account Name
+			</label>
+
+			<!-- set a local reference on input -->
+			<input
+				type="text"
+				class="form-control"
+				#accountName>
+
+		</div>
+
+		<!-- second form input: new account status -->
+		<div class="form-group">
+
+			<!-- set a local reference on select tag to fetch value of selected element -->
+			<!-- active, inactive or hidden -->
+			<select class="form-control" #status>
+				<option value="active">Active</option>
+				<option value="inactive">Inactive</option>
+				<option value="hidden">Hidden</option>
+			</select>
+
+		</div>
+
+		<!-- submit button: call onCreateAccount() handler and pass in the html input and select values directly -->
+		<button
+			class="btn btn-primary"
+			(click)="onCreateAccount(accountName.value, status.value)">
+			Add Account
+		</button>
+
+	</div>
+
+</div>
+

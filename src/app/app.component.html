@@ -1,36 +1,36 @@
 <!-- root component html -->
 
-<!-- the header component -->
-<!-- listen for the featureToDisplay found on the header component, trigger setFeature() root component method -->
-<!-- to set the new feature string value -->
-<app-header
-    (featureToDisplay)="setFeature($event)">
-
-</app-header>
-
-<!-- main container -->
+<!-- container -->
 <div class="container">
 
-    <!-- grid -->
-    <div class="row">
+	<!-- grid -->
+	<div class="row">
 
-        <!-- first column: recipes component and shopping list component beneath -->
-        <div class="col-md-12">
+			<!-- column -->
+			<div class="col-xs-12 col-md-8 col-md-offset-2">
 
-            <!-- display app recipes component if the actual feature value is 'recipes' -->
-            <app-recipes
-                *ngIf="feature === 'recipes'">
+				<!-- NewAccountComponent: listen for the accountAdded emitter -->
+				<!-- when triggered, call onAccountAdded() with the emitted data passed in -->
+				<!-- (account name and account status) -->
+				<app-new-account (accountAdded)="onAccountAdded($event)">
 
-            </app-recipes>
+				</app-new-account>
 
-            <!-- display app recipes component if the actual feature value is 'shopping list' -->
-            <app-shopping-list
-                *ngIf="feature === 'shoppingList'">
+				<hr>
 
-            </app-shopping-list>
-            
-        </div>
+				<!-- AccountComponent: create components as there are account objects in the array -->
+				<!-- bind the 'account' property of the AccountComponent to the current account iteration -->
+				<!-- bing the 'id' property of the AccountComponent to the current index array value -->
+				<!-- listen for the statusChanged event emitter on AccountComponent: trigger onStatusChanged() -->
+				<!-- and give that method the object literal that was sent (account id and new status) -->
+				<app-account
+					*ngFor="let acc of accounts; let i = index"
+					[account]="acc"
+					[id]="i"
+					(statusChanged)="onStatusChanged($event)"></app-account>
 
-    </div>
+			</div>
+
+	</div>
 
 </div>
