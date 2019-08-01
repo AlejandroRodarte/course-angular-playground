@@ -47,15 +47,12 @@
 
 				</div>
 
-
 			</ul>
 
-			<!-- ngIf as attribute directive: display this template only when the toggle is true -->
-			<ng-template [ngIf]="onlyOdd">
-				<p>
-					Only odd
-				</p>
-			</ng-template>
+			<!-- apply to the paragraph element the appBasicHighlight directive -->
+			<p appBasicHighlight>
+				Style me with the basic highlight directive!
+			</p>
 
 		</div>
 
