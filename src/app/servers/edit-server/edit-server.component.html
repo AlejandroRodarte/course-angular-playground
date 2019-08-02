@@ -1,0 +1,49 @@
+<!-- edit server component -->
+
+<!-- server name -->
+<div class="form-group">
+
+	<label for="name">
+		Server Name
+	</label>
+
+	<!-- first input: server name (two-way data binding) -->
+	<input
+		type="text"
+		id="name"
+		class="form-control"
+		[(ngModel)]="serverName">
+
+</div>
+
+<!-- server status -->
+<div class="form-group">
+
+	<label for="status">
+		Server Status
+	</label>
+
+	<!-- select from the three possible server statuses -->
+	<select
+		id="status"
+		class="form-control"
+		[(ngModel)]="serverStatus">
+
+		<option value="online">
+			Online
+		</option>
+		
+		<option value="offline">
+			Offline
+		</option>
+
+	</select>
+
+</div>
+
+<!-- button: on click, call onUpdateServer() -->
+<button
+	class="btn btn-primary"
+	(click)="onUpdateServer()">
+	Update Server
+</button>

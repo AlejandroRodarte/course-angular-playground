@@ -1,0 +1,32 @@
+<!-- servers component html -->
+
+<!-- grid -->
+<div class="row">
+
+	<!-- first column -->
+	<div class="col-xs-12 col-sm-4">
+
+		<!-- unordered list of -->
+		<div class="list-group">
+
+			<!-- links for each server -->
+			<a
+				href="#"
+				class="list-group-item"
+				*ngFor="let server of servers">
+				{{ server.name }}
+			</a>
+
+		</div>
+
+	</div>
+
+	<!-- second column: place the edit server component and the server component beneath -->
+	<div class="col-xs-12 col-sm-4">
+		<app-edit-server></app-edit-server>
+		<hr>
+		<app-server></app-server>
+	</div>
+
+</div>
+

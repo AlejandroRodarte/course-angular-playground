@@ -1,36 +1,61 @@
 <!-- root component html -->
 
-<!-- the header component -->
-<!-- listen for the featureToDisplay found on the header component, trigger setFeature() root component method -->
-<!-- to set the new feature string value -->
-<app-header
-    (featureToDisplay)="setFeature($event)">
-
-</app-header>
-
-<!-- main container -->
+<!-- container -->
 <div class="container">
 
-    <!-- grid -->
-    <div class="row">
+	<!-- grid -->
+	<div class="row">
 
-        <!-- first column: recipes component and shopping list component beneath -->
-        <div class="col-md-12">
+		<!-- one column -->
+		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
 
-            <!-- display app recipes component if the actual feature value is 'recipes' -->
-            <app-recipes
-                *ngIf="feature === 'recipes'">
+			<!-- unordered list of linls -->
+			<ul class="nav nav-tabs">
 
-            </app-recipes>
+				<!-- link to home -->
+				<li role="presentation" class="active"><a href="#">
+					Home</a>
+				</li>
 
-            <!-- display app recipes component if the actual feature value is 'shopping list' -->
-            <app-shopping-list
-                *ngIf="feature === 'shoppingList'">
+				<!-- link to servers -->
+				<li role="presentation">
+					<a href="#">
+						Servers
+					</a>
+				</li>
 
-            </app-shopping-list>
-            
-        </div>
+				<!-- link to users -->
+				<li role="presentation">
+					<a href="#">
+						Users
+					</a>
+				</li>
 
-    </div>
+			</ul>
+
+		</div>
+
+	</div>
+
+	<!-- home component -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+			<app-home></app-home>
+		</div>
+	</div>
+
+	<!-- users component -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+			<app-users></app-users>
+		</div>
+	</div>
+
+	<!-- servers component -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+			<app-servers></app-servers>
+		</div>
+	</div>
 
 </div>

@@ -1,0 +1,31 @@
+<!-- users component html -->
+
+<!-- grid -->
+<div class="row">
+
+	<!-- first column -->
+	<div class="col-xs-12 col-sm-4">
+
+		<!-- unordered list -->
+		<div class="list-group">
+
+			<!-- loop through the users array and create links with each user name embedded -->
+			<a
+				href="#"
+				class="list-group-item"
+				*ngFor="let user of users">
+				{{ user.name }}
+			</a>
+
+		</div>
+
+	</div>
+
+	<!-- second column: user component -->
+	<div class="col-xs-12 col-sm-4">
+		<app-user></app-user>
+	</div>
+
+</div>
+
+
