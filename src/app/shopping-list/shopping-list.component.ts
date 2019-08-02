@@ -15,12 +15,20 @@ export class ShoppingListComponent implements OnInit {
 
 	// receive singleton of shopping list service
 	constructor(private shoppingListService: ShoppingListService) { 
-
+		
 	}
 
-	// on initialization, get a copy of these ingredients through the service
+	// on initialization
 	ngOnInit() {
+
+		// get a copy of these ingredients through the service
 		this.ingredients = this.shoppingListService.getIngredients();
+
+		// subscribe to the ingredientWasAdded emitter from the service and push to this copy the new ingredient
+		this.shoppingListService.ingredientWasAdded.subscribe((ingredient: Ingredient) => {
+			this.ingredients.push(ingredient);
+		})
+
 	}
 
 }
