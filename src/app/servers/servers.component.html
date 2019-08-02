@@ -10,7 +10,13 @@
 		<div class="list-group">
 
 			<!-- links for each server -->
+			<!-- routerLink -> localhost:4200/servers/5/edit -->
+			<!-- queryParams is a property of the routerLink directive -->
+			<!-- localhost:4200/servers/5/edit?allowEdit='1' -->
 			<a
+				[routerLink]="['/servers', 5, 'edit']"
+				[queryParams]="{ allowEdit: '1' }"
+				[fragment]="'loading'"
 				href="#"
 				class="list-group-item"
 				*ngFor="let server of servers">

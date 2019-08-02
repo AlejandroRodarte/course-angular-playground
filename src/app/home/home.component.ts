@@ -18,12 +18,18 @@ export class HomeComponent implements OnInit {
 		
 	}
 
-	onLoadServers(): void {
+	onLoadServer(id: number): void {
 
 		// ...perform some complicated algorithm
 
 		// access the router an navigate to localhost:4200/servers
-		this.router.navigate(['/servers']);
+		this.router.navigate(
+			['/servers', id, 'edit'], { 
+			queryParams: { 
+				allowEdit: '1' 
+			}, 
+			fragment: 'loading' 
+		});
 
 	}
 
