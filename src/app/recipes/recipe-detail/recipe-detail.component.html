@@ -43,7 +43,9 @@
 
                 <!-- add to shopping list -->
                 <li>
-                    <a href="">
+                    <a  href="#"
+                        (click)="addToShoppingList()"
+                        style="cursor: pointer;">
                         To Shopping List
                     </a>
                 </li>
@@ -79,7 +81,21 @@
 
 <!-- grid: recipe ingredients -->
 <div class="row">
+
     <div class="col-xs-12">
-        Ingredients
+
+        <ul class="list-group">
+
+            <!-- loop through each ingredient in the array and print their values -->
+            <li class="list-group-item"
+                *ngFor="let ingredient of recipe.ingredients">
+
+                {{ ingredient.name }} - {{ ingredient.amount }}
+
+            </li>
+
+        </ul>
+
     </div>
+
 </div>

@@ -24,10 +24,10 @@ export class ShoppingListComponent implements OnInit {
 		// get a copy of these ingredients through the service
 		this.ingredients = this.shoppingListService.getIngredients();
 
-		// subscribe to the ingredientWasAdded emitter from the service and push to this copy the new ingredient
-		this.shoppingListService.ingredientWasAdded.subscribe((ingredient: Ingredient) => {
-			this.ingredients.push(ingredient);
-		})
+		// subscribe to the ingredientsChanged emitter from the service and push to this copy the new ingredient
+		this.shoppingListService.ingredientsChanged.subscribe(() => {
+			this.ingredients = this.shoppingListService.getIngredients();
+		});
 
 	}
 

@@ -29,11 +29,11 @@ export class ShoppingEditComponent implements OnInit {
 
 		// capture the ingredient name and amount
 		const name: string = this.ingredientName.nativeElement.value;
-		const amount: number = this.ingredientAmount.nativeElement.value;
+		const amount: number = parseInt(this.ingredientAmount.nativeElement.value);
 
 		// if not empty, add the new ingredient to the ingredients array found on the service and clear the fields
 		if (name && amount) {
-			this.shoppingListService.addNewIngredient(new Ingredient(name, amount));
+			this.shoppingListService.addIngredient(new Ingredient(name, amount));
 			this.ingredientName.nativeElement.value = '';
 			this.ingredientAmount.nativeElement.value = '';
 		}
