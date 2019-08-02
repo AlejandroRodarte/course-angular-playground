@@ -4,12 +4,8 @@
 <div class="row">
 
     <!-- first column: the recipe list component -->
-    <!-- when sendSelectedRecipe forwards recipe data, we will call -->
-    <!-- the setSelectedRecipe() handler which will receive the recipe data -->
     <div class="col-md-5">
-        <app-recipe-list
-            (sendSelectedRecipe)="setSelectedRecipe($event)">
-
+        <app-recipe-list>
         </app-recipe-list>
     </div>
 
@@ -19,7 +15,7 @@
     <!-- from this RecipesComponent -->
     <div class="col-md-7">
         <app-recipe-detail
-            *ngIf="doRenderDetails === true"
+            *ngIf="renderFlag"
             [recipe]="selectedRecipe">
 
         </app-recipe-detail>

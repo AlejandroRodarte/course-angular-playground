@@ -8,13 +8,16 @@ import { Recipe } from '../recipe.model';
 })
 export class RecipeDetailComponent implements OnInit {
 
-	// recipe property binded to access the selected recipe by the user
+	// property binding to receive the currently selected recipe from RecipesComponent
 	@Input()
 	recipe: Recipe;
 
-	constructor() { }
+	constructor() {
+
+	}
 
 	ngOnInit() {
+
 	}
 
 }
