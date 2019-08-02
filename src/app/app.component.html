@@ -14,7 +14,10 @@
 
 				<!-- link to home -->
 				<!-- routerLink: route to / -->
-				<li role="presentation" class="active">
+				<!-- routerLinkActive: add bootstrap .active class when being on this route -->
+				<li role="presentation"
+					routerLinkActive="active"
+					[routerLinkActiveOptions]="{ exact: true }">
 					<a routerLink="/">
 						Home
 					</a>
@@ -22,7 +25,9 @@
 
 				<!-- link to servers -->
 				<!-- routerLink: route to /servers -->
-				<li role="presentation">
+				<!-- routerLinkActive: add bootstrap .active class when being on this route -->
+				<li role="presentation"
+					routerLinkActive="active">
 					<a routerLink="/servers">
 						Servers
 					</a>
@@ -30,7 +35,9 @@
 
 				<!-- link to users -->
 				<!-- routerLink: route to /users -->
-				<li role="presentation">
+				<!-- routerLinkActive: add bootstrap .active class when being on this route -->
+				<li role="presentation"
+					routerLinkActive="active">
 					<a [routerLink]="['/users']">
 						Users
 					</a>
