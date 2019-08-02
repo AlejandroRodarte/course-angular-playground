@@ -1,27 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService, UserProps, UserStatus } from './user.service';
-import { CounterService } from './counter.service';
+// component parent node selector goes here
+// component class definition goes here
 
-// root component
+import { Component } from '@angular/core';
+
+// this component will go inside an <app-root> html tag found on the index.html page
 @Component({
-	selector: 'app-root',
-	templateUrl: './app.component.html',
-	styleUrls: ['./app.component.css'],
-	providers: [UserService, CounterService]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
 
-	// list of users
-	users: UserProps[] = [];
+// component class definition
+export class AppComponent {
+	
+	// property that holds the current feature
+	feature: string = 'recipes';
 
-	// inject the user service
-	constructor(private userService: UserService) {
-
-	}
-
-	// make the users property point to the users array in the service
-	ngOnInit() {
-		this.users = this.userService.users;
+	// event handler triggered when data is emitted from the header
+	// set the new feature to display
+	setFeature(feature: string): void {
+		this.feature = feature;
 	}
 
 }

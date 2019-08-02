@@ -1,70 +1,34 @@
 <!-- root component html -->
 
+<!-- the header component -->
+<!-- listen for the featureToDisplay found on the header component, trigger setFeature() root component method -->
+<!-- to set the new feature string value -->
+<app-header
+    (featureToDisplay)="setFeature($event)">
+
+</app-header>
+
+<!-- main container -->
 <div class="container">
 
+    <!-- grid -->
     <div class="row">
 
-        <div class="col-xs-12">
+        <!-- first column: recipes component and shopping list component beneath -->
+        <div class="col-md-12">
 
-            <h3>
-                Active Users
-            </h3>
+            <!-- display app recipes component if the actual feature value is 'recipes' -->
+            <app-recipes
+                *ngIf="feature === 'recipes'">
 
-            <!-- loop through all users -->
-            <div
-                *ngFor="let user of users; let i = index">
+            </app-recipes>
 
-                <!-- only print active users component where the status is active -->
-                <!-- bind the user object literal and the index -->
-                <app-active-user
-                    *ngIf="user.status === 'active'"
-                    [user]="user"
-                    [id]="i">
-    
-                </app-active-user>
+            <!-- display app recipes component if the actual feature value is 'shopping list' -->
+            <app-shopping-list
+                *ngIf="feature === 'shoppingList'">
 
-            </div>
-
-            <h3>
-                Inactive Users
-            </h3>
-
-            <!-- loop through all users -->
-            <div
-                *ngFor="let user of users; let i = index">
-
-                <!-- only print active users component where the status is inactive -->
-                <!-- bind the user object literal and the index -->
-                <app-inactive-user
-                    *ngIf="user.status === 'inactive'"
-                    [user]="user"
-                    [id]="i">
-    
-                </app-inactive-user>
-
-            </div>
-
-            <!-- display of counter values -->
-            <div>
-
-                <h3>
-                    Active to Inactive Changes
-                </h3>
-
-                <p>
-                    {{ userService.activeToInactive }}
-                </p>
-
-                <h3>
-                    Inactive to Active Changes
-                </h3>
-
-                <p>
-                    {{ userService.inactiveToActive }}
-                </p>
-
-            </div>
-
+            </app-shopping-list>
+            
         </div>
 
     </div>
