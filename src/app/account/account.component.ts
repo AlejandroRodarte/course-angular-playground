@@ -5,11 +5,13 @@ import { AccountsService } from '../accounts.service';
 // account component
 // requiring to inject LoggingService to constructor
 // do not place the AccountsService dependency, since we will receive the singleton instance from the parent component
+
+// the accountsService is now in the AppModule, so all components share the same singleton service
 @Component({
     selector: 'app-account',
     templateUrl: './account.component.html',
     styleUrls: ['./account.component.css'],
-    providers: [LoggingService]
+    // providers: [LoggingService]
 })
 export class AccountComponent {
 
@@ -23,6 +25,8 @@ export class AccountComponent {
 
     // constructor: required to inject to this component the logging service
     // also inject an AccountsService instance coming from parent component (hierarchical injector)
+
+    // inject the inherited AccountsService instance to this component from AppModule
     constructor(private loggingService: LoggingService, 
                 private accountsService: AccountsService) {
 
@@ -35,7 +39,7 @@ export class AccountComponent {
         this.accountsService.updateStatus(this.id, status);
 
         // using the injected service to log data
-        this.loggingService.logStatusChange(status);
+        // this.loggingService.logStatusChange(status);
 
     }
 

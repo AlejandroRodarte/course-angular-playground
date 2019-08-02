@@ -2,19 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { AccountsService } from './accounts.service';
 
 // root component
-// inject the AccountsService dependency
+// the accountsService is now in the AppModule, so all components share the same singleton service
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
-	styleUrls: ['./app.component.css'],
-	providers: [AccountsService]
+	styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
 
 	// array of accounts
 	accounts: { name : string, status: string }[] = [];
 
-	// inject an AccountsService instance to this component
+	// inject the inherited AccountsService instance to this component from AppModule
 	constructor(private accountsService: AccountsService) {
 
 	}
