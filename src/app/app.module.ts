@@ -4,24 +4,22 @@ import { FormsModule } from '@angular/forms';
 
 
 import { AppComponent } from './app.component';
-import { AccountComponent } from './account/account.component';
-import { NewAccountComponent } from './new-account/new-account.component';
-import { AccountsService } from './accounts.service';
-import { LoggingService } from './logging.service';
+import { ActiveUserComponent } from './active-user/active-user.component';
+import { InactiveUserComponent } from './inactive-user/inactive-user.component';
+import { CounterService } from './counter.service';
 
-// the accounts service will be global
-// this is the only way we can inject a service inside a service
+// counterService declared as a global service
 @NgModule({
   declarations: [
     AppComponent,
-    AccountComponent,
-    NewAccountComponent
+    ActiveUserComponent,
+    InactiveUserComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
   ],
-  providers: [AccountsService, LoggingService],
+  providers: [CounterService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

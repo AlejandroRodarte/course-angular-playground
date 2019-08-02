@@ -1,41 +1,72 @@
 <!-- root component html -->
 
-<!-- container -->
 <div class="container">
 
-	<!-- grid -->
-	<div class="row">
+    <div class="row">
 
-			<!-- column -->
-			<div class="col-xs-12 col-md-8 col-md-offset-2">
+        <div class="col-xs-12">
 
-				<!-- NewAccountComponent: listen for the accountAdded emitter -->
-				<!-- when triggered, call onAccountAdded() with the emitted data passed in -->
-				<!-- (account name and account status) -->
+            <h3>
+                Active Users
+            </h3>
 
-				<!-- update: eliminated this event binding since services centralize data access -->
-				<app-new-account>
+            <!-- loop through all users -->
+            <div
+                *ngFor="let user of users; let i = index">
 
-				</app-new-account>
+                <!-- only print active users component where the status is active -->
+                <!-- bind the user object literal and the index -->
+                <app-active-user
+                    *ngIf="user.status === 'active'"
+                    [user]="user"
+                    [id]="i">
+    
+                </app-active-user>
 
-				<hr>
+            </div>
 
-				<!-- AccountComponent: create components as there are account objects in the array -->
-				<!-- bind the 'account' property of the AccountComponent to the current account iteration -->
-				<!-- bing the 'id' property of the AccountComponent to the current index array value -->
-				<!-- listen for the statusChanged event emitter on AccountComponent: trigger onStatusChanged() -->
-				<!-- and give that method the object literal that was sent (account id and new status) -->
+            <h3>
+                Inactive Users
+            </h3>
 
-				<!-- update: eliminated this event binding since services centralize data access -->
-				<app-account
-					*ngFor="let acc of accounts; let i = index"
-					[account]="acc"
-					[id]="i">
-				
-				</app-account>
+            <!-- loop through all users -->
+            <div
+                *ngFor="let user of users; let i = index">
 
-			</div>
+                <!-- only print active users component where the status is inactive -->
+                <!-- bind the user object literal and the index -->
+                <app-inactive-user
+                    *ngIf="user.status === 'inactive'"
+                    [user]="user"
+                    [id]="i">
+    
+                </app-inactive-user>
 
-	</div>
+            </div>
+
+            <!-- display of counter values -->
+            <div>
+
+                <h3>
+                    Active to Inactive Changes
+                </h3>
+
+                <p>
+                    {{ userService.activeToInactive }}
+                </p>
+
+                <h3>
+                    Inactive to Active Changes
+                </h3>
+
+                <p>
+                    {{ userService.inactiveToActive }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
