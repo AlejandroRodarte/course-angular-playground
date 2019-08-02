@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 // user component
 @Component({
@@ -7,10 +8,13 @@ import { ActivatedRoute, Params } from '@angular/router';
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, OnDestroy {
 
 	// store a single user
 	user: {id: number, name: string};
+
+	// subscription to the parameters observable
+	paramsSubscription: Subscription;
 
 	// inject the activated route
 	// besides having the path that loaded this component, has more route metadata
@@ -28,11 +32,15 @@ export class UserComponent implements OnInit {
 			name: this.route.snapshot.params['name']
 		};
 
-		this.route.params.subscribe((params: Params) => {
+		this.paramsSubscription = this.route.params.subscribe((params: Params) => {
 			this.user.id = params['id'];
 			this.user.name = params['name'];
 		})
 
+	}
+
+	ngOnDestroy() {
+		this.paramsSubscription.unsubscribe();
 	}
 
 }
