@@ -12,7 +12,9 @@
 				<!-- NewAccountComponent: listen for the accountAdded emitter -->
 				<!-- when triggered, call onAccountAdded() with the emitted data passed in -->
 				<!-- (account name and account status) -->
-				<app-new-account (accountAdded)="onAccountAdded($event)">
+
+				<!-- update: eliminated this event binding since services centralize data access -->
+				<app-new-account>
 
 				</app-new-account>
 
@@ -23,11 +25,14 @@
 				<!-- bing the 'id' property of the AccountComponent to the current index array value -->
 				<!-- listen for the statusChanged event emitter on AccountComponent: trigger onStatusChanged() -->
 				<!-- and give that method the object literal that was sent (account id and new status) -->
+
+				<!-- update: eliminated this event binding since services centralize data access -->
 				<app-account
 					*ngFor="let acc of accounts; let i = index"
 					[account]="acc"
-					[id]="i"
-					(statusChanged)="onStatusChanged($event)"></app-account>
+					[id]="i">
+				
+				</app-account>
 
 			</div>
 

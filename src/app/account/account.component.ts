@@ -38,6 +38,10 @@ export class AccountComponent {
         // use the accountsService instance to update the status with the id and the new status
         this.accountsService.updateStatus(this.id, status);
 
+        // use the accountsService instance to access the event emitter and emit some data
+        // this allows for cross-component communication
+        this.accountsService.statusUpdated.emit(status);
+
         // using the injected service to log data
         // this.loggingService.logStatusChange(status);
 

@@ -24,6 +24,12 @@ export class NewAccountComponent {
 	constructor(private loggingService: LoggingService,
 				private accountsService: AccountsService) {
 
+		// this component also has access to the single accounts service, so it can access the event emitter and subscribe to 
+		// it to run some callback function each time data is emitted through this accounts service
+		this.accountsService.statusUpdated.subscribe(
+			(status: string) => alert('New status: ' + status)
+		);
+		
 	}
 
 	// onCreateAccount() submission handler
