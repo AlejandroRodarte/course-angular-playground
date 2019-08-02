@@ -17,11 +17,15 @@ import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.com
 import { RecipeListComponent } from './recipes/recipe-list/recipe-list.component';
 import { RecipeItemComponent } from './recipes/recipe-list/recipe-item/recipe-item.component';
 import { DropdownDirective } from './shared/dropdown.directive';
+import { ShoppingListService } from './shopping-list/shopping-list.service';
 
 // here go the components/modules we will implement on our app
 // declarations : declare all components 
 // imports : declare required external modules
 // bootstrap : component to load when kickstarting app
+
+// section 10: ShoppingListService becomes a global service since it will also be used
+// by the recipes components later on
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,7 +42,7 @@ import { DropdownDirective } from './shared/dropdown.directive';
     BrowserModule,
     FormsModule
   ],
-  providers: [],
+  providers: [ShoppingListService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

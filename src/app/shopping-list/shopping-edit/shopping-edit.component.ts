@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Ingredient } from 'src/app/shared/ingredient.model';
+import { ShoppingListService } from './../shopping-list.service';
 
 @Component({
     selector: 'app-shopping-edit',
@@ -15,11 +16,10 @@ export class ShoppingEditComponent implements OnInit {
 	@ViewChild('ingredientAmountInput', { static : false })
 	ingredientAmount: ElementRef;
 
-	// create a new emitter for the shopping list component html to listen
-	@Output()
-	sendNewIngredient = new EventEmitter<Ingredient>();
+	// get shopping list service singleton
+    constructor(private shoppingListService: ShoppingListService) {
 
-    constructor() { }
+	}
 
     ngOnInit() {
 	}
@@ -31,9 +31,9 @@ export class ShoppingEditComponent implements OnInit {
 		const name: string = this.ingredientName.nativeElement.value;
 		const amount: number = this.ingredientAmount.nativeElement.value;
 
-		// if not empty, send the new ingredient and clear the fields
+		// if not empty, add the new ingredient to the ingredients array found on the service and clear the fields
 		if (name && amount) {
-			this.sendNewIngredient.emit(new Ingredient(name, amount));
+			this.shoppingListService.addNewIngredient(new Ingredient(name, amount));
 			this.ingredientName.nativeElement.value = '';
 			this.ingredientAmount.nativeElement.value = '';
 		}

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
+import { ShoppingListService } from './shopping-list.service';
 
 // shopping list component
 @Component({
@@ -9,24 +10,17 @@ import { Ingredient } from '../shared/ingredient.model';
 })
 export class ShoppingListComponent implements OnInit {
 
-	// ingredients array
-	public ingredients: Ingredient[] = [
-		new Ingredient('Apples', 5),
-		new Ingredient('Tomatoes', 10)
-	];
+	// ingredients copy from service
+	ingredients: Ingredient[] = [];
 
-	constructor() { 
+	// receive singleton of shopping list service
+	constructor(private shoppingListService: ShoppingListService) { 
 
 	}
 
+	// on initialization, get a copy of these ingredients through the service
 	ngOnInit() {
-
-	}
-
-	// add new ingredient handler: triggers when sendNewIngredient emitter from shopping edit component
-	// emits a new ingredient from the form
-	addNewIngredient(ingredient: Ingredient): void {
-		this.ingredients.push(ingredient);
+		this.ingredients = this.shoppingListService.getIngredients();
 	}
 
 }
