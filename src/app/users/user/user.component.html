@@ -9,3 +9,10 @@
 <p>
     User name is {{ user.name }}
 </p>
+
+<hr>
+
+<!-- access localhost:4200/users/10/Anna -->
+<a [routerLink]="['/users', 10, 'Anna']">
+    Load Anna (10)
+</a>
