@@ -36,8 +36,9 @@ const appRoutes: Routes = [
 
 	// load a single user component by id
 	// the ':' informs Angular that this a dynamic part of the path (the user id)
+	// add a name dynamic piece of data too
 	{
-		path: 'users/:id',
+		path: 'users/:id/:name',
 		component: UserComponent
 	}
 

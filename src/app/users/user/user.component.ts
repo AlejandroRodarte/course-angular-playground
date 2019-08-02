@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 // user component
 @Component({
@@ -11,12 +12,22 @@ export class UserComponent implements OnInit {
 	// store a single user
 	user: {id: number, name: string};
 
-	constructor() { 
+	// inject the activated route
+	// besides having the path that loaded this component, has more route metadata
+	constructor(private route: ActivatedRoute) { 
 
 	}
 
 	ngOnInit() {
-		
+
+		// access the loaded route instance
+		// its snapshot property has a picture of the final path (with id and user params)
+		// access the params property inside and fetch the params you desire
+		this.user = {
+			id: this.route.snapshot.params['id'],
+			name: this.route.snapshot.params['name']
+		};
+
 	}
 
 }
