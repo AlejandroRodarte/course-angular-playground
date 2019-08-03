@@ -32,14 +32,18 @@
 	<!-- second column: place the edit server component and the server component beneath -->
 	<div class="col-xs-12 col-sm-4">
 
+		<!-- hook to load child routes of /servers -->
+		<!-- which are /servers/id and /servers/id/edit -->
+		<router-outlet></router-outlet>
+
 		<!-- button to reload page -->
-		<button class="btn btn-primary"
+		<!-- <button class="btn btn-primary"
 				(click)="onReload()">
 			Reload Page
-		</button>
+		</button> -->
 
-		<app-edit-server></app-edit-server>
-		<hr>
+		<!-- <app-edit-server></app-edit-server>
+		<hr> -->
 		<!-- <app-server></app-server> -->
 
 	</div>
