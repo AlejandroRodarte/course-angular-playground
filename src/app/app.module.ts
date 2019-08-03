@@ -12,6 +12,7 @@ import { UserComponent } from './users/user/user.component';
 import { EditServerComponent } from './servers/edit-server/edit-server.component';
 import { ServerComponent } from './servers/server/server.component';
 import { ServersService } from './servers/servers.service';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 // app routes are defined in the app.module.ts file
 const appRoutes: Routes = [
@@ -58,6 +59,21 @@ const appRoutes: Routes = [
 			}
 
 		]
+	},
+
+	// localhost:4200/not-found
+	// component to load whenever user attempts to access unknown route
+	{
+		path: 'not-found',
+		component: PageNotFoundComponent
+	},
+
+	// ** wildcard: covers all paths unknown to us
+	// will not load a component but redirect to /not-found, which loads the PageNotFoundComponent
+	// make sure to place this at the very botton: paths are parsed from top to bottom!
+	{
+		path: '**',
+		redirectTo: '/not-found'
 	}
 
 ];
@@ -73,7 +89,8 @@ const appRoutes: Routes = [
     ServersComponent,
     UserComponent,
     EditServerComponent,
-    ServerComponent
+    ServerComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
