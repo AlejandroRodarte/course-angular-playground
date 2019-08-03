@@ -1,12 +1,13 @@
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, CanActivateChild } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 
 // authentication guard service: must implement CanActivate interface
 // make this service receive other services (AuthService)
+// CanActivateChild interface, runs its canActivate() method whenever we attempt to access children paths of the parent path
 @Injectable()
-export class AuthGuardService implements CanActivate {
+export class AuthGuardService implements CanActivate, CanActivateChild {
 
     // injections: AuthService and router to navigate and redirect user
     constructor(private authService: AuthService, 
@@ -30,6 +31,11 @@ export class AuthGuardService implements CanActivate {
                 }
             })
 
+    }
+
+    // canActivateChild() implementation, guard method whenever we attempt to access child paths of their parent
+    canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+        return this.canActivate(route, state);
     }
 
 }

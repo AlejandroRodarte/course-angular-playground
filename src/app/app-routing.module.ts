@@ -39,9 +39,14 @@ const appRoutes: Routes = [
     // localhost:4200/servers: load ServersComponent
     // canActivate: accepts an array of guards (classes that implement CanActivate interface)
     // the ServersComponent will be loaded when all guard canActivate() implementations return true
+
+    // canActivateChild: sets guards to protect the children of this parent
 	{
         path: 'servers',
-        canActivate: [
+        // canActivate: [
+        //     AuthGuardService
+        // ],
+        canActivateChild: [
             AuthGuardService
         ],
 		component: ServersComponent,
