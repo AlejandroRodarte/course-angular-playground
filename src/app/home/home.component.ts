@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 // home component
 @Component({
@@ -10,7 +11,9 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
 
 	// we can inject the application global router
-	constructor(private router: Router) { 
+	// inject authentication service
+	constructor(private router: Router,
+				private authService: AuthService) { 
 
 	}
 
@@ -31,6 +34,16 @@ export class HomeComponent implements OnInit {
 			fragment: 'loading' 
 		});
 
+	}
+
+	// on login handler, login
+	onLogin(): void {
+		this.authService.login();
+	}
+
+	// on logout handler, logout
+	onLogout(): void {
+		this.authService.logout();
 	}
 
 }
