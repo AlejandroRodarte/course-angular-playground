@@ -10,7 +10,9 @@
 		<div class="list-group">
 
 			<!-- loop through the users array and create links with each user name embedded -->
+			<!-- using current user id and name to create automatically dynamic url paths -->
 			<a
+				[routerLink]="['/users', user.id, user.name]"
 				href="#"
 				class="list-group-item"
 				*ngFor="let user of users">

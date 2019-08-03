@@ -46,6 +46,12 @@ const appRoutes: Routes = [
 	{
 		path: 'servers/:id/edit',
 		component: EditServerComponent
+	},
+
+	// localhost:4200/servers/idNumber
+	{
+		path: 'servers/:id',
+		component: ServerComponent
 	}
 
 ];

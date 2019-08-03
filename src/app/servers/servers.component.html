@@ -13,10 +13,12 @@
 			<!-- routerLink -> localhost:4200/servers/5/edit -->
 			<!-- queryParams is a property of the routerLink directive -->
 			<!-- localhost:4200/servers/5/edit?allowEdit='1' -->
+
+			<!-- using current server id to create automatically dynamic url paths -->
 			<a
-				[routerLink]="['/servers', 5, 'edit']"
-				[queryParams]="{ allowEdit: '1' }"
-				[fragment]="'loading'"
+				[routerLink]="['/servers', server.id]"
+				[queryParams]="{ allowEdit : '1' }"
+				fragment="loading"
 				href="#"
 				class="list-group-item"
 				*ngFor="let server of servers">
@@ -38,7 +40,7 @@
 
 		<app-edit-server></app-edit-server>
 		<hr>
-		<app-server></app-server>
+		<!-- <app-server></app-server> -->
 
 	</div>
 
