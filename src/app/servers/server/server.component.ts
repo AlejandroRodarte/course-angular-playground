@@ -39,7 +39,8 @@ export class ServerComponent implements OnInit {
 	// use a relative route to load localhost:4200/servers/id/edit, which loads the EditServerComponent
 	onEdit() {
 		this.router.navigate(['edit'], {
-			relativeTo: this.route
+			relativeTo: this.route,
+			queryParamsHandling: 'preserve'
 		})
 	}
 

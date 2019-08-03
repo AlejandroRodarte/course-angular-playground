@@ -44,21 +44,26 @@ export class EditServerComponent implements OnInit {
 		// fetch the allowEdit query param
 		// if its value is 1, set to true, else, set to false
 		this.route.queryParams.subscribe((queryParams: Params) => {
-			this.allowEdit = queryParams['allowEdit'] === 1 ? true : false;
+			this.allowEdit = queryParams['allowEdit'] === '1' ? true : false;
 		});
 
 		this.route.fragment.subscribe();
 
-		// each time this component is loaded (and allowed to edit), we will fetch the server id
-		const id = +this.route.snapshot.params['id'];
+		// each time this component is loaded (and allowed to edit)
+		if (this.allowEdit) {
 
-		// and get the server
-		this.server = this.serversService.getServer(id);
+			// we will fetch the server id
+			const id = +this.route.snapshot.params['id'];
+	
+			// and get the server
+			this.server = this.serversService.getServer(id);
+	
+			// and set the serverName and serverStatus fields to the fetched server
+			// since this is two-way data-binding, their values will be also present on their respective inputs
+			this.serverName = this.server.name;
+			this.serverStatus = this.server.status;
 
-		// and set the serverName and serverStatus fields to the fetched server
-		// since this is two-way data-binding, their values will be also present on their respective inputs
-		this.serverName = this.server.name;
-		this.serverStatus = this.server.status;
+		}
 
 	}
 
