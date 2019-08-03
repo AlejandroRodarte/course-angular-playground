@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ServersService } from '../servers.service';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // server component
 @Component({
@@ -16,7 +16,8 @@ export class ServerComponent implements OnInit {
 
 	// inject the servers service
 	constructor(private serversService: ServersService,
-				private route: ActivatedRoute) { 
+				private route: ActivatedRoute,
+				private router: Router) { 
 		
 	}
 
@@ -32,6 +33,14 @@ export class ServerComponent implements OnInit {
 			this.server = this.serversService.getServer(+params['id']);
 		});
 
+	}
+
+	// when we load this component, we ensure we are at path localhost:4200/servers/id
+	// use a relative route to load localhost:4200/servers/id/edit, which loads the EditServerComponent
+	onEdit() {
+		this.router.navigate(['edit'], {
+			relativeTo: this.route
+		})
 	}
 
 }

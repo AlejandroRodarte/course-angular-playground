@@ -15,9 +15,11 @@
 			<!-- localhost:4200/servers/5/edit?allowEdit='1' -->
 
 			<!-- using current server id to create automatically dynamic url paths -->
+
+			<!-- allowEdit boolean: if server id is 3, set it to 1, else, set it to 0 -->
 			<a
 				[routerLink]="['/servers', server.id]"
-				[queryParams]="{ allowEdit : '1' }"
+				[queryParams]="{ allowEdit : server.id === 3 ? '1' : '0' }"
 				fragment="loading"
 				href="#"
 				class="list-group-item"
