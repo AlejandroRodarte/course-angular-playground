@@ -8,6 +8,7 @@ import { ServersComponent } from './servers/servers.component';
 import { ServerComponent } from './servers/server/server.component';
 import { EditServerComponent } from './servers/edit-server/edit-server.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AuthGuardService } from './auth-guard.service';
 
 // app routes are defined in the app.module.ts file
 const appRoutes: Routes = [
@@ -35,9 +36,14 @@ const appRoutes: Routes = [
 		]
 	},
 
-	// localhost:4200/servers: load ServersComponent
+    // localhost:4200/servers: load ServersComponent
+    // canActivate: accepts an array of guards (classes that implement CanActivate interface)
+    // the ServersComponent will be loaded when all guard canActivate() implementations return true
 	{
-		path: 'servers',
+        path: 'servers',
+        canActivate: [
+            AuthGuardService
+        ],
 		component: ServersComponent,
 		children: [
 
