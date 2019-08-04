@@ -18,6 +18,7 @@ import { RecipeListComponent } from './recipes/recipe-list/recipe-list.component
 import { RecipeItemComponent } from './recipes/recipe-list/recipe-item/recipe-item.component';
 import { DropdownDirective } from './shared/dropdown.directive';
 import { ShoppingListService } from './shopping-list/shopping-list.service';
+import { AppRoutingModule } from './app-routing.module';
 
 // here go the components/modules we will implement on our app
 // declarations : declare all components 
@@ -26,6 +27,8 @@ import { ShoppingListService } from './shopping-list/shopping-list.service';
 
 // section 10: ShoppingListService becomes a global service since it will also be used
 // by the recipes components later on
+
+// section 12: add the App Routing module
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,7 +43,8 @@ import { ShoppingListService } from './shopping-list/shopping-list.service';
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    AppRoutingModule
   ],
   providers: [ShoppingListService],
   bootstrap: [AppComponent]

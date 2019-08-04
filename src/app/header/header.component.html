@@ -6,9 +6,12 @@
     <!-- navbar container -->
     <div class="container-fluid">
 
-        <!-- navbar header: header with link embedded -->
+        <!-- navbar header: link to root (redirect to /recipes) -->
         <div class="navbar-header">
-            <a href="#" class="navbar-brand">Recipe Book</a>
+            <a  [routerLink]="['/']" 
+                class="navbar-brand">
+                Recipe Book
+            </a>
         </div>
 
         <!-- collapsed navbar (?) -->
@@ -17,20 +20,16 @@
             <!-- first list, links to the recipes and the shopping list -->
             <ul class="nav navbar-nav">
 
-                <!-- link to recipes -->
-                <!-- on click, call event handler -->
+                <!-- link to /recipes -->
                 <li>
-                    <a  href="#"
-                        (click)="onFeatureChange('recipes')">
+                    <a [routerLink]="['/recipes']">
                         Recipes
                     </a>
                 </li>
 
-                <!-- link to shopping list -->
-                <!-- on click, call event handler -->
+                <!-- link to /shopping-list -->
                 <li>
-                    <a  href="#"
-                        (click)="onFeatureChange('shoppingList')">
+                    <a [routerLink]="['/shopping-list']">
                         Shopping List
                     </a>
                 </li>

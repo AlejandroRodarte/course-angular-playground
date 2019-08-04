@@ -12,14 +12,5 @@ import { Component } from '@angular/core';
 
 // component class definition
 export class AppComponent {
-	
-	// property that holds the current feature
-	feature: string = 'recipes';
-
-	// event handler triggered when data is emitted from the header
-	// set the new feature to display
-	setFeature(feature: string): void {
-		this.feature = feature;
-	}
 
 }

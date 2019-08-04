@@ -1,12 +1,7 @@
 <!-- root component html -->
 
 <!-- the header component -->
-<!-- listen for the featureToDisplay found on the header component, trigger setFeature() root component method -->
-<!-- to set the new feature string value -->
-<app-header
-    (featureToDisplay)="setFeature($event)">
-
-</app-header>
+<app-header></app-header>
 
 <!-- main container -->
 <div class="container">
@@ -14,21 +9,10 @@
     <!-- grid -->
     <div class="row">
 
-        <!-- first column: recipes component and shopping list component beneath -->
+        <!-- first column: app-routlet, will load either RecipesComponent or ShoppingListComponent -->
+        <!-- in dependence of current route -->
         <div class="col-md-12">
-
-            <!-- display app recipes component if the actual feature value is 'recipes' -->
-            <app-recipes
-                *ngIf="feature === 'recipes'">
-
-            </app-recipes>
-
-            <!-- display app recipes component if the actual feature value is 'shopping list' -->
-            <app-shopping-list
-                *ngIf="feature === 'shoppingList'">
-
-            </app-shopping-list>
-            
+            <router-outlet></router-outlet>
         </div>
 
     </div>
