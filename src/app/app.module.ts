@@ -16,14 +16,15 @@ import { AuthService } from './auth.service';
 import { AuthGuardService } from './auth-guard.service';
 import { CanDeactivateGuardService } from './servers/edit-server/can-deactivate-guard.service';
 import { ErrorPageComponent } from './error-page/error-page.component';
+import { ServerResolverService } from './servers/server/server-resolver.service';
 
 // serversService defines a global service (singleton)
 // using the RouterModule to use the Angular router
 // method forRoot() allows us to register or constant that defines the application routes
 
 // added the authentication and authentication guard services
-
 // added the deactivation guard service
+// added the server resolver service
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -45,7 +46,8 @@ import { ErrorPageComponent } from './error-page/error-page.component';
 		ServersService,
 		AuthService,
 		AuthGuardService,
-		CanDeactivateGuardService
+		CanDeactivateGuardService,
+		ServerResolverService
 	],
 	bootstrap: [AppComponent]
 })

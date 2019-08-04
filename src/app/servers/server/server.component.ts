@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ServersService } from '../servers.service';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router, Data } from '@angular/router';
 
 // server component
 @Component({
@@ -25,12 +25,18 @@ export class ServerComponent implements OnInit {
 	ngOnInit() {
 
 		// parsing id to number and getting the server by id through the service
-		const id = +this.route.snapshot.params['id'];
-		this.server = this.serversService.getServer(id);
+		// const id = +this.route.snapshot.params['id'];
+		// this.server = this.serversService.getServer(id);
 
 		// subscribe to the params observable to listen for changes in the id dynamic part of the path
-		this.route.params.subscribe((params: Params) => {
-			this.server = this.serversService.getServer(+params['id']);
+		// this.route.params.subscribe((params: Params) => {
+		// 	this.server = this.serversService.getServer(+params['id']);
+		// });
+
+		// access the 'data' property of the current route and fetch the 'server' object we resolved
+		// through the resolver thanks to our ServerResolverService
+		this.route.data.subscribe((data: Data) => {
+			this.server = data['server'];
 		});
 
 	}

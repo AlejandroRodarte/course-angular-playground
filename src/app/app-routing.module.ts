@@ -11,6 +11,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AuthGuardService } from './auth-guard.service';
 import { CanDeactivateGuardService } from './servers/edit-server/can-deactivate-guard.service';
 import { ErrorPageComponent } from './error-page/error-page.component';
+import { ServerResolverService } from './servers/server/server-resolver.service';
 
 // app routes are defined in the app.module.ts file
 const appRoutes: Routes = [
@@ -55,9 +56,17 @@ const appRoutes: Routes = [
 		children: [
 
 			// localhost:4200/servers/id
+			// whenever we load a new ServerComponent
+			// we will access the ServerResolverService and pre-fetch the server we want to 
+			// render on the component
+			// the result of this resolver will be stored in the custom key 'server'
+			// inside the 'data' property (not seen here, but it will be loaded)
 			{
 				path: ':id',
 				component: ServerComponent,
+				resolve: {
+					server: ServerResolverService
+				}
 			},
 
 			// localhost:4200/id/edit
