@@ -1,0 +1,82 @@
+<!-- shopping edit component -->
+
+<!-- grid -->
+<div class="row">
+
+    <!-- column -->
+    <div class="col-xs-12">
+
+        <!-- ingredient form -->
+        <form>
+
+            <!-- grid -->
+            <div class="row">
+
+                <!-- first column -->
+                <div class="col-sm-5 form-group">
+
+                    <!-- first input: ingredient name -->
+                    <label for="name">
+                        Name
+                    </label>
+
+                    <!-- place a local reference to use on the .ts file -->
+                    <input 
+                        type="text" 
+                        id="name" 
+                        class="form-control"
+                        #ingredientNameInput>
+
+                </div>
+
+                <!-- second input: ingredient amount -->
+                <div class="col-sm-2 form-group">
+
+                    <label for="amount">
+                        Amount
+                    </label>
+
+                    <!-- place a local reference to use on the .ts file -->
+                    <input 
+                        type="number" 
+                        id="amount" 
+                        class="form-control"
+                        #ingredientAmountInput>
+
+                </div>
+
+            </div>
+
+            <!-- grid inside form: buttons -->
+            <div class="row">
+
+                <!-- column -->
+                <div class="col-xs-12">
+
+                    <!-- add an ingredient to shopping list -->
+                    <!-- on click, call onSubmitClick() event handler -->
+                    <button type="submit" 
+                            class="btn btn-success"
+                            (click)="onSubmitClick()">
+                        Add
+                    </button>
+
+                    <!-- delete an ingredient from shopping list -->
+                    <button type="button" class="btn btn-danger">
+                        Delete
+                    </button>
+
+                    <!-- clear ingredient form -->
+                    <button type="button" class="btn btn-primary">
+                        Clear
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

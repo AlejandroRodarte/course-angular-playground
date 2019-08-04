@@ -1,54 +1,48 @@
+// required imports for the app go here
+
+// default modules
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+
+// FormsModule enables directives to set model attributes
 import { FormsModule } from '@angular/forms';
 
+// import root and custom components
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { UsersComponent } from './users/users.component';
-import { ServersComponent } from './servers/servers.component';
-import { UserComponent } from './users/user/user.component';
-import { EditServerComponent } from './servers/edit-server/edit-server.component';
-import { ServerComponent } from './servers/server/server.component';
-import { ServersService } from './servers/servers.service';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AppRoutingModule } from './app-routing.module';
-import { AuthService } from './auth.service';
-import { AuthGuardService } from './auth-guard.service';
-import { CanDeactivateGuardService } from './servers/edit-server/can-deactivate-guard.service';
-import { ErrorPageComponent } from './error-page/error-page.component';
-import { ServerResolverService } from './servers/server/server-resolver.service';
+import { HeaderComponent } from './header/header.component';
+import { RecipesComponent } from './recipes/recipes.component';
+import { ShoppingListComponent } from './shopping-list/shopping-list.component';
+import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-edit.component';
+import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.component';
+import { RecipeListComponent } from './recipes/recipe-list/recipe-list.component';
+import { RecipeItemComponent } from './recipes/recipe-list/recipe-item/recipe-item.component';
+import { DropdownDirective } from './shared/dropdown.directive';
+import { ShoppingListService } from './shopping-list/shopping-list.service';
 
-// serversService defines a global service (singleton)
-// using the RouterModule to use the Angular router
-// method forRoot() allows us to register or constant that defines the application routes
+// here go the components/modules we will implement on our app
+// declarations : declare all components 
+// imports : declare required external modules
+// bootstrap : component to load when kickstarting app
 
-// added the authentication and authentication guard services
-// added the deactivation guard service
-// added the server resolver service
+// section 10: ShoppingListService becomes a global service since it will also be used
+// by the recipes components later on
 @NgModule({
-	declarations: [
-		AppComponent,
-		HomeComponent,
-		UsersComponent,
-		ServersComponent,
-		UserComponent,
-		EditServerComponent,
-		ServerComponent,
-		PageNotFoundComponent,
-		ErrorPageComponent
-	],
-	imports: [
-		BrowserModule,
-		FormsModule,
-		AppRoutingModule
-	],
-	providers: [
-		ServersService,
-		AuthService,
-		AuthGuardService,
-		CanDeactivateGuardService,
-		ServerResolverService
-	],
-	bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    RecipesComponent,
+    ShoppingListComponent,
+    ShoppingEditComponent,
+    RecipeDetailComponent,
+    RecipeListComponent,
+    RecipeItemComponent,
+    DropdownDirective
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule
+  ],
+  providers: [ShoppingListService],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

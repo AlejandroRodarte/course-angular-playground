@@ -1,61 +1,36 @@
 <!-- root component html -->
 
-<!-- container -->
+<!-- the header component -->
+<!-- listen for the featureToDisplay found on the header component, trigger setFeature() root component method -->
+<!-- to set the new feature string value -->
+<app-header
+    (featureToDisplay)="setFeature($event)">
+
+</app-header>
+
+<!-- main container -->
 <div class="container">
 
-	<!-- grid -->
-	<div class="row">
+    <!-- grid -->
+    <div class="row">
 
-		<!-- one column -->
-		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+        <!-- first column: recipes component and shopping list component beneath -->
+        <div class="col-md-12">
 
-			<!-- unordered list of linls -->
-			<ul class="nav nav-tabs">
+            <!-- display app recipes component if the actual feature value is 'recipes' -->
+            <app-recipes
+                *ngIf="feature === 'recipes'">
 
-				<!-- link to home -->
-				<!-- routerLink: route to / -->
-				<!-- routerLinkActive: add bootstrap .active class when being on this route -->
-				<li role="presentation"
-					routerLinkActive="active"
-					[routerLinkActiveOptions]="{ exact: true }">
-					<a routerLink="/">
-						Home
-					</a>
-				</li>
+            </app-recipes>
 
-				<!-- link to servers -->
-				<!-- routerLink: route to /servers -->
-				<!-- routerLinkActive: add bootstrap .active class when being on this route -->
-				<li role="presentation"
-					routerLinkActive="active">
-					<a routerLink="/servers">
-						Servers
-					</a>
-				</li>
+            <!-- display app recipes component if the actual feature value is 'shopping list' -->
+            <app-shopping-list
+                *ngIf="feature === 'shoppingList'">
 
-				<!-- link to users -->
-				<!-- routerLink: route to /users -->
-				<!-- routerLinkActive: add bootstrap .active class when being on this route -->
-				<li role="presentation"
-					routerLinkActive="active">
-					<a [routerLink]="['/users']">
-						Users
-					</a>
-				</li>
+            </app-shopping-list>
+            
+        </div>
 
-			</ul>
-
-		</div>
-
-	</div>
-
-	<!-- router outlet directive: informing Angular Router the place where we want to load -->
-	<!-- the components based on their routes (registered through the RouterModule and defined as a constant) -->
-	<!-- on the app.module.ts as appRoutes -->
-	<div class="row">
-		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
-			<router-outlet></router-outlet>
-		</div>
-	</div>
+    </div>
 
 </div>
