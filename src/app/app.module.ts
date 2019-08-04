@@ -20,6 +20,7 @@ import { DropdownDirective } from './shared/dropdown.directive';
 import { ShoppingListService } from './shopping-list/shopping-list.service';
 import { AppRoutingModule } from './app-routing.module';
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
+import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 
 // here go the components/modules we will implement on our app
 // declarations : declare all components 
@@ -41,7 +42,8 @@ import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.compon
     RecipeListComponent,
     RecipeItemComponent,
     DropdownDirective,
-    RecipeStartComponent
+    RecipeStartComponent,
+    RecipeEditComponent
   ],
   imports: [
     BrowserModule,

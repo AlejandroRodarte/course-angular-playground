@@ -5,6 +5,7 @@ import { RecipesComponent } from './recipes/recipes.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.component';
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
+import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 
 // application routes
 // root: redirect to /recipes
@@ -30,6 +31,8 @@ const appRoutes: Routes = [
     // children:
     // localhost:4200/recipes -> load RecipeStartComponent
     // localhost:4200/recipes/id
+    // localhost:4200/recipe/new -> load RecipeEditComponent to add a new recipe
+    // localhost:4200/recipe/id/edit -> load RecipeEditComponent to edit an existing recipe
     {
         path: 'recipes',
         component: RecipesComponent,
@@ -39,8 +42,16 @@ const appRoutes: Routes = [
                 component: RecipeStartComponent 
             },
             {
+                path: 'new',
+                component: RecipeEditComponent
+            },
+            {
                 path: ':id',
                 component: RecipeDetailComponent
+            },
+            {
+                path: ':id/edit',
+                component: RecipeEditComponent
             }
         ]
     }
