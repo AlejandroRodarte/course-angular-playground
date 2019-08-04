@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, ElementRef } from '@angular/core';
 import { Recipe } from '../../recipe.model';
 import { RecipeService } from '../../recipe.service';
 
@@ -18,8 +18,14 @@ export class RecipeItemComponent implements OnInit {
 	@Input()
 	index: number;
 
+	// toggle to add/remove bootstrap .active class
+	toggle: boolean = true;
+
 	// receive recipeService singleton from RecipesComponent parent
-	constructor(private recipeService: RecipeService) { 
+	// renderer and element reference injections
+	constructor(private recipeService: RecipeService, 
+				private renderer: Renderer2,
+				private elementRef: ElementRef) { 
 
 	}
 
@@ -27,9 +33,24 @@ export class RecipeItemComponent implements OnInit {
 
 	}
 
-	// on recipe item click, emit its index
+	// on recipe item click
 	onRecipeItemClick() {
+
+		// toggle logic
+		// toggle between adding and removing the .active bootstrap class
+		// the first child of the component's native element is the link that should
+		// receive this class
+		if (!this.toggle) {
+			this.renderer.removeClass(this.elementRef.nativeElement.firstChild, 'active');
+			this.toggle = true;
+		} else {
+			this.renderer.addClass(this.elementRef.nativeElement.firstChild, 'active');
+			this.toggle = false;
+		}
+
+		// emit its index
 		this.recipeService.selectedRecipe.emit(this.index);
+
 	}
 
 }

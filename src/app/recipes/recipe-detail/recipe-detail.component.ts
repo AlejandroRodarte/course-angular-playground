@@ -37,7 +37,12 @@ export class RecipeDetailComponent implements OnInit {
 		// on trigger, access the params and fetch the id
 		// and use the getRecipe() method to access the recipe to load through the service
 		this.route.params.subscribe((params: Params) => {
-			this.recipe = this.recipeService.getRecipe(+params['id']);
+
+			const id = +params['id'];
+			
+			this.recipe = this.recipeService.getRecipe(id);
+			this.selectedIndex = id;
+
 		})
 
 	}
