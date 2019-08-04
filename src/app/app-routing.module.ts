@@ -9,6 +9,8 @@ import { ServerComponent } from './servers/server/server.component';
 import { EditServerComponent } from './servers/edit-server/edit-server.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { AuthGuardService } from './auth-guard.service';
+import { CanDeactivateGuardService } from './servers/edit-server/can-deactivate-guard.service';
+import { ErrorPageComponent } from './error-page/error-page.component';
 
 // app routes are defined in the app.module.ts file
 const appRoutes: Routes = [
@@ -59,9 +61,14 @@ const appRoutes: Routes = [
 			},
 
 			// localhost:4200/id/edit
+			// when attempting to leave this path, we will run the deactivation guard code
+			// to succesfully leave the path, this service must return a true value on its canDeactivate() method
 			{
 				path: ':id/edit',
-				component: EditServerComponent
+				component: EditServerComponent,
+				canDeactivate: [
+					CanDeactivateGuardService
+				]
 			}
 
 		]
@@ -69,9 +76,20 @@ const appRoutes: Routes = [
 
 	// localhost:4200/not-found
 	// component to load whenever user attempts to access unknown route
+	// {
+	// 	path: 'not-found',
+	// 	component: PageNotFoundComponent
+	// },
+
+	// loading now ErrorPageComponent
+	// when loaded, we will send some data object literal, where we can pass in
+	// any key/value pairs we desire, so we set an error message particular for this case
 	{
 		path: 'not-found',
-		component: PageNotFoundComponent
+		component: ErrorPageComponent,
+		data: {
+			message: 'Page not found!'
+		}
 	},
 
 	// ** wildcard: covers all paths unknown to us
