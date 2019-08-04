@@ -13,34 +13,44 @@ export class RecipeService {
 
         new Recipe(
 
-        'Test recipe name 1', 
-        'Test recipe description 1', 
-        'https://www.asouthernsoul.com/wp-content/uploads/2018/09/MPM131-768x768.jpg',
+            'Test recipe name 1', 
+            'Test recipe description 1', 
+            'https://www.asouthernsoul.com/wp-content/uploads/2018/09/MPM131-768x768.jpg',
 
-        [new Ingredient('Apples', 10),
-        new Ingredient('Pears', 20),
-        new Ingredient('Yoghurt', 10)]
+            [
+                new Ingredient('Apples', 10),
+                new Ingredient('Pears', 20),
+                new Ingredient('Yoghurt', 10)
+            ]
+
         ),
 
         new Recipe(
             
-        'Test recipe name 2', 
-        'Test recipe description 2', 
-        'https://www.asouthernsoul.com/wp-content/uploads/2018/09/MPM131-768x768.jpg',
+            'Test recipe name 2', 
+            'Test recipe description 2', 
+            'https://www.asouthernsoul.com/wp-content/uploads/2018/09/MPM131-768x768.jpg',
 
-        [new Ingredient('Pineapple', 5),
-        new Ingredient('Shit', 10),
-        new Ingredient('Cheese', 2)]
-        ),
+            [new Ingredient('Pineapple', 5),
+            new Ingredient('Shit', 10),
+            new Ingredient('Cheese', 2)]
+
+        )
         
 	];
     
-    // selected recipe event emitter: will emit data when a recipe item is selected
-    selectedRecipe = new EventEmitter<Recipe>();
+    // selected recipe event emitter: emitters will send the position index where a particular recipe
+    // item is found
+    selectedRecipe = new EventEmitter<number>();
     
     // inject the shopping list gloval service
     constructor(private shoppingListService: ShoppingListService) {
 
+    }
+
+    // get recipe based on id
+    getRecipe(index: number): Recipe {
+        return this.recipes[index];
     }
 
     // get recipes

@@ -10,15 +10,11 @@
     </div>
 
     <!-- second column: the selected recipe item detail component -->
-    <!-- display this component when the display boolean flag is set to true -->
-    <!-- also, bind the recipe property of the RecipeDetailComponent to the selectedRecipe property -->
-    <!-- from this RecipesComponent -->
+    <!-- display the router outlet if the renderFlag is set to true -->
+    <!-- which loads the RecipeEditComponent -->
+    <!-- this flag is set initially to true to load RecipeStartComponent -->
     <div class="col-md-7">
-        <app-recipe-detail
-            *ngIf="renderFlag"
-            [recipe]="selectedRecipe">
-
-        </app-recipe-detail>
+        <router-outlet></router-outlet>
     </div>
 
 </div>

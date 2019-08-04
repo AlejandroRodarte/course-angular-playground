@@ -27,9 +27,11 @@
         <!-- recipe item component -->
         <!-- create recipe item components as long as there are recipes to loop in the array -->
         <!-- access the 'recipe' property from RecipeItemComponent and provide it with the curren recipe iteration value -->
+        <!-- also, bind the current index with the 'index' property of the recipe item component -->
         <app-recipe-item
-            *ngFor="let recipe of recipes"
-            [recipe]="recipe">
+            *ngFor="let recipe of recipes; let i = index"
+            [recipe]="recipe"
+            [index]="i">
 
         </app-recipe-item>
 

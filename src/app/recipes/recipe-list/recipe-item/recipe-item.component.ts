@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Recipe } from '../../recipe.model';
 import { RecipeService } from '../../recipe.service';
 
@@ -14,6 +14,10 @@ export class RecipeItemComponent implements OnInit {
 	@Input()
 	recipe: Recipe;
 
+	// we will embed to each recipe item an id for future use
+	@Input()
+	index: number;
+
 	// receive recipeService singleton from RecipesComponent parent
 	constructor(private recipeService: RecipeService) { 
 
@@ -23,10 +27,9 @@ export class RecipeItemComponent implements OnInit {
 
 	}
 
-	// event handler when clicking on a recipe item
-	// load the recipe data through the event emitter that the recipe service contains
-	onRecipeItemClick(): void {
-		this.recipeService.selectedRecipe.emit(this.recipe);
+	// on recipe item click, emit its index
+	onRecipeItemClick() {
+		this.recipeService.selectedRecipe.emit(this.index);
 	}
 
 }
