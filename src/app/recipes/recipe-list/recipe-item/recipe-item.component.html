@@ -4,7 +4,9 @@
 <!-- when clicking on an recipe item, we will the onRecipeItemClick() method -->
 <!-- deleted href -->
 <!-- routerLink: localhost:4200/recipes/id -->
+<!-- add .active css class in dependence of the isSelectedRecipeItem() returned boolean -->
 <a  
+    [ngClass]="{ active: isSelectedRecipeItem() }"
     [routerLink]="[index]"
     style="cursor: pointer;"
     class="list-group-item clearfix"

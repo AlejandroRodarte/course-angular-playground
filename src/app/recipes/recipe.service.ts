@@ -37,14 +37,32 @@ export class RecipeService {
 
         )
         
-	];
+    ];
+    
+    currentRecipeIndex: number;
     
     // selected recipe event emitter: emitters will send the position index where a particular recipe
     // item is found
     selectedRecipe = new EventEmitter<number>();
     
-    // inject the shopping list gloval service
+    // inject the shopping list global service
     constructor(private shoppingListService: ShoppingListService) {
+
+        // make this service subscribe to its own emitter
+        this.selectedRecipe.subscribe((index: number) => {
+
+            // if the user selected the same recipe item
+            // make the current recipe index equal to -1 as a flag to not add the .active bootstrap class
+
+            // if the user however, selected a different recipe than the previous one, assing the new index
+            // as the current recipe index
+            if (this.currentRecipeIndex === index) {
+                this.currentRecipeIndex = -1;
+            } else {
+                this.currentRecipeIndex = index;
+            }
+            
+        })
 
     }
 

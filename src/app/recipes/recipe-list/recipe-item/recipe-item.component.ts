@@ -18,14 +18,9 @@ export class RecipeItemComponent implements OnInit {
 	@Input()
 	index: number;
 
-	// toggle to add/remove bootstrap .active class
-	toggle: boolean = true;
-
 	// receive recipeService singleton from RecipesComponent parent
 	// renderer and element reference injections
-	constructor(private recipeService: RecipeService, 
-				private renderer: Renderer2,
-				private elementRef: ElementRef) { 
+	constructor(private recipeService: RecipeService) { 
 
 	}
 
@@ -35,22 +30,15 @@ export class RecipeItemComponent implements OnInit {
 
 	// on recipe item click
 	onRecipeItemClick() {
-
-		// toggle logic
-		// toggle between adding and removing the .active bootstrap class
-		// the first child of the component's native element is the link that should
-		// receive this class
-		if (!this.toggle) {
-			this.renderer.removeClass(this.elementRef.nativeElement.firstChild, 'active');
-			this.toggle = true;
-		} else {
-			this.renderer.addClass(this.elementRef.nativeElement.firstChild, 'active');
-			this.toggle = false;
-		}
-
 		// emit its index
 		this.recipeService.selectedRecipe.emit(this.index);
+	}
 
+	// method that defines if the .active boostrap class should be loaded
+	// 1. the user must not have selected the same recipe item
+	// 2. the current recipe index matches this recipe item's index
+	isSelectedRecipeItem(): boolean {
+		return this.recipeService.currentRecipeIndex !== -1 && this.recipeService.currentRecipeIndex === this.index;
 	}
 
 }

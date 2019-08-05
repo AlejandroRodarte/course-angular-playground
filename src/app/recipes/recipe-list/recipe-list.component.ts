@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ElementRef, Renderer2 } from '@angular/core';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 
@@ -14,7 +14,7 @@ export class RecipeListComponent implements OnInit {
 	recipes: Recipe[];
 
 	// receive recipe service singleton from parent (RecipesComponent)
-  	constructor(private recipeService: RecipeService) {
+	constructor(private recipeService: RecipeService) {
 
 	}
 
