@@ -15,7 +15,12 @@
 			<form (ngSubmit)="onSubmit(f)" #f="ngForm">
 
 				<!-- user data -->
-				<div id="user-data">
+
+				<!-- ngModelGroup: treat both al inputs inside this div as a group and give it a name: userData -->
+				<!-- Angular creates a FormGroup object and we can access it with ngModelGroup and a local referece -->
+				<div id="user-data"
+					 ngModelGroup="userData"
+					 #userData="ngModelGroup">
 
 					<!-- username -->
 					<div class="form-group">
@@ -77,6 +82,11 @@
 					</div>
 
 				</div>
+
+				<!-- display error message if the form group happens to be invalid through the local reference -->
+				<p *ngIf="!userData.valid && userData.touched">
+					User Data is invalid
+				</p>
 
 				<!-- secret questions section -->
 				<div class="form-group">
