@@ -21,8 +21,30 @@ export class AppComponent {
 	// gender options for radio button
 	genders = ['male', 'female'];
 
+	// suggest username handler
 	suggestUserName() {
+
 		const suggestedName = 'Superuser';
+
+		// setValue(): forces us to override the whole form
+		// we declare a JS object and use the names we places for this form objects/groups
+		// this.signupForm.setValue({
+		// 	userData: {
+		// 		username: suggestedName,
+		// 		email: ''
+		// 	},
+		// 	secret: 'pet',
+		// 	questionAnswer: '',
+		// 	gender: 'male'
+		// });
+
+		// patchValue(): override parts of our form
+		this.signupForm.form.patchValue({
+			userData: {
+				username: suggestedName
+			}
+		});
+
 	}
 
 	// handler: get the NgForm object that the FormsModule created for us
