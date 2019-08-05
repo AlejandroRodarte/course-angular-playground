@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { UserService } from './user.service';
 
 @Component({
 	selector: 'app-user',
@@ -12,7 +13,9 @@ export class UserComponent implements OnInit {
 	id: number;
 
 	// load current route
-	constructor(private route: ActivatedRoute) {
+	// inject user service
+	constructor(private route: ActivatedRoute,
+				private userSerivce: UserService) {
 
 	}
 
@@ -22,4 +25,10 @@ export class UserComponent implements OnInit {
 			this.id = +params.id;
 		});
 	}
+
+	// on activate handler, call next() on active observable to send data
+	onActivate(): void {
+		this.userSerivce.activatedEmitter.next(true);
+	}
+
 }
