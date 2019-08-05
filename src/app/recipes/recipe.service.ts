@@ -1,12 +1,13 @@
 import { Recipe } from './recipe.model';
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
+import { Subject, Subscription } from 'rxjs';
 
 // this service will receive as a dependency another service: shopping list service
 // to make it injectable, use this decorator
 @Injectable()
-export class RecipeService {
+export class RecipeService implements OnDestroy {
 
     // an array of Recipe models
   	private recipes: Recipe[] = [
@@ -39,17 +40,21 @@ export class RecipeService {
         
     ];
     
+    // current recipe index
     currentRecipeIndex: number;
     
-    // selected recipe event emitter: emitters will send the position index where a particular recipe
+    // selected recipe subject: emitters will send the position index where a particular recipe
     // item is found
-    selectedRecipe = new EventEmitter<number>();
+    selectedRecipe = new Subject<number>();
+
+    // selected recipe subscription
+    selectedRecipeSubscription: Subscription;
     
     // inject the shopping list global service
     constructor(private shoppingListService: ShoppingListService) {
 
         // make this service subscribe to its own emitter
-        this.selectedRecipe.subscribe((index: number) => {
+        this.selectedRecipeSubscription = this.selectedRecipe.subscribe((index: number) => {
 
             // if the user selected the same recipe item
             // make the current recipe index equal to -1 as a flag to not add the .active bootstrap class
@@ -81,6 +86,11 @@ export class RecipeService {
     // addToShoppingList() handler: delegate the task to the shopping list service
     addToShoppingList(ingredients: Ingredient[]): void {
         this.shoppingListService.addIngredients(ingredients);
+    }
+
+    // unsubscribe upon service destruction
+    ngOnDestroy() {
+        this.selectedRecipeSubscription.unsubscribe();
     }
 
 }

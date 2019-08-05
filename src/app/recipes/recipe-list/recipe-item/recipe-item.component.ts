@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Recipe } from '../../recipe.model';
 import { RecipeService } from '../../recipe.service';
 
@@ -31,7 +31,7 @@ export class RecipeItemComponent implements OnInit {
 	// on recipe item click
 	onRecipeItemClick() {
 		// emit its index
-		this.recipeService.selectedRecipe.emit(this.index);
+		this.recipeService.selectedRecipe.next(this.index);
 	}
 
 	// method that defines if the .active boostrap class should be loaded

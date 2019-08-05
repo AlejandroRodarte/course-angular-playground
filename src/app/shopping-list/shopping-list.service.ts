@@ -1,5 +1,5 @@
 import { Ingredient } from './../shared/ingredient.model';
-import { EventEmitter } from '@angular/core';
+import { Subject } from 'rxjs';
 
 // shopping list service
 export class ShoppingListService {
@@ -10,9 +10,9 @@ export class ShoppingListService {
 		new Ingredient('Tomatoes', 10)
     ];
 
-    // ingredientsChanged emitter: will notify other components that the ingredients service array changed
+    // ingredientsChanged subject: will notify other components that the ingredients service array changed
     // components may subscribe to this event to update their copy through the getter
-    ingredientsChanged = new EventEmitter<void>();
+    ingredientsChanged = new Subject<void>();
 
     // add an array of ingredients (usually coming from a recipe)
     addIngredients(ingredients: Ingredient[]): void {
@@ -24,7 +24,7 @@ export class ShoppingListService {
         });
 
         // notify components the array changed
-        this.ingredientsChanged.emit();
+        this.ingredientsChanged.next();
 
     }
 
@@ -32,7 +32,7 @@ export class ShoppingListService {
     // call pushOrUpdate on the ingredient and notify the change to other components through the emitter
 	addIngredient(newIngredient: Ingredient): void {
         this.pushOrUpdate(newIngredient);
-        this.ingredientsChanged.emit();
+        this.ingredientsChanged.next();
     }
 
     // pushOrUpdate() method

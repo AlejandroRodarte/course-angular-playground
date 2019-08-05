@@ -1,14 +1,15 @@
-import { Component, OnInit, Input, AfterContentChecked, AfterViewChecked, DoCheck, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, AfterContentChecked, AfterViewChecked, DoCheck, OnChanges, OnDestroy } from '@angular/core';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-recipe-detail',
 	templateUrl: './recipe-detail.component.html',
 	styleUrls: ['./recipe-detail.component.css']
 })
-export class RecipeDetailComponent implements OnInit {
+export class RecipeDetailComponent implements OnInit, OnDestroy {
 
 	// current index
 	selectedIndex: number;
@@ -18,6 +19,9 @@ export class RecipeDetailComponent implements OnInit {
 
 	// property binding to receive the currently selected recipe from RecipesComponent
 	recipe: Recipe;
+
+	// selected recipe service subscription
+	selectedRecipeSubscription: Subscription;
 
 	// inject the recipe service singleton
 	constructor(private recipeService: RecipeService,
@@ -29,7 +33,7 @@ export class RecipeDetailComponent implements OnInit {
 
 		// listen for each time the recipe item emits a new index and call doRender()
 		// to set the value of the render flag
-		this.recipeService.selectedRecipe.subscribe((index: number) => {
+		this.selectedRecipeSubscription = this.recipeService.selectedRecipe.subscribe((index: number) => {
 			this.doRender(index);
 		}) 
 
@@ -65,6 +69,11 @@ export class RecipeDetailComponent implements OnInit {
 			this.renderFlag = true;
 		}
 
+	}
+
+	// unsubscribe upon component destruction
+	ngOnDestroy() {
+		this.selectedRecipeSubscription.unsubscribe();
 	}
 
 }
