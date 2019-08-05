@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
 	selector: 'app-root',
@@ -23,9 +23,13 @@ export class AppComponent implements OnInit {
 		// FormControl arguments
 		// default control value
 		// on 'gender', we set the initial radio button value: 'male'
+
+		// second argument: validator or array of validators
+		// Validators.required: check if input is not empty
+		// Validators.email: check if input is an email
 		this.signupForm = new FormGroup({
-			'username': new FormControl(null),
-			'email': new FormControl(null),
+			'username': new FormControl(null, Validators.required),
+			'email': new FormControl(null, [Validators.required, Validators.email]),
 			'gender': new FormControl(this.genders[0])
 		});
 
