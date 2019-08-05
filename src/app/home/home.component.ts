@@ -40,15 +40,38 @@ export class HomeComponent implements OnInit, OnDestroy {
 			let count = 0;
 
 			setInterval(() => {
+
+				// emit regular data with next()
 				observer.next(count);
+
+				// emit completed notification with complete()
+				if (count === 2) {
+					observer.complete();
+				}
+
+				// emit error data with error()
+				if (count > 3) {
+					observer.error(new Error('Count is greater than 3. The apocalypsis is upon us.'))
+				}
+
 				count++;
+
 			}, 1000);
 
 		});
 
+		// subscribe() accepts three arguments: all arrow functions
+		// 1. handler for observer.next()
+		// 2. handler for observer.error()
+		// 3. handler for observer.complete()
 		this.firstObsSubscription = customIntervalObservable.subscribe((data: number) => {
 			console.log(data);
-		})
+		}, (error: Error) => {
+			console.log(error);
+			alert(error.message);
+		}, () => {
+			console.log('task completed: doing some cleanup work...')
+		});
 
 	}
 
