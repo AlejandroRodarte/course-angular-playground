@@ -27,10 +27,21 @@ export class AppComponent implements OnInit {
 		// second argument: validator or array of validators
 		// Validators.required: check if input is not empty
 		// Validators.email: check if input is an email
+
+		// we can nest FormGroup inside FormGroups
+		// userData: FormGroup that will contain the username and email controls
+
+		// how to access username with the get() method: get(userData.username)
+		// how to access email with the get() method: get(userData.email)
 		this.signupForm = new FormGroup({
-			'username': new FormControl(null, Validators.required),
-			'email': new FormControl(null, [Validators.required, Validators.email]),
+
+			'userData': new FormGroup({
+				'username': new FormControl(null, Validators.required),
+				'email': new FormControl(null, [Validators.required, Validators.email])
+			}),
+
 			'gender': new FormControl(this.genders[0])
+
 		});
 
 	}
