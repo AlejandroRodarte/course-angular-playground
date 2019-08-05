@@ -31,4 +31,9 @@ export class AppComponent implements OnInit {
 
 	}
 
+	// on submission, log signup form
+	onSubmit(): void {
+		console.log(this.signupForm);
+	}
+
 }
