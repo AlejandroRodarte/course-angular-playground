@@ -21,6 +21,18 @@ export class AppComponent {
 	// gender options for radio button
 	genders = ['male', 'female'];
 
+	// generic object to store form data
+	user = {
+		username: '',
+		email: '',
+		secretQuestion: '',
+		answer: '',
+		gender: ''
+	}
+
+	// submitted? flag
+	submitted: boolean = false;
+
 	// suggest username handler
 	suggestUserName() {
 
@@ -52,9 +64,19 @@ export class AppComponent {
 	// 	console.log(form);
 	// }
 
-	// log the NgForm
+	// on submission
 	onSubmit(): void {
-		console.log(this.signupForm);
+
+		// set flag to true
+		this.submitted = true;
+
+		// access the signup form local reference with @ViewChild and access the values of each input
+		this.user.username = this.signupForm.value.userData.username;
+		this.user.email = this.signupForm.value.userData.email;
+		this.user.secretQuestion = this.signupForm.value.secret;
+		this.user.answer = this.signupForm.value.questionAnswer;
+		this.user.gender = this.signupForm.value.gender;
+
 	}
 
 }
