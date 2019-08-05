@@ -1,5 +1,5 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
 	selector: 'app-root',
@@ -8,32 +8,10 @@ import { NgForm } from '@angular/forms';
 })
 export class AppComponent {
 
-	// access the NgForm object
-	@ViewChild('f', { static : false })
-	private form: NgForm;
-
-	// template to store form results
-	formData = {
-		email: '',
-		subscription: '',
-		password: ''
-	}
-
-	// subscription types
-	private subscriptionTypes: string[] = [
-		'Basic',
-		'Advanced',
-		'Pro'
-	]
-
-	// default subscription type: Basic
-	private defaultSubscriptionOption: string = this.subscriptionTypes[0];
-
-	// on submit, store form results on the template object literal
-	onSubmit(): void {
-		this.formData.email = this.form.value.email;
-		this.formData.subscription = this.form.value.subscription;
-		this.formData.password = this.form.value.password;
-	}
+	// genders on radio buttons
+	genders = ['male', 'female'];
+	
+	// variable to store the form: must be of type FormGroup
+	signupForm: FormGroup;
 
 }

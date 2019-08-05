@@ -1,131 +1,54 @@
-<!-- root component html -->
-
-<!-- container -->
 <div class="container">
-
-	<!-- grid -->
 	<div class="row">
 
-		<!-- column -->
 		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
 
-			<!-- form -->
-
-			<!-- (ngSubmit)="onSubmit(f)" #f="ngForm" -->
-			<!-- on submission, call onSubmit and pass as argument the NgForm JS object -->
-			<form (ngSubmit)="onSubmit(f)" #f="ngForm">
+			<form>
 
 				<div class="form-group">
 
-					<label for="email">
-						Email
+					<label for="username">
+						Username
 					</label>
 
-					<!-- email -->
-					<!-- ngModel: register as control -->
-					<!-- required: not empty -->
-					<!-- email: must be of type email -->
-					<!-- #email="ngModel": use FormControl of this control -->
-					<input  type="email" 
-							name="email" 
-							id="email"
-							class="form-control"
-							ngModel
-							required
-							email
-							#email="ngModel">
+					<input  type="text"
+							id="username"
+							class="form-control">
 
-					<!-- warning message for email (invalid and touched) -->
-					<p  class="help-block" 
-						*ngIf="!email.valid && email.touched">
-						Please type a valid email address.
-					</p>
-
-					<label for="subscriptionType">
-						Subscription Type
-					</label>
-
-					<!-- subscription type -->
-					<!-- [ngModel]="defaultSubscriptionOption": set default option (Basic) -->
-					<!-- required: must have an option selected -->
-					<!-- #subscription="ngModel": use FormControl of this control -->
-					<select name="subscription" 
-							id="subscription"
-							class="form-control"
-							[ngModel]="defaultSubscriptionOption"
-							required
-							#subscription="ngModel">
-
-						<!-- options: loop through the subscription type -->
-						<!-- [value]="subscriptionType": property binding: the value of the option should be the current subscription type -->
-						<option *ngFor="let subscriptionType of subscriptionTypes"
-								[value]="subscriptionType">
-							{{ subscriptionType }}
-						</option>
-
-					</select>
-
-					<!-- warning message in case user does not select a valid subscription -->
-					<p  class="help-block"
-						*ngIf="!subscription.valid && subscription.touched">
-						Please select a valid subscription type.
-					</p>
-
-					<label for="password">
-						Password
-					</label>
-
-					<!-- password -->
-					<!-- ngModel: define as a control -->
-					<!-- required: password not empty -->
-					<!-- #password="ngModel": access the FormControl object of this input -->
-					<input  type="password" 
-							name="password" 
-							id="password"
-							class="form-control"
-							ngModel
-							required
-							#password="ngModel">
+				</div>
 					
-					<!-- warning message if user enters an invalid password -->
-					<p  class="help-block" 
-						*ngIf="!password.valid && password.touched">
-						Please type a password.
-					</p>
+					<div class="form-group">
+
+						<label for="email">
+							email
+						</label>
+
+						<input  type="text"
+								id="email"
+								class="form-control">
+
+					</div>
+
+				<div class="radio" 
+					 *ngFor="let gender of genders">
+
+					<label>
+
+						<input  type="radio"
+								[value]="gender">
+
+						{{ gender }}
+
+					</label>
 
 				</div>
 
-				<!-- submit button -->
-				<!-- on click, call onSubmit() -->
-				<!-- disable the button if general form is invalid -->
-				<button class="btn btn-primary"
-						(click)="onSubmit()"
-						[disabled]="!f.valid">
-					Submit Form
+				<button class="btn btn-primary" 
+						type="submit">
+					Submit
 				</button>
 
 			</form>
-
-		</div>
-
-	</div>
-
-	<!-- display results when form is submitted -->
-	<div class="row">
-
-		<div class="col-xs-12">
-
-			<p>
-				Email Address: {{ formData.email }}
-			</p>
-
-			<p>
-				Subscription Type: {{ formData.subscription }}
-			</p>
-
-			<p>
-				Password: {{ formData.password }}
-			</p>
 
 		</div>
 
