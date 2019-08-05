@@ -77,6 +77,9 @@ export class AppComponent {
 		this.user.answer = this.signupForm.value.questionAnswer;
 		this.user.gender = this.signupForm.value.gender;
 
+		// clear the form fields
+		this.signupForm.reset();
+
 	}
 
 }
