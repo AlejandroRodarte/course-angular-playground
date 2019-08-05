@@ -1,3 +1,10 @@
 .container {
   margin-top: 30px;
 }
+
+/* using CSS classes added by Angular to style wrong form inputs */
+/* targeting invalid input that already have been touched */
+input.ng-invalid.ng-touched, 
+select.ng-invalid.ng-touched {
+  border: 1px solid red;
+}

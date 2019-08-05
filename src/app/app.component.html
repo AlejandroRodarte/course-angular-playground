@@ -35,6 +35,10 @@
 								ngModel
 								name="username"
 								required>
+						
+						<p *ngIf="">
+							Please enter a valid value
+						</p>
 
 					</div>
 
@@ -97,7 +101,11 @@
 				</div>
 
 				<!-- submit form button -->
-				<button class="btn btn-primary" type="submit">
+				<!-- disable the button if the form is invalid -->
+				<!-- access the 'valid' property of the NgForm form object (through local reference) -->
+				<button class="btn btn-primary" 
+						type="submit"
+						[disabled]="!f.valid">
 					Submit
 				</button>
 
