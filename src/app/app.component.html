@@ -11,7 +11,8 @@
 
 			<!-- form -->
 			<!-- no action or method attribute: Angular must handle the submission -->
-			<form>
+			<!-- #f="ngForm": inform Angular we require the form object it created -->
+			<form (ngSubmit)="onSubmit(f)" #f="ngForm">
 
 				<!-- user data -->
 				<div id="user-data">
