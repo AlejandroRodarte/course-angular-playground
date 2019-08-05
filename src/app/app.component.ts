@@ -18,6 +18,9 @@ export class AppComponent {
 	// default text area value
 	answer: string = '';
 
+	// gender options for radio button
+	genders = ['male', 'female'];
+
 	suggestUserName() {
 		const suggestedName = 'Superuser';
 	}

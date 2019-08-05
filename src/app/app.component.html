@@ -125,9 +125,28 @@
 									[(ngModel)]="answer">
 						</textarea>
 
-						<p>
-							Your reply: {{ answer }}
-						</p>
+					</div>
+
+					<p>
+						Your reply: {{ answer }}
+					</p>
+
+					<!-- loop through the genders string -->
+					<div class="radio"
+						 *ngFor="let gender of genders">
+						
+						<label>
+
+							<!-- create a new radio on each iteration with the current gender value -->
+							<input  type="radio" 
+									name="gender"
+									ngModel
+									[value]="gender"
+									required>
+
+							{{ gender }}
+
+						</label>
 
 					</div>
 
