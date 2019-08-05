@@ -57,6 +57,8 @@
 						<!-- its caught and used by Angular to make this control have a 'false' value on the 'valid' property -->
 
 						<!-- email: built-in validator so this input should be of type email -->
+
+						<!-- ngMode: acess FormControl object of this input here in the template -->
 						<input  type="email" 
 								id="email" 
 								class="form-control"
@@ -66,6 +68,7 @@
 								email
 								#email="ngModel">
 						
+						<!-- use FormControl properties to determine if this text shoud be displayed or not -->
 						<span   class="help-block"
 								*ngIf="!email.valid && email.touched">
 							Please enter a valid value
@@ -85,9 +88,11 @@
 					<!-- select one of two secret questions -->
 					<!-- ngModel to inform Angular this is a control to insert in the form object -->
 					<!-- name to identify the name the control will have -->
+
+					<!-- [ngModel] property binding to set a default option: 'pet' -->
 					<select id="secret" 
 							class="form-control"
-							ngModel
+							[ngModel]="defaultQuestion"
 							name="secret">
 
 						<option value="pet">
