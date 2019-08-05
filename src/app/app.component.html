@@ -105,6 +105,22 @@
 
 					</select>
 
+					<!-- text area -->
+					<div class="form-group">
+
+						<!-- two-way databinding to set a default value but also check for its content -->
+						<textarea   class="form-control"
+									name="questionAnswer" 
+									rows="3"
+									[(ngModel)]="answer">
+						</textarea>
+
+						<p>
+							Your reply: {{ answer }}
+						</p>
+
+					</div>
+
 				</div>
 
 				<!-- submit form button -->

@@ -15,6 +15,9 @@ export class AppComponent {
 	// default select question: Your first pet?
 	private defaultQuestion: string = 'pet';
 
+	// default text area value
+	answer: string = '';
+
 	suggestUserName() {
 		const suggestedName = 'Superuser';
 	}
