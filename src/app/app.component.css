@@ -1,3 +1,8 @@
 .container {
   margin-top: 30px;
 }
+
+/* take advantage of css angular validation classes to style invalid form fields */
+input.ng-invalid.ng-touched {
+  border: solid 1px red;
+}

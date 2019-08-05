@@ -19,6 +19,13 @@
 							id="username"
 							class="form-control"
 							formControlName="username">
+					
+					<!-- signupForm.get('username') to access the 'username' FormControl -->
+					<!-- check if the field is not valid or touched to trigger this span text -->
+					<span 	class="help-block"
+							*ngIf="!signupForm.get('username').valid && signupForm.get('username').touched">
+						Please enter a valid username.
+					</span>
 
 				</div>
 					
@@ -33,6 +40,13 @@
 								id="email"
 								class="form-control"
 								formControlName="email">
+						
+						<!-- signupForm.get('email') to access the 'email' FormControl -->
+						<!-- check if the field is not valid or touched to trigger this span text -->
+						<span 	class="help-block"
+								*ngIf="!signupForm.get('email').valid && signupForm.get('email').touched">
+							Please enter a valid email.
+						</span>
 
 					</div>
 
@@ -51,6 +65,12 @@
 					</label>
 
 				</div>
+
+				<!-- signupForm.valid and signupForm.touched represent the overall form properties -->
+				<span 	class="help-block"
+						*ngIf="!signupForm.valid && signupForm.touched">
+					Please enter a valid data.
+				</span>
 
 				<button class="btn btn-primary" 
 						type="submit">
