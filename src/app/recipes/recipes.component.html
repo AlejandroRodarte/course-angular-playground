@@ -1,0 +1,20 @@
+<!-- recipes component html -->
+
+<!-- grid -->
+<div class="row">
+
+    <!-- first column: the recipe list component -->
+    <div class="col-md-5">
+        <app-recipe-list>
+        </app-recipe-list>
+    </div>
+
+    <!-- second column: the selected recipe item detail component -->
+    <!-- display the router outlet if the renderFlag is set to true -->
+    <!-- which loads the RecipeEditComponent -->
+    <!-- this flag is set initially to true to load RecipeStartComponent -->
+    <div class="col-md-7">
+        <router-outlet></router-outlet>
+    </div>
+
+</div>

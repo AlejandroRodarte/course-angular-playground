@@ -1,36 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { UserService } from './user/user.service';
-import { Subscription } from 'rxjs';
+// component parent node selector goes here
+// component class definition goes here
 
+import { Component } from '@angular/core';
+
+// this component will go inside an <app-root> html tag found on the index.html page
 @Component({
-	selector: 'app-root',
-	templateUrl: './app.component.html',
-	styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, OnDestroy {
 
-	// boolean
-	userActivated: boolean = false;
+// component class definition
+export class AppComponent {
 
-	// subscription
-	private activatedSub: Subscription;
-
-	// inject user service
-	constructor(private userService: UserService) {
-
-	}
-
-	// subscribe to activatedEmitter subject from service (active observable)
-	// and store the boolean value on the userActivated field
-	ngOnInit() {
-		this.activatedSub = this.userService.activatedEmitter.subscribe((didActivate: boolean): void => {
-			this.userActivated = didActivate;
-		})
-	}
-
-	// unsubscribe from subject
-	ngOnDestroy() {
-		this.activatedSub.unsubscribe();
-	}
-	
 }
