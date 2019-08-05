@@ -8,78 +8,32 @@ import { NgForm } from '@angular/forms';
 })
 export class AppComponent {
 
-	// @ViewChild to access local reference of NgForm
+	// access the NgForm object
 	@ViewChild('f', { static : false })
-	private signupForm: NgForm;
+	private form: NgForm;
 
-	// default select question: Your first pet?
-	private defaultQuestion: string = 'pet';
-
-	// default text area value
-	answer: string = '';
-
-	// gender options for radio button
-	genders = ['male', 'female'];
-
-	// generic object to store form data
-	user = {
-		username: '',
+	// template to store form results
+	formData = {
 		email: '',
-		secretQuestion: '',
-		answer: '',
-		gender: ''
+		subscription: '',
+		password: ''
 	}
 
-	// submitted? flag
-	submitted: boolean = false;
+	// subscription types
+	private subscriptionTypes: string[] = [
+		'Basic',
+		'Advanced',
+		'Pro'
+	]
 
-	// suggest username handler
-	suggestUserName() {
+	// default subscription type: Basic
+	private defaultSubscriptionOption: string = this.subscriptionTypes[0];
 
-		const suggestedName = 'Superuser';
-
-		// setValue(): forces us to override the whole form
-		// we declare a JS object and use the names we places for this form objects/groups
-		// this.signupForm.setValue({
-		// 	userData: {
-		// 		username: suggestedName,
-		// 		email: ''
-		// 	},
-		// 	secret: 'pet',
-		// 	questionAnswer: '',
-		// 	gender: 'male'
-		// });
-
-		// patchValue(): override parts of our form
-		this.signupForm.form.patchValue({
-			userData: {
-				username: suggestedName
-			}
-		});
-
-	}
-
-	// handler: get the NgForm object that the FormsModule created for us
-	// onSubmit(form: NgForm) {
-	// 	console.log(form);
-	// }
-
-	// on submission
+	// on submit, store form results on the template object literal
 	onSubmit(): void {
-
-		// set flag to true
-		this.submitted = true;
-
-		// access the signup form local reference with @ViewChild and access the values of each input
-		this.user.username = this.signupForm.value.userData.username;
-		this.user.email = this.signupForm.value.userData.email;
-		this.user.secretQuestion = this.signupForm.value.secret;
-		this.user.answer = this.signupForm.value.questionAnswer;
-		this.user.gender = this.signupForm.value.gender;
-
-		// clear the form fields
-		this.signupForm.reset();
-
+		this.formData.email = this.form.value.email;
+		this.formData.subscription = this.form.value.subscription;
+		this.formData.password = this.form.value.password;
 	}
 
 }

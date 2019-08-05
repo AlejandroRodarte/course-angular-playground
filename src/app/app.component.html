@@ -10,199 +10,125 @@
 		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
 
 			<!-- form -->
-			<!-- no action or method attribute: Angular must handle the submission -->
-			<!-- #f="ngForm": inform Angular we require the form object it created -->
+
+			<!-- (ngSubmit)="onSubmit(f)" #f="ngForm" -->
+			<!-- on submission, call onSubmit and pass as argument the NgForm JS object -->
 			<form (ngSubmit)="onSubmit(f)" #f="ngForm">
 
-				<!-- user data -->
-
-				<!-- ngModelGroup: treat both al inputs inside this div as a group and give it a name: userData -->
-				<!-- Angular creates a FormGroup object and we can access it with ngModelGroup and a local referece -->
-				<div id="user-data"
-					 ngModelGroup="userData"
-					 #userData="ngModelGroup">
-
-					<!-- username -->
-					<div class="form-group">
-
-						<label for="username">
-							Username
-						</label>
-
-						<!-- ngModel to inform Angular this is a control to insert in the form object -->
-						<!-- name to identify the name the control will have -->
-
-						<!-- required: built-in validator so this input should not be empty -->
-						<!-- its caught and used by Angular to make this control have a 'false' value on the 'valid' property -->
-						<input  type="text" 
-								id="username" 
-								class="form-control"
-								ngModel
-								name="username"
-								required>
-
-					</div>
-
-					<!-- suggest a username button -->
-					<button class="btn btn-default" 
-							type="button"
-							(click)="suggestUserName()">
-						Suggest an Username
-					</button>
-
-					<!-- email -->
-					<div class="form-group">
-
-						<label for="email">
-							Mail
-						</label>
-
-						<!-- ngModel to inform Angular this is a control to insert in the form object -->
-						<!-- name to identify the name the control will have -->
-
-						<!-- required: built-in validator so this input should not be empty -->
-						<!-- its caught and used by Angular to make this control have a 'false' value on the 'valid' property -->
-
-						<!-- email: built-in validator so this input should be of type email -->
-
-						<!-- ngMode: acess FormControl object of this input here in the template -->
-						<input  type="email" 
-								id="email" 
-								class="form-control"
-								ngModel
-								name="email"
-								required
-								email
-								#email="ngModel">
-						
-						<!-- use FormControl properties to determine if this text shoud be displayed or not -->
-						<span   class="help-block"
-								*ngIf="!email.valid && email.touched">
-							Please enter a valid value
-						</span>
-
-					</div>
-
-				</div>
-
-				<!-- display error message if the form group happens to be invalid through the local reference -->
-				<p *ngIf="!userData.valid && userData.touched">
-					User Data is invalid
-				</p>
-
-				<!-- secret questions section -->
 				<div class="form-group">
 
-					<label for="secret">
-						Secret Questions
+					<label for="email">
+						Email
 					</label>
 
-					<!-- select one of two secret questions -->
-					<!-- ngModel to inform Angular this is a control to insert in the form object -->
-					<!-- name to identify the name the control will have -->
-
-					<!-- [ngModel] property binding to set a default option: 'pet' -->
-					<select id="secret" 
+					<!-- email -->
+					<!-- ngModel: register as control -->
+					<!-- required: not empty -->
+					<!-- email: must be of type email -->
+					<!-- #email="ngModel": use FormControl of this control -->
+					<input  type="email" 
+							name="email" 
+							id="email"
 							class="form-control"
-							[ngModel]="defaultQuestion"
-							name="secret">
+							ngModel
+							required
+							email
+							#email="ngModel">
 
-						<option value="pet">
-							Your first Pet?
-						</option>
+					<!-- warning message for email (invalid and touched) -->
+					<p  class="help-block" 
+						*ngIf="!email.valid && email.touched">
+						Please type a valid email address.
+					</p>
 
-						<option value="teacher">
-							Your first teacher?
+					<label for="subscriptionType">
+						Subscription Type
+					</label>
+
+					<!-- subscription type -->
+					<!-- [ngModel]="defaultSubscriptionOption": set default option (Basic) -->
+					<!-- required: must have an option selected -->
+					<!-- #subscription="ngModel": use FormControl of this control -->
+					<select name="subscription" 
+							id="subscription"
+							class="form-control"
+							[ngModel]="defaultSubscriptionOption"
+							required
+							#subscription="ngModel">
+
+						<!-- options: loop through the subscription type -->
+						<!-- [value]="subscriptionType": property binding: the value of the option should be the current subscription type -->
+						<option *ngFor="let subscriptionType of subscriptionTypes"
+								[value]="subscriptionType">
+							{{ subscriptionType }}
 						</option>
 
 					</select>
 
-					<!-- text area -->
-					<div class="form-group">
-
-						<!-- two-way databinding to set a default value but also check for its content -->
-						<textarea   class="form-control"
-									name="questionAnswer" 
-									rows="3"
-									[(ngModel)]="answer">
-						</textarea>
-
-					</div>
-
-					<p>
-						Your reply: {{ answer }}
+					<!-- warning message in case user does not select a valid subscription -->
+					<p  class="help-block"
+						*ngIf="!subscription.valid && subscription.touched">
+						Please select a valid subscription type.
 					</p>
 
-					<!-- loop through the genders string -->
-					<div class="radio"
-						 *ngFor="let gender of genders">
-						
-						<label>
+					<label for="password">
+						Password
+					</label>
 
-							<!-- create a new radio on each iteration with the current gender value -->
-							<input  type="radio" 
-									name="gender"
-									ngModel
-									[value]="gender"
-									required>
-
-							{{ gender }}
-
-						</label>
-
-					</div>
+					<!-- password -->
+					<!-- ngModel: define as a control -->
+					<!-- required: password not empty -->
+					<!-- #password="ngModel": access the FormControl object of this input -->
+					<input  type="password" 
+							name="password" 
+							id="password"
+							class="form-control"
+							ngModel
+							required
+							#password="ngModel">
+					
+					<!-- warning message if user enters an invalid password -->
+					<p  class="help-block" 
+						*ngIf="!password.valid && password.touched">
+						Please type a password.
+					</p>
 
 				</div>
 
-				<!-- submit form button -->
-				<!-- disable the button if the form is invalid -->
-				<!-- access the 'valid' property of the NgForm form object (through local reference) -->
-				<button class="btn btn-primary" 
-						type="submit"
+				<!-- submit button -->
+				<!-- on click, call onSubmit() -->
+				<!-- disable the button if general form is invalid -->
+				<button class="btn btn-primary"
+						(click)="onSubmit()"
 						[disabled]="!f.valid">
-					Submit
+					Submit Form
 				</button>
 
 			</form>
 
-			
 		</div>
-		
+
 	</div>
-	
-	<hr>
-	
-	<!-- grid to display form data -->
-	<div class="row"
-		 *ngIf="submitted">
+
+	<!-- display results when form is submitted -->
+	<div class="row">
 
 		<div class="col-xs-12">
-			
-			<h3>
-				Your Data
-			</h3>
 
 			<p>
-				Username: {{ user.username }}
+				Email Address: {{ formData.email }}
 			</p>
 
 			<p>
-				Mail: {{ user.email }}
+				Subscription Type: {{ formData.subscription }}
 			</p>
 
 			<p>
-				Secret Question: {{ user.secretQuestion }}
-			</p>
-
-			<p>
-				Answer: {{ user.answer }}
-			</p>
-
-			<p>
-				Gender: {{ user.gender }}
+				Password: {{ formData.password }}
 			</p>
 
 		</div>
+
 	</div>
 
 </div>
