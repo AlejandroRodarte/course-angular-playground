@@ -31,7 +31,17 @@
 						<!-- since username is now nested inside userData FormGroup, access it with its full path: userData.username -->
 						<span 	class="help-block"
 								*ngIf="!signupForm.get('userData.username').valid && signupForm.get('userData.username').touched">
-							Please enter a valid username.
+
+							<!-- if the username FormControl has the nameIsForbidden error, display this text -->
+							<span *ngIf="signupForm.get('userData.username').errors['nameIsForbidden']">
+								This name is invalid.
+							</span>
+
+							<!-- if the usernem FormControl has the required error, display this text -->
+							<span *ngIf="signupForm.get('userData.username').errors['required']">
+								This name is required.
+							</span>
+
 						</span>
 	
 					</div>
