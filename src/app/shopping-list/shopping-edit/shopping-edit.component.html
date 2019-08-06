@@ -12,38 +12,68 @@
             <!-- grid -->
             <div class="row">
 
-                <!-- first column -->
-                <div class="col-sm-5 form-group">
-
-                    <!-- first input: ingredient name -->
-                    <label for="name">
-                        Name
-                    </label>
-
-                    <!-- place a local reference to use on the .ts file -->
-                    <input 
-                        type="text" 
-                        id="name" 
-                        class="form-control"
-                        #ingredientNameInput>
-
-                </div>
-
-                <!-- second input: ingredient amount -->
-                <div class="col-sm-2 form-group">
-
-                    <label for="amount">
-                        Amount
-                    </label>
-
-                    <!-- place a local reference to use on the .ts file -->
-                    <input 
-                        type="number" 
-                        id="amount" 
-                        class="form-control"
-                        #ingredientAmountInput>
-
-                </div>
+                <!-- template-driven form -->
+                <form   (ngSubmit)="onSubmit()" 
+                        #shoppingListForm="ngForm">
+                
+                    <!-- first column -->
+                    <div class="col-sm-5 form-group">
+    
+                        <!-- first input: ingredient name -->
+                        <label for="ingredientName">
+                            Name
+                        </label>
+    
+                        <!-- place a local reference to use on the .ts file -->
+                        <!-- ngModel: this will be a control with name ingredientName -->
+                        <!-- required: can't be empty -->
+                        <input 
+                            type="text" 
+                            name="ingredientName"
+                            id="ingredientName" 
+                            class="form-control"
+                            ngModel
+                            required
+                            #ingredientName="ngModel">
+                        
+                        <!-- display this text if ingredient name is invalid and touched -->
+                        <span   *ngIf="!ingredientName.valid && ingredientName.touched"
+                                class="help-block">
+                            This field is required.
+                        </span>
+    
+                    </div>
+    
+                    <!-- second input: ingredient amount -->
+                    <div class="col-sm-2 form-group">
+    
+                        <label for="ingredientAmount">
+                            Amount
+                        </label>
+    
+                        <!-- place a local reference to use on the .ts file -->
+                        <!-- set initially the amount of 1 -->
+                        <!-- [pattern] to express a regexp to allow only number higher than 1 -->
+                        <!-- required: field can't be empty -->
+                        <input 
+                            type="number"
+                            name="ingredientAmount"
+                            id="ingredientAmount" 
+                            class="form-control"
+                            [ngModel]="1"
+                            [pattern]="'^[1-9]+[0-9]*$'"
+                            required
+                            #ingredientAmount="ngModel">
+                        
+                        <!-- display text if field is invalid and touched -->
+                        <span   *ngIf="!ingredientAmount.valid && ingredientAmount.touched"
+                                class="help-block">
+                            Wrong amount.
+                        </span>
+        
+                    </div>
+                        
+                </form>
 
             </div>
 
@@ -55,8 +85,10 @@
 
                     <!-- add an ingredient to shopping list -->
                     <!-- on click, call onSubmitClick() event handler -->
+                    <!-- disable submit button while form is invalid -->
                     <button type="submit" 
                             class="btn btn-success"
+                            [disabled]="!shoppingListForm.valid"
                             (click)="onSubmitClick()">
                         Add
                     </button>

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 import { ShoppingListService } from './../shopping-list.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
     selector: 'app-shopping-edit',
@@ -9,12 +10,9 @@ import { ShoppingListService } from './../shopping-list.service';
 })
 export class ShoppingEditComponent implements OnInit {
 
-	// reference to the input html elements
-	@ViewChild('ingredientNameInput', { static : false })
-	ingredientName: ElementRef;
-
-	@ViewChild('ingredientAmountInput', { static : false })
-	ingredientAmount: ElementRef;
+	// shopping list form
+	@ViewChild('shoppingListForm', { static : false })
+	private shoppingListForm: NgForm;
 
 	// get shopping list service singleton
     constructor(private shoppingListService: ShoppingListService) {
@@ -22,22 +20,27 @@ export class ShoppingEditComponent implements OnInit {
 	}
 
     ngOnInit() {
+
 	}
 	
 	// listener for the submission button click
 	onSubmitClick(): void {
 
-		// capture the ingredient name and amount
-		const name: string = this.ingredientName.nativeElement.value;
-		const amount: number = parseInt(this.ingredientAmount.nativeElement.value);
+		// capture the ingredient name and amount from the template-driven form
+		const name: string = this.shoppingListForm.form.value.ingredientName;
+		const amount: number = +this.shoppingListForm.form.value.ingredientAmount;
 
-		// if not empty, add the new ingredient to the ingredients array found on the service and clear the fields
-		if (name && amount) {
-			this.shoppingListService.addIngredient(new Ingredient(name, amount));
-			this.ingredientName.nativeElement.value = '';
-			this.ingredientAmount.nativeElement.value = '';
-		}
+		// add the ingredient through the service
+		this.shoppingListService.addIngredient(new Ingredient(name, amount));
+
+		// clear the form
+		this.clearForm();
 		
+	}
+
+	// clear form: just clear the ingredient name (not the amount)
+	private clearForm() {
+		this.shoppingListForm.controls['ingredientName'].reset();
 	}
 
 }
