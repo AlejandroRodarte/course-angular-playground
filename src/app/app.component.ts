@@ -58,6 +58,16 @@ export class AppComponent implements OnInit {
 
 		});
 
+		// listen for form status changes (pending, valid, invalid)
+		this.signupForm.statusChanges.subscribe((status) => {
+			console.log(status);
+		});
+
+		// listen for form value changes (triggers whenever any change in any form control occurs)
+		this.signupForm.valueChanges.subscribe((value) => {
+			console.log(value);
+		});
+
 	}
 
 	// on submission, log signup form
