@@ -6,3 +6,19 @@
 input.ng-invalid.ng-touched {
   border: solid 1px red;
 }
+
+input.ng-pending {
+  border: solid 1px blue;
+}
+
+input.ng-valid {
+  border: solid 1px green;
+}
+
+input {
+  margin-bottom: 1.1rem;
+}
+
+img.loadingGif {
+  max-width: 20px;
+}

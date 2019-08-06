@@ -1,130 +1,112 @@
 <div class="container">
+
 	<div class="row">
 
 		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
-
-			<!-- [formGroup]="signupForm": inform Angular we will use our own FormGroup instead of NgForm -->
-			<!-- (ngSubmit)="onSubmit()": listen for generic form submission -->
-			<form 	[formGroup]="signupForm"
+			
+			<form  	[formGroup]="projectForm"
 					(ngSubmit)="onSubmit()">
 
-				<!-- inform Angular we contemplate a FormGroup inside a FormGroup -->
-				<!-- use a wrapper element that will contain inside the fields inside of our nested FormGroup -->
-				<!-- and use the formGroupName the name declared on the nested FormGroup on our component class -->
-				<div formGroupName="userData">
+				<div class="form-group">
 
-					<div class="form-group">
-	
-						<label for="username">
-							Username
-						</label>
-	
-						<!-- formControlName: bind control declared on FormGroup with this HTML input -->
-						<input  type="text"
-								id="username"
-								class="form-control"
-								formControlName="username">
-						
-						<!-- signupForm.get('username') to access the 'username' FormControl -->
-						<!-- check if the field is not valid or touched to trigger this span text -->
-
-						<!-- since username is now nested inside userData FormGroup, access it with its full path: userData.username -->
-						<span 	class="help-block"
-								*ngIf="!signupForm.get('userData.username').valid && signupForm.get('userData.username').touched">
-
-							<!-- if the username FormControl has the nameIsForbidden error, display this text -->
-							<span *ngIf="signupForm.get('userData.username').errors['nameIsForbidden']">
-								This name is invalid.
-							</span>
-
-							<!-- if the usernem FormControl has the required error, display this text -->
-							<span *ngIf="signupForm.get('userData.username').errors['required']">
-								This name is required.
-							</span>
-
-						</span>
-	
-					</div>
-						
-					<div class="form-group">
-	
-						<label for="email">
-							email
-						</label>
-	
-						<!-- formControlName: bind control declared on FormGroup with this HTML input -->
-						<input  type="text"
-								id="email"
-								class="form-control"
-								formControlName="email">
-						
-						<!-- signupForm.get('email') to access the 'email' FormControl -->
-						<!-- check if the field is not valid or touched to trigger this span text -->
-
-						<!-- since email is now nested inside userData FormGroup, access it with its full path: userData.email -->
-						<span 	class="help-block"
-								*ngIf="!signupForm.get('userData.email').valid && signupForm.get('userData.email').touched">
-							Please enter a valid email.
-						</span>
-	
-					</div>
-
-				</div>
-
-				<div class="radio" 
-					 *ngFor="let gender of genders">
-
-					<label>
-
-						<!-- formControlName: bind control declared on FormGroup with this HTML input -->
-						<input  type="radio"
-								[value]="gender"
-								formControlName="gender">
-
-						{{ gender }}
-
+					<label for="projectName">
+						Project Name
 					</label>
 
+					<input  type="text" 
+							name="projectName" 
+							id="projectName"
+							class="form-control"
+							[formControlName]="'projectName'">
+					
+					<span   *ngIf="projectForm.get('projectName').pending === true"
+							class="help-block">
+
+						Validating project name...
+
+						<img  [src]="loadingGifUrl" 
+								alt="Loading..."
+								class="loadingGif">
+
+					</span>
+
+					<span 	class="help-block"
+							*ngIf="!projectForm.get('projectName').pending && projectForm.get('projectName').touched && !projectForm.get('projectName').valid">
+
+						<span *ngIf="projectForm.get('projectName').errors['required']">
+							This field is required.
+						</span>
+
+						<span *ngIf="projectForm.get('projectName').errors['invalidProjectName']">
+							This project name is forbidden!
+						</span>
+
+					</span>
+
 				</div>
 
-				<!-- container for the form array section -->
-				<!-- on this container we should place the formArrayName directive and associate the form array name -->
-				<div formArrayName="hobbies">
+				<div class="form-group">
 
-					<h4>
-						Your Hobbies
-					</h4>
+					<label for="email">
+						Email Address
+					</label>
 
-					<!-- on click, add a hobby text input (push a new form control to the the form array) -->
-					<button class="btn btn-default"
-							(click)="onAddHobby()"
-							type="button">
-						Add Hobby
+					<input  type="text" 
+							name="email" 
+							id="email"
+							class="form-control"
+							[formControlName]="'email'">
+					
+					<span 	class="help-block"
+							*ngIf="!projectForm.get('email').valid && projectForm.get('email').touched">
+
+						<span *ngIf="projectForm.get('email').errors['required']">
+							This field is required.
+						</span>
+
+						<span *ngIf="projectForm.get('email').errors['email']">
+							Please provide a valid email.
+						</span>
+
+					</span>
+
+				</div>
+
+				<div class="form-group">
+
+					<label for="projectStatus">
+						Project Status
+					</label>
+
+					<select name="projectStatus" 
+							id="projectStatus"
+							class="form-control"
+							[formControlName]="'projectStatus'">
+
+						<option *ngFor="let status of projectStatuses" 
+								 [value]="status">
+							{{ status }}
+						</option>
+
+					</select>
+
+				</div>
+
+				<div>
+
+					<button class="btn btn-success"
+							type="button"
+							[disabled]="!projectForm.valid"
+							(click)="onSubmit()">
+						Submit
 					</button>
 
-					<!-- loop through the array of abstract controls -->
-					<div class="form-group"
-						 *ngFor="let hobbyControl of getControls('hobbies'); let i = index">
-
-						<!-- create each time a new text input with a form control name being the index value -->
-						<input 	type="text" 
-								class="form-control"
-								[formControlName]="i">
-
-					</div>
+					<span 	*ngIf="!projectForm.valid && projectForm.touched"
+							class="help-block">
+						The form is invalid. Please check all of your fields before submitting.
+					</span>
 
 				</div>
-
-				<!-- signupForm.valid and signupForm.touched represent the overall form properties -->
-				<span 	class="help-block"
-						*ngIf="!signupForm.valid && signupForm.touched">
-					Please enter a valid data.
-				</span>
-
-				<button class="btn btn-primary" 
-						type="submit">
-					Submit
-				</button>
 
 			</form>
 
