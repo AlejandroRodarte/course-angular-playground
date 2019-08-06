@@ -14,6 +14,9 @@ export class AppComponent implements OnInit {
 	// variable to store the form: must be of type FormGroup
 	signupForm: FormGroup;
 
+	// forbidden usernames
+	forbiddenUsernames: string[] = ['Chris', 'Anna'];
+
 	ngOnInit(): void {
 
 		// controls go inside object literal as key/value pairs
@@ -35,10 +38,14 @@ export class AppComponent implements OnInit {
 		// how to access email with the get() method: get(userData.email)
 
 		// hobbies: a form array (array of text inputs)
+
+		// append forbiddenNames custom validator method reference
+		// inside that method we make a call to 'this', where such method is called not from our class, but by Angular outside
+		// so we need to bind this class instance so no problems persists
 		this.signupForm = new FormGroup({
 
 			'userData': new FormGroup({
-				'username': new FormControl(null, Validators.required),
+				'username': new FormControl(null, [Validators.required, this.forbiddenNames.bind(this)]),
 				'email': new FormControl(null, [Validators.required, Validators.email])
 			}),
 
@@ -72,6 +79,22 @@ export class AppComponent implements OnInit {
 	// we explicitly cast this method so it returns the FormArray value
 	private getFormArray(path: string) {
 		return <FormArray> this.signupForm.get(path);
+	}
+
+	// custom validator: a regular method
+	forbiddenNames(control: FormControl): { [key: string]: boolean } {
+
+		// check if the control value to validate is contained on any of the forbidden names
+		// if true, send an object with the nameIsForbidden key set to true
+		if (this.forbiddenUsernames.indexOf(control.value) !== -1) {
+			return {
+				'nameIsForbidden': true
+			}
+		}
+
+		// if not, it means the username is fine, so return null for the error
+		return null;
+
 	}
 
 }
