@@ -27,6 +27,7 @@
                         <!-- place a local reference to use on the .ts file -->
                         <!-- ngModel: this will be a control with name ingredientName -->
                         <!-- required: can't be empty -->
+                        <!-- make this field disabled whenever we are on 'update' mode so the user can't change the name -->
                         <input 
                             type="text" 
                             name="ingredientName"
@@ -34,6 +35,7 @@
                             class="form-control"
                             ngModel
                             required
+                            [disabled]="editMode"
                             #ingredientName="ngModel">
                         
                         <!-- display this text if ingredient name is invalid and touched -->
@@ -86,20 +88,30 @@
                     <!-- add an ingredient to shopping list -->
                     <!-- on click, call onSubmitClick() event handler -->
                     <!-- disable submit button while form is invalid -->
+                    <!-- add class .btn-edit when edit mode is active -->
+                    <!-- create a local reference to use in the component class -->
                     <button type="submit" 
                             class="btn btn-success"
                             [disabled]="!shoppingListForm.valid"
-                            (click)="onSubmitClick()">
+                            (click)="onSubmitClick()"
+                            [ngClass]="{ 'btn-edit': editMode }"
+                            #submitButton>
                         Add
                     </button>
 
                     <!-- delete an ingredient from shopping list -->
-                    <button type="button" class="btn btn-danger">
+                    <button type="button" 
+                            class="btn btn-danger"
+                            [disabled]="!editMode"
+                            (click)="onDeleteClick()">
                         Delete
                     </button>
 
                     <!-- clear ingredient form -->
-                    <button type="button" class="btn btn-primary">
+                    <!-- when clicked, call clear event handler -->
+                    <button type="button" 
+                            class="btn btn-primary"
+                            (click)="onClearClick()">
                         Clear
                     </button>
 

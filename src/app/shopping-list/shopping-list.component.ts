@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from './shopping-list.service';
 import { Subscription } from 'rxjs';
@@ -38,6 +38,12 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 	// upon destruction, unsubscribe from the service's subject
 	ngOnDestroy() {
 		this.ingredientsChangedSubscription.unsubscribe();
+	}
+
+	// when clicking on a shopping list ingredient, access the Subject emitter from the shopping list service
+	// and emit the ingredient's index
+	onShoppingListIngredientClick(index: number): void {
+		this.shoppingListService.sendIngredientIndex.next(index);
 	}
 
 }

@@ -14,13 +14,28 @@ export class ShoppingListService {
     // components may subscribe to this event to update their copy through the getter
     ingredientsChanged = new Subject<void>();
 
+    // subject that emits the index of a particular ingredient on the shopping list
+    sendIngredientIndex = new Subject<number>();
+
+    // get ingredient based on index
+    getIngredient(index: number): Ingredient {
+        return this.ingredients[index];
+    }
+
+    // get a copy of the current ingredients array
+    getIngredients(): Ingredient[] {
+        return this.ingredients.slice();
+    }
+
     // add an array of ingredients (usually coming from a recipe)
     addIngredients(ingredients: Ingredient[]): void {
 
         // for each ingredient, call pushOrUpdate() method for the current ingredient
         // to either add it to the array (brand new) or update it (already existed)
+
+        // since we are adding ingredients from a recipe, the edit mode flag is set to false
         ingredients.forEach((ingredient: Ingredient) => {
-            this.pushOrUpdate(ingredient);
+            this.pushOrUpdate(ingredient, false);
         });
 
         // notify components the array changed
@@ -30,13 +45,22 @@ export class ShoppingListService {
 
     // add single ingredient handler
     // call pushOrUpdate on the ingredient and notify the change to other components through the emitter
-	addIngredient(newIngredient: Ingredient): void {
-        this.pushOrUpdate(newIngredient);
+    // the editMode flag serves to inform the method whether we are adding an amount to an existing ingredient (false)
+    // or overriding the amount overall (true)
+	addIngredient(newIngredient: Ingredient, editMode: boolean): void {
+        this.pushOrUpdate(newIngredient, editMode);
+        this.ingredientsChanged.next();
+    }
+
+    // delete ingredient based on id
+    // after deletion, notify the changes through the Subject
+    deleteIngredient(index: number): void {
+        this.ingredients.splice(index, 1);
         this.ingredientsChanged.next();
     }
 
     // pushOrUpdate() method
-    pushOrUpdate(ingredient: Ingredient): void {
+    pushOrUpdate(ingredient: Ingredient, editMode: boolean): void {
 
         // tracing boolean
         let existed: boolean = false;
@@ -44,13 +68,22 @@ export class ShoppingListService {
         // loop through the current ingredients array
         for (let i = 0; i < this.ingredients.length; i++) {
 
-            // if found (matching names): simply add the recipe amount to the item's amount on the shopping list
-            // emit the updated ingredient, set the existed flag to true and send the index where this existing ingredient
-            // was found
+            // if found (matching names)
             if (this.ingredients[i].name === ingredient.name) {
-                this.ingredients[i].amount += ingredient.amount;
+
+                // check if the existing ingredient should have overriden its previous amount completely through the editMode boolean
+                // if not, simply add the given amount to the current one
+                // otherwise, override the value completely by reassigning it
+                if (!editMode) {
+                    this.ingredients[i].amount += ingredient.amount;
+                } else {
+                    this.ingredients[i].amount = ingredient.amount;
+                }
+
+                // set the existed ingredient flag to true and jump out of the loop
                 existed = true;
                 break;
+
             }
 
         }
@@ -60,11 +93,6 @@ export class ShoppingListService {
             this.ingredients.push(ingredient);
         }
 
-    }
-    
-    // get a copy of the current ingredients array
-    getIngredients(): Ingredient[] {
-        return this.ingredients.slice();
     }
 
 }

@@ -1,7 +1,14 @@
+/* styling for valid inputs */
 input.ng-valid {
     border: 1px solid green;
 }
 
+/* styling for invalid and touched inputs */
 input.ng-invalid.ng-touched {
     border: 1px solid red;
+}
+
+/* css style that triggers when button 'Add' changes to 'Update' when editing an ingredient */
+.btn-edit {
+    background: brown;
 }

@@ -18,9 +18,12 @@
 
             <!-- links, using *ngFor to create multiple links of each ingredient model on the ingredients array field -->
             <!-- of the shopping list component -->
+
+            <!-- when clicked, call event handler with the index sent as an argument -->
             <a  class="list-group-item" 
                 style="cursor: pointer;"
-                *ngFor="let ingredient of ingredients">
+                *ngFor="let ingredient of ingredients; let i = index"
+                (click)="onShoppingListIngredientClick(i)">
 
                 <!-- simply print the current ingredient name and amount -->
                 {{ ingredient.name }} {{ ingredient.amount }}
