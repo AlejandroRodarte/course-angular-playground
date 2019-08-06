@@ -77,6 +77,34 @@
 
 				</div>
 
+				<!-- container for the form array section -->
+				<!-- on this container we should place the formArrayName directive and associate the form array name -->
+				<div formArrayName="hobbies">
+
+					<h4>
+						Your Hobbies
+					</h4>
+
+					<!-- on click, add a hobby text input (push a new form control to the the form array) -->
+					<button class="btn btn-default"
+							(click)="onAddHobby()"
+							type="button">
+						Add Hobby
+					</button>
+
+					<!-- loop through the array of abstract controls -->
+					<div class="form-group"
+						 *ngFor="let hobbyControl of getControls('hobbies'); let i = index">
+
+						<!-- create each time a new text input with a form control name being the index value -->
+						<input 	type="text" 
+								class="form-control"
+								[formControlName]="i">
+
+					</div>
+
+				</div>
+
 				<!-- signupForm.valid and signupForm.touched represent the overall form properties -->
 				<span 	class="help-block"
 						*ngIf="!signupForm.valid && signupForm.touched">
