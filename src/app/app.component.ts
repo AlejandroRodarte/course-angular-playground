@@ -68,11 +68,32 @@ export class AppComponent implements OnInit {
 			console.log(value);
 		});
 
+		// setValue() to pre-configure the full form
+		this.signupForm.setValue({
+			'userData': {
+				'username': 'Max',
+				'email': 'max@test.com'
+			},
+			'gender': 'male',
+			'hobbies': []
+		});
+
+		// patchValue() to set a particular form control value
+		this.signupForm.patchValue({
+			'userData': {
+				'username': 'Anna',
+			}
+		});
+
 	}
 
 	// on submission, log signup form
 	onSubmit(): void {
 		console.log(this.signupForm);
+
+		// reset() to clear form (we can pass an object to clear only text fields and not radio buttons for example)
+		this.signupForm.reset();
+
 	}
 
 	// FormArray extends from AbstractControl, so it is, in essence an array of controls where you can
