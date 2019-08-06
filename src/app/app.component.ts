@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray, AbstractControl } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
 	selector: 'app-root',
@@ -42,11 +43,13 @@ export class AppComponent implements OnInit {
 		// append forbiddenNames custom validator method reference
 		// inside that method we make a call to 'this', where such method is called not from our class, but by Angular outside
 		// so we need to bind this class instance so no problems persists
+
+		// third argument of FormControl constructor: aynschronous validator method references
 		this.signupForm = new FormGroup({
 
 			'userData': new FormGroup({
 				'username': new FormControl(null, [Validators.required, this.forbiddenNames.bind(this)]),
-				'email': new FormControl(null, [Validators.required, Validators.email])
+				'email': new FormControl(null, [Validators.required, Validators.email], this.forbiddenEmails)
 			}),
 
 			'gender': new FormControl(this.genders[0]),
@@ -94,6 +97,35 @@ export class AppComponent implements OnInit {
 
 		// if not, it means the username is fine, so return null for the error
 		return null;
+
+	}
+
+	// asynchronous validators which can await for an asynchronous task to be resolved
+	// can resolve either null of an object will string keys and boolean values
+	forbiddenEmails(control: FormControl): Promise<{ [key: string]: boolean | null }> | Observable<{ [key: string]: boolean | null }> {
+
+		// return new promise that
+		return new Promise<{ [key: string]: boolean | null }>((resolve, reject) => {
+
+			// will wait for a timeout
+			setTimeout(() => {
+
+				// after such timeout if the email matches some hardcoded value
+				if (control.value === 'test@test.com') {
+
+					// if validation fails, we can resolve by sending the error code
+					resolve({
+						'emailIsForbidden': true
+					});
+
+				} else {
+					// if validation succeeds, we can resolve to null
+					resolve(null);
+				}
+
+			}, 1500);
+
+		});
 
 	}
 
