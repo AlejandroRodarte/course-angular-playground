@@ -1,136 +1,20 @@
+<!-- root component html -->
+
+<!-- the header component -->
+<app-header></app-header>
+
+<!-- main container -->
 <div class="container">
 
-	<div class="row">
+    <!-- grid -->
+    <div class="row">
 
-		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
-			
-			<!-- bind this form with the FormGroup -->
-			<!-- listen for submission with ngSubmit -->
-			<form  	[formGroup]="projectForm"
-					(ngSubmit)="onSubmit()">
+        <!-- first column: app-routlet, will load either RecipesComponent or ShoppingListComponent -->
+        <!-- in dependence of current route -->
+        <div class="col-md-12">
+            <router-outlet></router-outlet>
+        </div>
 
-				<!-- project name -->
-				<div class="form-group">
-
-					<label for="projectName">
-						Project Name
-					</label>
-
-					<!-- bind this input with projectName FormControl -->
-					<input  type="text" 
-							name="projectName" 
-							id="projectName"
-							class="form-control"
-							[formControlName]="'projectName'">
-					
-					<!-- display this span if the async validator is pending to resolve -->
-					<span   *ngIf="projectForm.get('projectName').pending === true"
-							class="help-block">
-
-						Validating project name...
-
-						<!-- display the loading gif -->
-						<img  [src]="loadingGifUrl" 
-								alt="Loading..."
-								class="loadingGif">
-
-					</span>
-
-					<!-- displat this span if the async validation is no longer pending, if this field has already been touched and if the field at the end is not even valid -->
-					<span 	class="help-block"
-							*ngIf="!projectForm.get('projectName').pending && projectForm.get('projectName').touched && !projectForm.get('projectName').valid">
-
-						<!-- required error -->
-						<span *ngIf="projectForm.get('projectName').errors['required']">
-							This field is required.
-						</span>
-
-						<!-- invalidProjectName error we resolved on the async validator method handler -->
-						<span *ngIf="projectForm.get('projectName').errors['invalidProjectName']">
-							This project name is forbidden!
-						</span>
-
-					</span>
-
-				</div>
-
-				<!-- email -->
-				<div class="form-group">
-
-					<label for="email">
-						Email Address
-					</label>
-
-					<!-- bind this input with the 'email' FormControl -->
-					<input  type="text" 
-							name="email" 
-							id="email"
-							class="form-control"
-							[formControlName]="'email'">
-					
-					<!-- display this span if it the input is not valid and already has been touched -->
-					<span 	class="help-block"
-							*ngIf="!projectForm.get('email').valid && projectForm.get('email').touched">
-
-						<!-- required error -->
-						<span *ngIf="projectForm.get('email').errors['required']">
-							This field is required.
-						</span>
-
-						<!-- invalid email format error -->
-						<span *ngIf="projectForm.get('email').errors['email']">
-							Please provide a valid email.
-						</span>
-
-					</span>
-
-				</div>
-
-				<!-- project status -->
-				<div class="form-group">
-
-					<label for="projectStatus">
-						Project Status
-					</label>
-
-					<!-- bind this input with the 'projectStatus' FormControl -->
-					<select name="projectStatus" 
-							id="projectStatus"
-							class="form-control"
-							[formControlName]="'projectStatus'">
-
-						<!-- loop through the projectStatuses array and display all possible statuses on dropdown -->
-						<option *ngFor="let status of projectStatuses" 
-								 [value]="status">
-							{{ status }}
-						</option>
-
-					</select>
-
-				</div>
-
-				<div>
-
-					<!-- submit button -->
-					<button class="btn btn-success"
-							type="button"
-							[disabled]="!projectForm.valid"
-							(click)="onSubmit()">
-						Submit
-					</button>
-
-					<!-- invalid form message -->
-					<span 	*ngIf="!projectForm.valid && projectForm.touched"
-							class="help-block">
-						The form is invalid. Please check all of your fields before submitting.
-					</span>
-
-				</div>
-
-			</form>
-
-		</div>
-
-	</div>
+    </div>
 
 </div>
