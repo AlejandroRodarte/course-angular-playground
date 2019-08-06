@@ -7,18 +7,22 @@ input.ng-invalid.ng-touched {
   border: solid 1px red;
 }
 
+/* style pending inputs */
 input.ng-pending {
   border: solid 1px blue;
 }
 
+/* style valid inputs */
 input.ng-valid {
   border: solid 1px green;
 }
 
+/* style inputs */
 input {
   margin-bottom: 1.1rem;
 }
 
+/* style the loading gif */
 img.loadingGif {
   max-width: 20px;
 }
