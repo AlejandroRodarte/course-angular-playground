@@ -136,24 +136,15 @@ export class RecipeEditComponent implements OnInit {
 		// clear the form
 		this.recipeForm.reset();
 
-		// if we were not on edit mode (adding), it means we are on path localhost:4200/recipes/new
-		// we desire to route the user to the recently created recipe, so we extract from the service the length of the recipes array
-		// and use it to route the user to such new recipe path
+		// route the user to the correct path
+		this.routeUser();
 
-		// before: localhost:4200/recipes/new
-		// after: localhost:4200/recipes/id
+	}
 
-		// if we were on edit mode (updating), we will route the user one level upwards so exit him from the /edit path
-		if (!this.editMode) {
-			this.router.navigate(['..', this.recipeService.length - 1], {
-				relativeTo: this.route
-			});
-		} else {
-			this.router.navigate(['..'], {
-				relativeTo: this.route
-			});
-		}
-
+	// on cancel, reset the form and redirect user
+	onCancel(): void {
+		this.recipeForm.reset();
+		this.routeUser();
 	}
 
 	// handler when deleting a recipe ingredient
@@ -226,6 +217,29 @@ export class RecipeEditComponent implements OnInit {
 				this.submitRecipeButton.nativeElement.textContent = 'Add Recipe';
 				break;
 
+		}
+
+	}
+
+	// route the user when adding/updating/canceling a form
+	private routeUser(): void {
+
+		// if we were not on edit mode (adding), it means we are on path localhost:4200/recipes/new
+		// we desire to route the user to the recently created recipe, so we extract from the service the length of the recipes array
+		// and use it to route the user to such new recipe path
+
+		// before: localhost:4200/recipes/new
+		// after: localhost:4200/recipes/id
+
+		// if we were on edit mode (updating), we will route the user one level upwards so exit him from the /edit path
+		if (!this.editMode) {
+			this.router.navigate(['..', this.recipeService.length - 1], {
+				relativeTo: this.route
+			});
+		} else {
+			this.router.navigate(['..'], {
+				relativeTo: this.route
+			});
 		}
 
 	}

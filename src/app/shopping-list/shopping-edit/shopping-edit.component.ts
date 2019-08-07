@@ -100,8 +100,10 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	}
 
 	// when deleting, call the service delete method and pass the currently selected ingredient index
+	// also, clear the form
 	onDeleteClick(): void {
 		this.shoppingListService.deleteIngredient(this.ingredientIndex);
+		this.clearForm();
 	}
 
 	// clear form
