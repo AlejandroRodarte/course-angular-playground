@@ -11,11 +11,14 @@ export class ShortenPipe implements PipeTransform {
 
     // transform implementation
     // get the value (output to transform), injected by Angular automatically when using this pipe
-    transform(value: string) {
+
+    // ...args: expect a series of arguments to parameterize the type
+    // args[0]: the limit of characters to shorten the text
+    transform(value: string, ...args: string[]): string {
 
         // pipe parsing logic goes here
-        if (value.length > 10) {
-            return value.substr(0, 10) + ' ...';
+        if (value.length > +args[0]) {
+            return value.substr(0, +args[0]) + ' ...';
         }
 
         return value;
