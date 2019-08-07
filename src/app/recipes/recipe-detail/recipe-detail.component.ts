@@ -3,6 +3,7 @@ import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Ingredient } from 'src/app/shared/ingredient.model';
 
 @Component({
 	selector: 'app-recipe-detail',
@@ -37,7 +38,6 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 		// to set the value of the render flag
 		this.selectedRecipeSubscription = this.recipeService.selectedRecipe.subscribe((index: number) => {
 			this.doRender(index);
-			console.log(this.recipe.ingredients);
 		});
 
 		// subscribe to the params observable: listen for changes in the id dynamic parameter
@@ -50,8 +50,6 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 			this.recipe = this.recipeService.getRecipe(id);
 			this.selectedIndex = id;
 
-			console.log(this.recipe.ingredients);
-
 		});
 
 	}
@@ -60,7 +58,6 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	// delefate the task to the recipe service
 	addToShoppingList() {
 		this.recipeService.addToShoppingList(this.recipe.ingredients);
-		console.log(this.recipe.ingredients);
 	}
 
 	// doRender() method, ran each time we select a recipe on the UI

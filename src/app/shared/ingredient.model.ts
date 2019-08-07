@@ -1,8 +1,3 @@
-export interface IngredientProps {
-    ingredientName: string;
-    ingredientAmount: number;
-}
-
 // ingredient model, plain old object
 export class Ingredient {
 

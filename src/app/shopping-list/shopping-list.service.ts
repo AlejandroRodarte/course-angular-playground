@@ -38,8 +38,6 @@ export class ShoppingListService {
             this.pushOrUpdate(ingredient, false);
         });
 
-        console.log(this.ingredients);
-
         // notify components the array changed
         this.ingredientsChanged.next();
 
@@ -92,7 +90,7 @@ export class ShoppingListService {
 
         // out of the loop: if item did not exist (brand new), simply push the ingredient to the array
         if (!existed) {
-            this.ingredients.push(ingredient);
+            this.ingredients.push(new Ingredient(ingredient.name, ingredient.amount));
         }
 
     }

@@ -43,16 +43,16 @@
                     <!-- first field: recipe name -->
                     <div class="form-group">
 
-                        <label for="recipeName">
+                        <label for="name">
                             Recipe Name
                         </label>
         
-                        <!-- associate it with 'recipeName' FormControl on component class -->
+                        <!-- associate it with 'name' FormControl on component class -->
                         <input  type="text" 
-                                name="recipeName"
-                                id="recipeName"
+                                name="name"
+                                id="name"
                                 class="form-control"
-                                [formControlName]="'recipeName'">
+                                [formControlName]="'name'">
         
                     </div>
 
@@ -67,17 +67,17 @@
                     <!-- second field: recipe description -->
                     <div class="form-group">
 
-                        <label for="recipeDescription">
+                        <label for="description">
                             Recipe Description
                         </label>
         
                         <!-- associate it with 'recipeName' FormControl on component class -->
                         <textarea   type="text" 
-                                    name="recipeDescription"
-                                    id="recipeDescription"
+                                    name="description"
+                                    id="description"
                                     class="form-control"
                                     rows="6"
-                                    [formControlName]="'recipeDescription'">
+                                    [formControlName]="'description'">
                         </textarea>
         
                     </div>
@@ -93,19 +93,19 @@
                     <!-- third field: recipe image path -->
                     <div class="form-group">
 
-                        <label for="recipeImagePath">
+                        <label for="imagePath">
                             Recipe Image Path
                         </label>
         
                         <!-- associate it with 'recipeName' FormControl on component class -->
                         <input  type="text" 
-                                name="recipeImagePath"
-                                id="recipeImagePath"
+                                name="imagePath"
+                                id="imagePath"
                                 class="form-control"
-                                [formControlName]="'recipeImagePath'">
+                                [formControlName]="'imagePath'">
                         
                         <!-- warning message to user in case it enters an invalid id -->
-                        <span   *ngIf="!recipeForm.get('recipeImagePath').valid && recipeForm.get('recipeImagePath').touched"
+                        <span   *ngIf="!recipeForm.get('imagePath').valid && recipeForm.get('imagePath').touched"
                                 class="help-block">
                             Please enter a valid URL.
                         </span>
@@ -120,7 +120,7 @@
 
                 <div class="col-xs-12">
 
-                    <div *ngIf="recipeForm.get('recipeImagePath').valid">
+                    <div *ngIf="recipeForm.get('imagePath').valid">
                
                        <label>
                            Preview Image
