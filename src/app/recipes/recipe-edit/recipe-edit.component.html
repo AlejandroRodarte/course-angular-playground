@@ -71,7 +71,7 @@
                             Recipe Description
                         </label>
         
-                        <!-- associate it with 'recipeName' FormControl on component class -->
+                        <!-- associate it with 'description' FormControl on component class -->
                         <textarea   type="text" 
                                     name="description"
                                     id="description"
@@ -97,7 +97,7 @@
                             Recipe Image Path
                         </label>
         
-                        <!-- associate it with 'recipeName' FormControl on component class -->
+                        <!-- associate it with 'imagePath' FormControl on component class -->
                         <input  type="text" 
                                 name="imagePath"
                                 id="imagePath"
@@ -120,12 +120,15 @@
 
                 <div class="col-xs-12">
 
+                    <!-- render preview image if the imagePath control happens to have a valid URL -->
                     <div *ngIf="recipeForm.get('imagePath').valid">
                
                        <label>
                            Preview Image
                        </label>
                
+                       <!-- bind the src property to the currentImagePath property, which is subscribed to -->
+                       <!-- value changes of the imagePath controls -->
                        <img    [src]="currentImagePath" 
                                alt="Waiting for valid url..."
                                class="img-responsive"

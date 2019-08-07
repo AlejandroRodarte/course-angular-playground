@@ -57,8 +57,8 @@ export class RecipeEditComponent implements OnInit {
 			// if id is a number, it means the current route is
 			// localhost:4200/recipes/id/edit to edit an existing recipe
 
-			// so set the mode of this form to 'update' mode, fetch the recipe by id
-			// and finally load the form with the fetched recipe data
+			// so set the mode of this form to 'update' mode (set editMode flag to true and change the submit button text
+			// to 'Update Recipe'
 
 			// if id is not a number, it means that we are adding a new recipe, so set the form mode
 			// to 'add' mode
@@ -68,6 +68,7 @@ export class RecipeEditComponent implements OnInit {
 				this.setMode(FormMode.Add);
 			}
 
+			// load and initialize the recipe form
 			this.loadForm();
 
 		});
@@ -97,8 +98,13 @@ export class RecipeEditComponent implements OnInit {
 	// when submitting
 	onSubmit(): void {
 
-		// call the service and send the recipe with the id (a number or NaN)
-		// based on the value of the id the method will decide whether to add or update
+		// the value of the whole recipe form happens to match EXACTLY the structure of the Recipe object
+		// while keeping consistency between the Recipe/Ingredient model property names and the form control names
+		// example: the 'name' field on the Recipes model matches the 'name' form control where you place the recipe name
+		// in this particular scenario, we can DIRECTLY inject the recipe form value instead of extracting the form inputs
+		// one by one and creating a recipe instance to inject to this method
+
+		// the second argument determines if we are either adding a new recipe or updating an existing one
 		this.recipeService.addOrUpdateRecipe(this.recipeForm.value, this.id);
 		
 		// clear the form
@@ -139,23 +145,32 @@ export class RecipeEditComponent implements OnInit {
 	// load a form
 	loadForm(): void {
 
+		// set initial values to the recipe name, description and image path on generic variables
+		// the recipe ingredients variable will be at the end an array of form groups, so declare a new instance of an empty FormArray
 		let recipeName: string = '';
 		let recipeDescription: string = '';
 		let recipeImagePath: string = '';
 		let recipeIngredients: FormArray = new FormArray([]);
 
+		// if we are going to edit an existing recipe...
 		if (this.editMode) {
 
+			// fetch it
 			const recipe = this.recipeService.getRecipe(this.id);
 
+			// save its name, description and image path
 			recipeName = recipe.name;
 			recipeDescription = recipe.description;
 			recipeImagePath = recipe.imagePath;
 
+			// if this recipe has any ingredients...
 			if (recipe['ingredients']) {
 
+				// loop through each one of them
 				for (let ingredient of recipe.ingredients) {
 
+					// and push the FormArray a new FormGropu with two controls for ingredient name and amount
+					// and set them initially to the value of the current ingredient object 
 					recipeIngredients.push(new FormGroup({
 						'name': new FormControl(ingredient.name, Validators.required),
 						'amount': new FormControl(ingredient.amount, [Validators.required, Validators.min(1)])
@@ -175,6 +190,8 @@ export class RecipeEditComponent implements OnInit {
 		// the recipe name must not be empty
 		// the recipe description must not be empty
 		// the recipe image path must not be empty and be a valid url
+
+		// set this form controls to the variables we declared initially
 		this.recipeForm = new FormGroup({
 			'name': new FormControl(recipeName, Validators.required),
 			'description': new FormControl(recipeDescription, Validators.required),

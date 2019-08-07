@@ -88,7 +88,13 @@ export class ShoppingListService {
 
         }
 
-        // out of the loop: if item did not exist (brand new), simply push the ingredient to the array
+        // out of the loop: if item did not exist, we will push to this ingredients array a COPY (new instance) of the ingredient
+        // why a new copy? the addToShoppingList() method, which adds ingredients of a particular recipe to the shopping list,
+        // passes as an argument a reference to the recipe's ingredients
+
+        // when a recipe's ingredient is not found on this shopping list array of ingredients, we desire to add this new ingredient to the array
+        // however if we simply push the current ingredient, we would be pushing a REFERENCE to that particular ingredient in the recipe
+        // to correct this, we create a deep copy of this ingredient by instantiating a new Ingrediet object and pass it to this array
         if (!existed) {
             this.ingredients.push(new Ingredient(ingredient.name, ingredient.amount));
         }

@@ -1,9 +1,8 @@
-import { Component, OnInit, Input, AfterContentChecked, AfterViewChecked, DoCheck, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Ingredient } from 'src/app/shared/ingredient.model';
 
 @Component({
 	selector: 'app-recipe-detail',
@@ -55,7 +54,8 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	}
 
 	// add ingredients to shopping list
-	// delefate the task to the recipe service
+	// delegate the task to the recipe service
+	// we are passing a reference to the array of ingredients this particular recipe has
 	addToShoppingList() {
 		this.recipeService.addToShoppingList(this.recipe.ingredients);
 	}
