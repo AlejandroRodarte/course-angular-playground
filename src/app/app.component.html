@@ -16,8 +16,9 @@
 						{{ server.status }}
 					</span>
 
+					<!-- apply the custom ShortenPipe to this string -->
 					<strong>
-						{{ server.name }}
+						{{ server.name | shorten }}
 					</strong> 
 
 					| 
