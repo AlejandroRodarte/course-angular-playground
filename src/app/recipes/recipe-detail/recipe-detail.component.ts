@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, AfterContentChecked, AfterViewChecked, DoCheck, OnChanges, OnDestroy } from '@angular/core';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -24,7 +24,9 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	selectedRecipeSubscription: Subscription;
 
 	// inject the recipe service singleton
+	// inject the router to redirect user and route to redirect based on relative path
 	constructor(private recipeService: RecipeService,
+				private router: Router,
 				private route: ActivatedRoute) {
 
 	}
@@ -35,7 +37,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 		// to set the value of the render flag
 		this.selectedRecipeSubscription = this.recipeService.selectedRecipe.subscribe((index: number) => {
 			this.doRender(index);
-		}) 
+		});
 
 		// subscribe to the params observable: listen for changes in the id dynamic parameter
 		// on trigger, access the params and fetch the id
@@ -47,7 +49,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 			this.recipe = this.recipeService.getRecipe(id);
 			this.selectedIndex = id;
 
-		})
+		});
 
 	}
 
@@ -68,6 +70,21 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 			this.selectedIndex = index;
 			this.renderFlag = true;
 		}
+
+	}
+
+	// delete recipe button handler
+	onDeleteRecipe(): void {
+
+		// call the delete recipe method from the service and pass the selected recipe index
+		this.recipeService.deleteRecipe(this.selectedIndex);
+
+		// navigate on upper level than the current one
+		// when deleting a recipe, we are on path localhost:4200/recipes/id
+		// when deleting, we will go to path localhost:4200/recipes
+		this.router.navigate(['..'], {
+			relativeTo: this.route
+		});
 
 	}
 

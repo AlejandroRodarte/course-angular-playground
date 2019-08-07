@@ -1,0 +1,19 @@
+/* edit button styling */
+.btn-edit {
+    background: brown;
+}
+
+/* general input styling */
+input {
+    margin: 0.8rem;
+}
+
+/* styling for valid and touched inputs */
+input.ng-valid.ng-touched {
+    border: 1px solid green;
+}
+
+/* styling for invalid and touched inputs */
+input.ng-invalid.ng-touched {
+    border: 1px solid red;
+}

@@ -6,7 +6,13 @@ import { Subject, Subscription } from 'rxjs';
 
 // this service will receive as a dependency another service: shopping list service
 // to make it injectable, use this decorator
-@Injectable()
+
+// update: this service was destroyed when leaving the /recipes path and instantiated when going back
+// to such path; this prevented the deletion of recipes
+// to solve this, we make this service a global singleton
+@Injectable({
+    providedIn: 'root'
+})
 export class RecipeService implements OnDestroy {
 
     // an array of Recipe models
@@ -47,6 +53,9 @@ export class RecipeService implements OnDestroy {
     // item is found
     selectedRecipe = new Subject<number>();
 
+    // recipes changed subject: informs subscribers wheneber the array of recipes has suffered changes
+    recipesChanged = new Subject<void>();
+
     // selected recipe subscription
     selectedRecipeSubscription: Subscription;
     
@@ -67,7 +76,7 @@ export class RecipeService implements OnDestroy {
                 this.currentRecipeIndex = index;
             }
             
-        })
+        });
 
     }
 
@@ -83,9 +92,37 @@ export class RecipeService implements OnDestroy {
         return this.recipes.slice();
     }
 
+    // get the length of the recipes array; this method is implement to route the user
+    // to the new recipe he created once submitted
+    get length(): number {
+        return this.recipes.length;
+    }
+
+    // add or update a recipe
+    addOrUpdateRecipe(recipe: Recipe, id: number): void {
+
+        // if the id is not a number, it means that we are attempting to add a new recipe, so push it to
+        // the recipes arrau
+        // if there is an id, simply replace the recipe element with the incoming one
+        if (isNaN(id)) {
+            this.recipes.push(recipe);
+        } else {
+            this.recipes[id] = recipe;
+        }
+
+        // in both cases, the recipes array changed, so notify all interested subscribers
+        this.recipesChanged.next();
+    }
+
     // addToShoppingList() handler: delegate the task to the shopping list service
     addToShoppingList(ingredients: Ingredient[]): void {
         this.shoppingListService.addIngredients(ingredients);
+    }
+
+    // delete a recipe based on id and notify subscribers
+    deleteRecipe(index: number): void {
+        this.recipes.splice(index, 1);
+        this.recipesChanged.next();
     }
 
     // unsubscribe upon service destruction

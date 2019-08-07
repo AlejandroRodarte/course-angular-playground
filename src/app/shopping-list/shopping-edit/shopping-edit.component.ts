@@ -1,13 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 import { ShoppingListService } from './../shopping-list.service';
-import { NgForm } from '@angular/forms';
+import { NgForm, Form } from '@angular/forms';
 import { Subscription } from 'rxjs';
-
-enum Mode {
-	Add,
-	Update
-}
+import { FormMode } from 'src/app/shared/form-mode.enum';
 
 @Component({
     selector: 'app-shopping-edit',
@@ -51,7 +47,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 				this.ingredientIndex = index;
 
 				// set the update mode (change button text and toggle the edit mode flag to true)
-				this.setMode(Mode.Update);
+				this.setMode(FormMode.Update);
 
 				// and the load the form data
 				this.loadForm(index);
@@ -120,7 +116,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 		});
 
 		// set the 'add' mode (change the button text and set edit mode flag to false)
-		this.setMode(Mode.Add);
+		this.setMode(FormMode.Add);
 
 	}
 
@@ -139,17 +135,17 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	}
 
 	// set mode
-	private setMode(mode: Mode) {
+	private setMode(mode: FormMode) {
 
 		switch (mode) {
 
 			// on 'add': set edit mode to false and make the submit button have the 'add' text
 			// on 'update': set edit mode to true and make the submit button have the 'update' text
-			case Mode.Add: 
+			case FormMode.Add: 
 				this.editMode = false;
 				this.submitButton.nativeElement.textContent = 'Add';
 				break;
-			case Mode.Update:
+			case FormMode.Update:
 				this.editMode = true;
 				this.submitButton.nativeElement.textContent = 'Update';
 				break;

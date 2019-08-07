@@ -1,3 +1,155 @@
-<p>
-    recipe-edit works!
-</p>
+<!-- recipe edit component -->
+
+<!-- grid -->
+<div class="row">
+
+    <!-- column -->
+    <div class="col-xs-12">
+
+        <!-- form: we will use the reactive recipeForm found on our component -->
+        <!-- listen for submit button also -->
+        <form   [formGroup]="recipeForm" 
+                (ngSubmit)="onSubmit()">
+
+            <!-- first field: recipe name -->
+            <div class="form-group">
+
+                <label for="recipeName">
+                    Recipe Name
+                </label>
+
+                <!-- associate it with 'recipeName' FormControl on component class -->
+                <input  type="text" 
+                        name="recipeName"
+                        id="recipeName"
+                        class="form-control"
+                        [formControlName]="'recipeName'">
+
+            </div>
+
+            <!-- second field: recipe description -->
+            <div class="form-group">
+
+                <label for="recipeDescription">
+                    Recipe Description
+                </label>
+
+                <!-- associate it with 'recipeName' FormControl on component class -->
+                <input  type="text" 
+                        name="recipeDescription"
+                        id="recipeDescription"
+                        class="form-control"
+                        [formControlName]="'recipeDescription'">
+
+            </div>
+
+            <!-- third field: recipe image path -->
+            <div class="form-group">
+
+                <label for="recipeImagePath">
+                    Recipe Image Path
+                </label>
+
+                <!-- associate it with 'recipeName' FormControl on component class -->
+                <input  type="text" 
+                        name="recipeImagePath"
+                        id="recipeImagePath"
+                        class="form-control"
+                        [formControlName]="'recipeImagePath'">
+                
+                <!-- warning message to user in case it enters an invalid id -->
+                <span   *ngIf="!recipeForm.get('recipeImagePath').valid && recipeForm.get('recipeImagePath').touched"
+                        class="help-block">
+                    Please enter a valid URL.
+                </span>
+
+            </div>
+
+            <!-- ingredients FormArray -->
+            <div formArrayName="ingredients">
+
+                <!-- button to be able to add a new ingredient FormGroup to the FormArray -->
+                <button class="btn btn-secondary"
+                        type="button"
+                        (click)="onAddIngredient()">
+                    Add Ingredient
+                </button>
+
+                <!-- button to delete all ingredient form groups -->
+                <button class="btn btn-danger"
+                        type="button"
+                        (click)="onDeleteAllIngredients()">
+                    Delete All Ingredients
+                </button>
+            
+                <!-- loop through all ingredient FormGroup elements inside the FormArray -->
+                <!-- the form group name for each iteration will be its index value -->
+                <div    class="form-group"
+                        *ngFor="let ingredient of getControls('ingredients'); let i = index"
+                        [formGroupName]="i">
+                    
+                    <!-- ingredient name -->
+                    <label>
+                        Ingredient Name
+                    </label>
+
+                    <input  type="text"
+                            class="form-control"
+                            [formControlName]="'ingredientName'">
+                    
+                    <!-- ingredient amount -->
+                    <label>
+                        Ingredient Amount
+                    </label>
+
+                    <input  type="number"
+                            class="form-control"
+                            [formControlName]="'ingredientAmount'">
+                    
+                    <!-- each ingredient FormGroup will come with a delete button so we can delete an ingredient while updating/adding a recipe -->
+                    <button class="btn btn-danger"
+                            type="button"
+                            (click)="onDeleteRecipeIngredient(i)">
+                        Delete Ingredient
+                    </button>
+
+                </div>
+            
+            </div>
+
+            <!-- general form warning: if form is invalid in any sense, display this text -->
+            <span   *ngIf="!recipeForm.valid && recipeForm.touched"
+                    class="help-block">
+                Please fill in all forms and ensure that you have positive ingredient amounts.
+            </span>
+
+            <!-- submit button -->
+            <!-- if we are on edit mode, we will style it differently with .btn-edit -->
+            <!-- while the form is invalid, we will make this button disabled -->
+            <!-- add a local reference since we will edit its text -->
+            <button class="btn btn-success"
+                    [ngClass]=" { 'btn-edit': editMode } "
+                    type="submit"
+                    [disabled]="!recipeForm.valid"
+                    #submitRecipeButton>
+                Add Recipe
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="col-xs-12"
+         *ngIf="recipeForm.get('recipeImagePath').valid">
+
+        <label>
+            Preview Image
+        </label>
+
+        <img    [src]="currentImagePath" 
+                alt="Waiting for valid url..."
+                style="display: block; max-width: 300px;">
+    
+    </div>
+
+</div>
