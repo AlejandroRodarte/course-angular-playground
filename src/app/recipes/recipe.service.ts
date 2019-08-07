@@ -117,6 +117,7 @@ export class RecipeService implements OnDestroy {
     // addToShoppingList() handler: delegate the task to the shopping list service
     addToShoppingList(ingredients: Ingredient[]): void {
         this.shoppingListService.addIngredients(ingredients);
+        console.log(ingredients);
     }
 
     // delete a recipe based on id and notify subscribers

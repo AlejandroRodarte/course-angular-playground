@@ -20,26 +20,26 @@
                     <div class="col-sm-5 form-group">
     
                         <!-- first input: ingredient name -->
-                        <label for="ingredientName">
+                        <label for="name">
                             Name
                         </label>
     
                         <!-- place a local reference to use on the .ts file -->
-                        <!-- ngModel: this will be a control with name ingredientName -->
+                        <!-- ngModel: this will be a control with name name -->
                         <!-- required: can't be empty -->
                         <!-- make this field disabled whenever we are on 'update' mode so the user can't change the name -->
                         <input 
                             type="text" 
-                            name="ingredientName"
-                            id="ingredientName" 
+                            name="name"
+                            id="name" 
                             class="form-control"
                             ngModel
                             required
                             [disabled]="editMode"
-                            #ingredientName="ngModel">
+                            #name="ngModel">
                         
                         <!-- display this text if ingredient name is invalid and touched -->
-                        <span   *ngIf="!ingredientName.valid && ingredientName.touched"
+                        <span   *ngIf="!name.valid && name.touched"
                                 class="help-block">
                             This field is required.
                         </span>
@@ -49,7 +49,7 @@
                     <!-- second input: ingredient amount -->
                     <div class="col-sm-2 form-group">
     
-                        <label for="ingredientAmount">
+                        <label for="amount">
                             Amount
                         </label>
     
@@ -59,16 +59,16 @@
                         <!-- required: field can't be empty -->
                         <input 
                             type="number"
-                            name="ingredientAmount"
-                            id="ingredientAmount" 
+                            name="amount"
+                            id="amount" 
                             class="form-control"
                             [ngModel]="1"
                             [pattern]="'^[1-9]+[0-9]*$'"
                             required
-                            #ingredientAmount="ngModel">
+                            #amount="ngModel">
                         
                         <!-- display text if field is invalid and touched -->
-                        <span   *ngIf="!ingredientAmount.valid && ingredientAmount.touched"
+                        <span   *ngIf="!amount.valid && amount.touched"
                                 class="help-block">
                             Wrong amount.
                         </span>

@@ -78,13 +78,13 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 		// on 'add', simply access the form value to fetch the ingredient name
 		// on 'update' access the value from the control itself (we can't access the value of disabled text fields)
 		if (!this.editMode) {
-			name = this.shoppingListForm.form.value.ingredientName;
+			name = this.shoppingListForm.form.value.name;
 		} else {
-			name = this.shoppingListForm.controls['ingredientName'].value;
+			name = this.shoppingListForm.controls['name'].value;
 		}
 		
 		// fetch the ingredient amount
-		const amount: number = +this.shoppingListForm.form.value.ingredientAmount;
+		const amount: number = +this.shoppingListForm.form.value.amount;
 
 		// add the ingredient through the service and set information whether we are 'adding' or 'updating'
 		this.shoppingListService.addIngredient(new Ingredient(name, amount), this.editMode);
@@ -110,11 +110,11 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	private clearForm() {
 
 		// reset the ingredient name (make it pristine)
-		this.shoppingListForm.controls['ingredientName'].reset();
+		this.shoppingListForm.controls['name'].reset();
 
 		// set the ingredient amount to the original value
 		this.shoppingListForm.form.patchValue({
-			'ingredientAmount': 1
+			'amount': 1
 		});
 
 		// set the 'add' mode (change the button text and set edit mode flag to false)
@@ -130,8 +130,8 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 
 		// set the form to the fetched ingredient fields
 		this.shoppingListForm.setValue({
-			'ingredientName': ingredient.name,
-			'ingredientAmount': ingredient.amount
+			'name': ingredient.name,
+			'amount': ingredient.amount
 		});
 
 	}

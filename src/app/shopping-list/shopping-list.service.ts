@@ -38,6 +38,8 @@ export class ShoppingListService {
             this.pushOrUpdate(ingredient, false);
         });
 
+        console.log(this.ingredients);
+
         // notify components the array changed
         this.ingredientsChanged.next();
 
