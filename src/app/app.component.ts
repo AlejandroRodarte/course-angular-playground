@@ -18,7 +18,7 @@ export interface PostProps {
 export class AppComponent implements OnInit {
 
 	// locally loaded posts from the database
-    loadedPosts = [];
+    loadedPosts: PostProps[] = [];
 
 	// inject the http client dependency to use client method to make http requests
     constructor(private http: HttpClient) {
@@ -106,7 +106,10 @@ export class AppComponent implements OnInit {
 				})
 			)
 			.subscribe((response) => {
-				console.log(response);
+
+				// get the array of post props and load it into the field
+				this.loadedPosts = response;
+
 			});
 
 	}
