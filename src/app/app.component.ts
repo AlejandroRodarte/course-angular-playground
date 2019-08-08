@@ -2,6 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
+// interface for the information a post has
+// used to inform TypeScript the data we expect at the end of the http response
+export interface PostProps {
+	title: string;
+	content: string;
+	id?: string
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -22,7 +30,7 @@ export class AppComponent implements OnInit {
     }
 
 	// on form submission
-    onCreatePost(postData: { title: string; content: string }) {
+    onCreatePost(postData: PostProps) {
 
 		// access the http client instance and call the post() method
 		// we pass in the API endpoint, the request body (postData)
@@ -35,7 +43,7 @@ export class AppComponent implements OnInit {
 		// if we do not set a subscription, Angular implies that we are not interested in a response, so by default
 		// it will not even send the request
 		this.http
-			.post(
+			.post<{ name: string }>(
 				'https://angular-course-app-eeedb.firebaseio.com/posts.json',
 				postData
 			)
@@ -72,14 +80,14 @@ export class AppComponent implements OnInit {
 		// so we will use observable operators with the pipe() method to beutify this data
 
 		this.http
-			.get(
+			.get<{ [key: string]: PostProps }>(
 				'https://angular-course-app-eeedb.firebaseio.com/posts.json'
 			)
 			.pipe(
-				map((response) => {
+				map((response: { [key: string]: PostProps }) => {
 
 					// we will go from an object of objects to an array of objects
-					const responseArray = [];
+					const responseArray: PostProps[] = [];
 
 					// loop through each object inside the big object with the keys
 					for (const key in response) {
