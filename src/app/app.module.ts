@@ -2,27 +2,31 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+// the http client module will allow us to make http requests
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { ShortenPipe } from './shorten.pipe';
-import { FilterPipe } from './filter.pipe';
-import { ReversePipe } from './reverse.pipe';
-import { SortPipe } from './sort.pipe';
 
-// components, directives AND PIPES are declared in the 'declarations' property
+// on the app module we declare that we will import the http client module
 @NgModule({
-  declarations: [
-    AppComponent,
-    ShortenPipe,
-    FilterPipe,
-    ReversePipe,
-    SortPipe
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+
+	declarations: [
+		AppComponent
+	],
+
+	imports: [
+		BrowserModule, 
+		FormsModule, 
+		HttpClientModule
+	],
+
+	providers: [
+
+	],
+
+	bootstrap: [
+		AppComponent
+	]
+	
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,74 +1,54 @@
-import { Component } from '@angular/core';
-
-export interface ServerProps {
-	instanceType: string;
-	name: string;
-	status: string;
-	started: Date;
-}
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-	filteredStatus: string = '';
+	// locally loaded posts from the database
+    loadedPosts = [];
 
-	// promise to resolve to a string
-	appStatus = new Promise<string>((resolve, reject) => {
+	// inject the http client dependency to use client method to make http requests
+    constructor(private http: HttpClient) {
 
-		setTimeout(() => {
-			resolve('stable');
-		}, 2000)
+    }
 
-	});
+    ngOnInit() {
 
-	servers: ServerProps[] = [
-		{
-			instanceType: 'medium',
-			name: 'Production Server',
-			status: 'stable',
-			started: new Date(15, 1, 2017)
-		},
-		{
-			instanceType: 'large',
-			name: 'User Database',
-			status: 'stable',
-			started: new Date(15, 1, 2017)
-		},
-		{
-			instanceType: 'small',
-			name: 'Development Server',
-			status: 'offline',
-			started: new Date(15, 1, 2017)
-		},
-		{
-			instanceType: 'small',
-			name: 'Testing Environment Server',
-			status: 'stable',
-			started: new Date(15, 1, 2017)
-		}
-	];
+    }
 
-	getStatusClasses(server: ServerProps) {
-		return {
-			'list-group-item-success': server.status === 'stable',
-			'list-group-item-warning': server.status === 'offline',
-			'list-group-item-danger': server.status === 'critical'
-		};
-	}
+	// on form submission
+    onCreatePost(postData: { title: string; content: string }) {
 
-	onAddServer(): void {
+		// access the http client instance and call the post() method
+		// we pass in the API endpoint, the request body (postData)
+		// and call the subscribe data afterwards to wait for an http response (log it)
 
-		this.servers.push({
-			instanceType: 'small',
-			name: 'New Server',
-			status: 'stable',
-			started: new Date(15, 1, 2017)
-		});
+		// the '/posts.json' is the API Endpoint in itself (post the data on a /json directory inside Firebase and expect a JSON file))
+		// the post data will be automatically parsed to JSON by Angular
 
-	}
+		// http requests are managed by observables so we can subscribe to them and fetch the http response
+		// if we do not set a subscription, Angular implies that we are not interested in a response, so by default
+		// it will not even send the request
+		this.http
+			.post(
+				'https://angular-course-app-eeedb.firebaseio.com/posts.json',
+				postData
+			)
+			.subscribe((httpResponse) => {
+				console.log(httpResponse);
+			});
+		  
+    }
 
+    onFetchPosts() {
+      // Send Http request
+    }
+
+    onClearPosts() {
+      // Send Http request
+    }
 }

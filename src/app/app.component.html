@@ -2,65 +2,93 @@
 
 	<div class="row">
 
-		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+		<div class="col-xs-12 col-md-6 col-md-offset-3">
 
-			<!-- filter string -->
-			<input  type="text" 
-					name="filteredStatus" 
-					id="filteredStatus"
-					[(ngModel)]="filteredStatus">
-			
-			<br><br>
+			<!-- template-driven form: pass directly the form value on method handler -->
+			<form #postForm="ngForm" (ngSubmit)="onCreatePost(postForm.value)">
 
-			<hr>
+				<div class="form-group">
 
-			<button class="btn btn-primary"
-					type="button"
-					(click)="onAddServer()">
-				Add Server
+					<label for="title">
+						Title
+					</label>
+
+					<!-- post title -->
+					<input
+						type="text"
+						class="form-control"
+						id="title"
+						required
+						ngModel
+						name="title"/>
+
+				</div>
+
+				<div class="form-group">
+
+					<label for="content">
+						Content
+					</label>
+
+					<!-- post content -->
+					<textarea
+						class="form-control"
+						id="content"
+						required
+						ngModel
+						name="content">
+					
+					</textarea>
+
+				</div>
+
+				<!-- submit button -->
+				<button
+					class="btn btn-primary"
+					type="submit"
+					[disabled]="!postForm.valid">
+					Send Post
+				</button>
+
+			</form>
+
+		</div>
+
+	</div>
+
+	<hr />
+
+	<div class="row">
+
+		<div class="col-xs-12 col-md-6 col-md-offset-3">
+
+			<!-- fetch posts from database -->
+			<button class="btn btn-primary" 
+					(click)="onFetchPosts()">
+				Fetch Posts
 			</button>
 
-			<br><br>
+			|
 
-			<hr>
+			<!-- clear posts on template -->
+			<button
+				class="btn btn-danger"
+				[disabled]="loadedPosts.length < 1"
+				(click)="onClearPosts()">
+				Clear Posts
+			</button>
 
-			<!-- async built-in pipe: recognizes appStatus as a Promise and will wait to render the resolved value -->
-			<h2>
-				App Status: {{ appStatus | async }}
-			</h2>
+		</div>
 
-			<ul class="list-group">
+	</div>
 
-				<!-- using the pipe inside the *ngFor to filter the 'server' output before looping -->
-				<!-- the filter string will be the input and the value to check on this element is the one -->
-				<!-- assigned to property 'status' -->
-				<li
-					class="list-group-item"
-					*ngFor="let server of servers | filter:filteredStatus:'status' | sort:'started'"
-					[ngClass]="getStatusClasses(server)">
+	<div class="row">
 
-					<span
-						class="badge">
-						{{ server.status }}
-					</span>
+		<div class="col-xs-12 col-md-6 col-md-offset-3">
 
-					<!-- apply the custom ShortenPipe to this string -->
-					<strong>
-						{{ server.name | shorten:'15' }}
-					</strong> 
-
-					| 
-
-					<!-- using a pipe to transform the instanceType string: all caps -->
-					{{ server.instanceType | uppercase | reverse }} 
-
-					| 
-
-					{{ server.started | date:'fullDate' | uppercase }}
-
-				</li>
-
-			</ul>
+			<p>
+				No posts available!
+			</p>
 
 		</div>
 
