@@ -3,7 +3,8 @@ import { ServerProps } from './app.component';
 
 // filter pipe
 @Pipe({
-  	name: 'filter'
+	  name: 'filter',
+	  pure: false
 })
 export class FilterPipe implements PipeTransform {
 
