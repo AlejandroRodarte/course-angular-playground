@@ -16,6 +16,15 @@ export class AppComponent {
 
 	filteredStatus: string = '';
 
+	// promise to resolve to a string
+	appStatus = new Promise<string>((resolve, reject) => {
+
+		setTimeout(() => {
+			resolve('stable');
+		}, 2000)
+
+	});
+
 	servers: ServerProps[] = [
 		{
 			instanceType: 'medium',

@@ -9,7 +9,9 @@
 					name="filteredStatus" 
 					id="filteredStatus"
 					[(ngModel)]="filteredStatus">
-				
+			
+			<br><br>
+
 			<hr>
 
 			<button class="btn btn-primary"
@@ -17,6 +19,15 @@
 					(click)="onAddServer()">
 				Add Server
 			</button>
+
+			<br><br>
+
+			<hr>
+
+			<!-- async built-in pipe: recognizes appStatus as a Promise and will wait to render the resolved value -->
+			<h2>
+				App Status: {{ appStatus | async }}
+			</h2>
 
 			<ul class="list-group">
 

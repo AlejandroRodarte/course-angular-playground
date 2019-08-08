@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ServerProps } from './app.component';
 
 // filter pipe
+// pure: false -> this pipe will trigger each time anything on the component changes
 @Pipe({
 	  name: 'filter',
 	  pure: false
