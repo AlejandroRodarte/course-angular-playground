@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-
+		this.fetchPosts();
     }
 
 	// on form submission
@@ -45,10 +45,23 @@ export class AppComponent implements OnInit {
     }
 
     onFetchPosts() {
-      // Send Http request
+		this.fetchPosts();
     }
 
     onClearPosts() {
       // Send Http request
-    }
+	}
+
+	private fetchPosts() {
+
+		this.http
+			.get(
+				'https://angular-course-app-eeedb.firebaseio.com/posts.json'
+			)
+			.subscribe((response) => {
+				console.log(response);
+			});
+
+	}
+	
 }
