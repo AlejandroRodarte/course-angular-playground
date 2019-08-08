@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PostProps } from './app.component';
 import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 // posts service: global module
 // will handle the http requests
@@ -15,7 +16,7 @@ export class PostsService {
 
     }
 
-    createAndStorePost(title: string, content: string) {
+    createAndStorePost(title: string, content: string): void {
         
         // convert the arguments in a post object
         const postData: PostProps = {
@@ -35,18 +36,20 @@ export class PostsService {
         // it will not even send the request
 
         // execute the post operation
+
+        // in the post() case, our component is simply not interested in the response, so there is no reason to make it subscribe to it
 		this.http
             .post<{ name: string }>(
                 'https://angular-course-app-eeedb.firebaseio.com/posts.json',
                 postData
-            )
-            .subscribe((httpResponse) => {
-                console.log(httpResponse);
-            });
+			)
+			.subscribe(response => {
+				console.log(response);
+			});
 
     }
 
-    fetchPosts() {
+    fetchPosts(): Observable<PostProps[]> {
 
         // get request: just place the rest api endpoint url
 		// we desire to edit the raw data that comes from firebase which comes in this format
@@ -62,9 +65,12 @@ export class PostsService {
 		// 		}
 		// 	}
 
-		// so we will use observable operators with the pipe() method to beutify this data
+        // so we will use observable operators with the pipe() method to beutify this data
+        
+        // subscription deleted and returning the get() observable so component can subscribe to it
+        // and fetch response
 
-		this.http
+		return this.http
 			.get<{ [key: string]: PostProps }>(
 				'https://angular-course-app-eeedb.firebaseio.com/posts.json'
 			)
@@ -88,11 +94,9 @@ export class PostsService {
 
 					return responseArray;
 
-				})
-			)
-			.subscribe((response) => {
-
-			});
+                })
+                
+			);
 
     }
 

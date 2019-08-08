@@ -29,21 +29,39 @@ export class AppComponent implements OnInit {
 
 	// on initialization, fetch posts
     ngOnInit() {
-		this.postsService.fetchPosts();
+		this.fetchPosts();
     }
 
-	// on form submission
+	// on form submission: post the data
+	// the component does not care about the response in this case, so the createAndStorePost() method
+	// does not return anything
     onCreatePost(postData: PostProps) {
 		this.postsService.createAndStorePost(postData.title, postData.content);
     }
 
 	// when fetching posts, fetch the posts (duh)
     onFetchPosts() {
-		this.postsService.fetchPosts();
+		this.fetchPosts();
     }
 
     onClearPosts() {
       // Send Http request
+	}
+
+	// fetch posts
+	private fetchPosts() {
+
+		// set toggle to true
+		this.isFetching = true;
+
+		// this component is interested in the http response of the get() request
+		// so we make this component subscribe to the get() observable and wait for the clean
+		// data to come to finally set the toggle to false and store the fetched posts
+		this.postsService.fetchPosts().subscribe((posts) => {
+			this.isFetching = false;
+			this.loadedPosts = posts;
+		});
+
 	}
 	
 }
