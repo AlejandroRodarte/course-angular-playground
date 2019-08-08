@@ -18,7 +18,10 @@ export interface PostProps {
 export class AppComponent implements OnInit {
 
 	// locally loaded posts from the database
-    loadedPosts: PostProps[] = [];
+	loadedPosts: PostProps[] = [];
+	
+	// boolean flag to know when are we fetching data to load a loading text or gif
+	isFetching: boolean = false;
 
 	// inject the http client dependency to use client method to make http requests
     constructor(private http: HttpClient) {
@@ -79,6 +82,9 @@ export class AppComponent implements OnInit {
 
 		// so we will use observable operators with the pipe() method to beutify this data
 
+		// set the fetching flag to true
+		this.isFetching = true;
+
 		this.http
 			.get<{ [key: string]: PostProps }>(
 				'https://angular-course-app-eeedb.firebaseio.com/posts.json'
@@ -109,6 +115,9 @@ export class AppComponent implements OnInit {
 
 				// get the array of post props and load it into the field
 				this.loadedPosts = response;
+
+				// since the fetching is done, set again the flag to false
+				this.isFetching = false;
 
 			});
 
