@@ -4,11 +4,22 @@
 
 		<div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
 
+			<!-- filter string -->
+			<input  type="text" 
+					name="filteredStatus" 
+					id="filteredStatus"
+					[(ngModel)]="filteredStatus">
+				
+			<hr>
+
 			<ul class="list-group">
 
+				<!-- using the pipe inside the *ngFor to filter the 'server' output before looping -->
+				<!-- the filter string will be the input and the value to check on this element is the one -->
+				<!-- assigned to property 'status' -->
 				<li
 					class="list-group-item"
-					*ngFor="let server of servers"
+					*ngFor="let server of servers | filter:filteredStatus:'status'"
 					[ngClass]="getStatusClasses(server)">
 
 					<span

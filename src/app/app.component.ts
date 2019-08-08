@@ -1,12 +1,22 @@
 import { Component } from '@angular/core';
 
+export interface ServerProps {
+	instanceType: string;
+	name: string;
+	status: string;
+	started: Date;
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-	servers = [
+
+	filteredStatus: string = '';
+
+	servers: ServerProps[] = [
 		{
 			instanceType: 'medium',
 			name: 'Production Server',
@@ -33,7 +43,7 @@ export class AppComponent {
 		}
 	];
 
-	getStatusClasses(server: {instanceType: string, name: string, status: string, started: Date}) {
+	getStatusClasses(server: ServerProps) {
 		return {
 			'list-group-item-success': server.status === 'stable',
 			'list-group-item-warning': server.status === 'offline',
