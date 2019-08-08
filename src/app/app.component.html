@@ -36,7 +36,7 @@
 				<!-- assigned to property 'status' -->
 				<li
 					class="list-group-item"
-					*ngFor="let server of servers | filter:filteredStatus:'status'"
+					*ngFor="let server of servers | filter:filteredStatus:'status' | sort:'started'"
 					[ngClass]="getStatusClasses(server)">
 
 					<span
@@ -52,7 +52,7 @@
 					| 
 
 					<!-- using a pipe to transform the instanceType string: all caps -->
-					{{ server.instanceType | uppercase }} 
+					{{ server.instanceType | uppercase | reverse }} 
 
 					| 
 
