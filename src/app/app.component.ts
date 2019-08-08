@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -54,9 +55,47 @@ export class AppComponent implements OnInit {
 
 	private fetchPosts() {
 
+		// get request: just place the rest api endpoint url
+		// we desire to edit the raw data that comes from firebase which comes in this format
+
+		// 	{
+		// 		idValue: {
+		// 			title: titleValue
+		// 			content: contentValue
+		// 		},
+		// 		idValue: {
+		// 			title: titleValue
+		// 			content: contentValue
+		// 		}
+		// 	}
+
+		// so we will use observable operators with the pipe() method to beutify this data
+
 		this.http
 			.get(
 				'https://angular-course-app-eeedb.firebaseio.com/posts.json'
+			)
+			.pipe(
+				map((response) => {
+
+					// we will go from an object of objects to an array of objects
+					const responseArray = [];
+
+					// loop through each object inside the big object with the keys
+					for (const key in response) {
+
+						// check if it has the key
+						// if so, we will push to the array a brand new object that has the properties of the
+						// looped object plus the key
+						if (response.hasOwnProperty(key)) {
+							responseArray.push( { ...response[key], id: key } );
+						}
+
+					}
+
+					return responseArray;
+
+				})
 			)
 			.subscribe((response) => {
 				console.log(response);
