@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PostProps } from './app.component';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, Subject, throwError } from 'rxjs';
@@ -79,7 +79,12 @@ export class PostsService {
 
 		return this.http
 			.get<{ [key: string]: PostProps }>(
-				'https://angular-course-app-eeedb.firebaseio.com/posts.json'
+				'https://angular-course-app-eeedb.firebaseio.com/posts.json',
+				{
+					headers: new HttpHeaders({
+						'custom-header': 'custom-header-value'
+					})
+				}
 			)
 			.pipe(
 
