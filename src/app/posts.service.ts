@@ -84,6 +84,8 @@ export class PostsService {
 		
 		// headers: set custom headers
 		// params: set multipe query params
+
+		// responseType: 'json': informs angular to parse the repsonse automatically to a JSON object
 		let searchParams = new HttpParams();
 		searchParams = searchParams.append('print', 'pretty');
 		searchParams = searchParams.append('custom', 'key');
@@ -95,7 +97,8 @@ export class PostsService {
 					headers: new HttpHeaders({
 						'custom-header': 'custom-header-value',
 					}),
-					params: searchParams
+					params: searchParams,
+					responseType: 'json'
 				}
 			)
 			.pipe(
@@ -147,11 +150,14 @@ export class PostsService {
 		// to enhance human lecture, the HttpEventType represents a readable version of the event types
 		// we have access to all this stages of the request/response process and execute some custom code that can either alter the UI
 		// or execute some internal code we desire
+
+		// responseType: 'json': informs angular to parse the repsonse automatically to a JSON object
 		return this.http
 			.delete(
 				'https://angular-course-app-eeedb.firebaseio.com/posts.json',
 				{
-					observe: 'events'
+					observe: 'events',
+					responseType: 'json'
 				}
 			)
 			.pipe(
