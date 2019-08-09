@@ -1,52 +1,57 @@
+// required imports for the app go here
+
+// default modules
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 
-// the http client module will allow us to make http requests
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+// FormsModule enables directives to set model attributes
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+// import root and custom components
 import { AppComponent } from './app.component';
-import { AuthInterceptorService } from './auth-interceptor.service';
-import { LoggingInterceptorService } from './logging-interceptor.service';
+import { HeaderComponent } from './header/header.component';
+import { RecipesComponent } from './recipes/recipes.component';
+import { ShoppingListComponent } from './shopping-list/shopping-list.component';
+import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-edit.component';
+import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.component';
+import { RecipeListComponent } from './recipes/recipe-list/recipe-list.component';
+import { RecipeItemComponent } from './recipes/recipe-list/recipe-item/recipe-item.component';
+import { DropdownDirective } from './shared/dropdown.directive';
+import { ShoppingListService } from './shopping-list/shopping-list.service';
+import { AppRoutingModule } from './app-routing.module';
+import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
+import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 
-// on the app module we declare that we will import the http client module
+// here go the components/modules we will implement on our app
+// declarations : declare all components 
+// imports : declare required external modules
+// bootstrap : component to load when kickstarting app
 
-// declaring interceptors
-// provide: HTTP_INTERCEPTORS -> token to indicate this service is an http interceptor
-// useClass: interceptor class
-// multi: allow for multiple interceptors
-// ORDER MATTERS: interceptors are executed as they are declared here from top to bottom
+// section 10: ShoppingListService becomes a global service since it will also be used
+// by the recipes components later on
+
+// section 12: add the App Routing module
 @NgModule({
-
-	declarations: [
-		AppComponent
-	],
-
-	imports: [
-		BrowserModule, 
-		FormsModule, 
-		HttpClientModule
-	],
-
-	providers: [
-
-		{
-			provide: HTTP_INTERCEPTORS,
-			useClass: AuthInterceptorService,
-			multi: true
-		},
-
-		{
-			provide: HTTP_INTERCEPTORS,
-			useClass: LoggingInterceptorService,
-			multi: true
-		}
-
-	],
-
-	bootstrap: [
-		AppComponent
-	]
-	
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    RecipesComponent,
+    ShoppingListComponent,
+    ShoppingEditComponent,
+    RecipeDetailComponent,
+    RecipeListComponent,
+    RecipeItemComponent,
+    DropdownDirective,
+    RecipeStartComponent,
+    RecipeEditComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    AppRoutingModule,
+    ReactiveFormsModule
+  ],
+  providers: [ShoppingListService],
+  bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
