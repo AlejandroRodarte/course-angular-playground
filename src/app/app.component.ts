@@ -78,15 +78,21 @@ export class AppComponent implements OnInit, OnDestroy {
 		// so we make this component subscribe to the get() observable and wait for the clean
 		// data to come to finally set the toggle to false and store the fetched posts
 
-		// second funciton argument: error handling, assign the error message to the error property
+		// second funciton argument: error handling, assign the error message to the error property and set the fetching flag to false
 		this.postsService.fetchPosts().subscribe((posts) => {
 			this.isFetching = false;
 			this.loadedPosts = posts;
 		}, (error) => {
+			this.isFetching = false;
 			this.error = error.message;
 			console.log(error);
 		});
 
+	}
+
+	// clean error: set error property to null
+	onHandleError(): void {
+		this.error = null;
 	}
 
 	// unsub from subject
