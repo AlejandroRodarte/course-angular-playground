@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { PostProps } from './app.component';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, Subject, throwError } from 'rxjs';
@@ -75,15 +75,22 @@ export class PostsService {
         // so we will use observable operators with the pipe() method to beutify this data
         
         // subscription deleted and returning the get() observable so component can subscribe to it
-        // and fetch response
+		// and fetch response
+		
+		// headers: set custom headers
+		// params: set multipe query params
+		let searchParams = new HttpParams();
+		searchParams = searchParams.append('print', 'pretty');
+		searchParams = searchParams.append('custom', 'key');
 
 		return this.http
 			.get<{ [key: string]: PostProps }>(
 				'https://angular-course-app-eeedb.firebaseio.com/posts.json',
 				{
 					headers: new HttpHeaders({
-						'custom-header': 'custom-header-value'
-					})
+						'custom-header': 'custom-header-value',
+					}),
+					params: searchParams
 				}
 			)
 			.pipe(
