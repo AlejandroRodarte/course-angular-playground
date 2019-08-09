@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpEventType } from '@angular/common/http';
 import { PostProps } from './app.component';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Observable, Subject, throwError } from 'rxjs';
 
 // posts service: global module
@@ -43,10 +43,15 @@ export class PostsService {
 		// in the post() case, our component is simply not interested in the response, so there is no reason to make it subscribe to it
 		
 		// when en error is sent by the server, catch it and emit it through the subject
+
+		// observe: 'response' -> get the full http response, not the body
 		this.http
             .post<{ name: string }>(
                 'https://angular-course-app-eeedb.firebaseio.com/posts.json',
-                postData
+				postData,
+				{
+					observe: 'response'
+				}
 			)
 			.subscribe(response => {
 				console.log(response);
@@ -132,8 +137,38 @@ export class PostsService {
 	// delete posts: return the delete() observable
 	deletePosts(): Observable<any> {
 
+		// observe: 'events' -> get the full http response and an events object
+		// this object has a type property and a number, where the number encodes an event
+		// which represents a certain stage of the request/response interchange
+
+		// the tap() observer allows us to execute some tasks with the event encoding value while not altering
+		// the overall subscription to the request
+
+		// to enhance human lecture, the HttpEventType represents a readable version of the event types
+		// we have access to all this stages of the request/response process and execute some custom code that can either alter the UI
+		// or execute some internal code we desire
 		return this.http
-			.delete('https://angular-course-app-eeedb.firebaseio.com/posts.json');
+			.delete(
+				'https://angular-course-app-eeedb.firebaseio.com/posts.json',
+				{
+					observe: 'events'
+				}
+			)
+			.pipe(
+				tap(event => {
+
+					console.log(event);
+
+					if (event.type === HttpEventType.Sent) {
+						// maybe update something in the UI...
+					}
+
+					if (event.type === HttpEventType.Response) {
+						console.log(event.body);
+					}
+
+				})
+			);
 
 	}
 
