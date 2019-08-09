@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PostProps } from './app.component';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 // posts service: global module
 // will handle the http requests
@@ -10,6 +10,9 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class PostsService {
+
+	// http error subject
+	error = new Subject<string>();
 
     // inject the http client
     constructor(private http: HttpClient) {
@@ -45,6 +48,8 @@ export class PostsService {
 			)
 			.subscribe(response => {
 				console.log(response);
+			}, error => {
+				this.error.next(error.message);
 			});
 
     }

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PostsService } from './posts.service';
+import { Subscription } from 'rxjs';
 
 // interface for the information a post has
 // used to inform TypeScript the data we expect at the end of the http response
@@ -14,7 +15,7 @@ export interface PostProps {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
 	// locally loaded posts from the database
 	loadedPosts: PostProps[] = [];
@@ -24,6 +25,9 @@ export class AppComponent implements OnInit {
 
 	error = null;
 
+	// error subscription
+	private errorSub: Subscription;
+
 	// inject the posts service which will handle the http client requests and responses
     constructor(private postsService: PostsService) {
 
@@ -31,7 +35,14 @@ export class AppComponent implements OnInit {
 
 	// on initialization, fetch posts
     ngOnInit() {
+
 		this.fetchPosts();
+
+		// each time the subject emits an error message, store it in the component field
+		this.errorSub = this.postsService.error.subscribe(message => {
+			this.error = message;
+		});
+
     }
 
 	// on form submission: post the data
@@ -76,6 +87,11 @@ export class AppComponent implements OnInit {
 			console.log(error);
 		});
 
+	}
+
+	// unsub from subject
+	ngOnDestroy(): void {
+		this.errorSub.unsubscribe();
 	}
 	
 }
