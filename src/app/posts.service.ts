@@ -98,6 +98,14 @@ export class PostsService {
                 
 			);
 
-    }
+	}
+	
+	// delete posts: return the delete() observable
+	deletePosts(): Observable<any> {
+
+		return this.http
+			.delete('https://angular-course-app-eeedb.firebaseio.com/posts.json');
+
+	}
 
 }

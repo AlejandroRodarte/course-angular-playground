@@ -35,8 +35,11 @@ export class AppComponent implements OnInit {
 	// on form submission: post the data
 	// the component does not care about the response in this case, so the createAndStorePost() method
 	// does not return anything
+
+	// finally, push the new post to the array
     onCreatePost(postData: PostProps) {
 		this.postsService.createAndStorePost(postData.title, postData.content);
+		this.loadedPosts.push(postData);
     }
 
 	// when fetching posts, fetch the posts (duh)
@@ -44,8 +47,12 @@ export class AppComponent implements OnInit {
 		this.fetchPosts();
     }
 
+	// when clearing posts: subscribe to the deletePosts() returned observable
+	// when deletion is complete, empty the loaded posts array
     onClearPosts() {
-      // Send Http request
+      this.postsService.deletePosts().subscribe(() => {
+		  this.loadedPosts = [];
+	  });
 	}
 
 	// fetch posts
