@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PostProps } from './app.component';
-import { map } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { Observable, Subject, throwError } from 'rxjs';
 
 // posts service: global module
 // will handle the http requests
@@ -40,7 +40,9 @@ export class PostsService {
 
         // execute the post operation
 
-        // in the post() case, our component is simply not interested in the response, so there is no reason to make it subscribe to it
+		// in the post() case, our component is simply not interested in the response, so there is no reason to make it subscribe to it
+		
+		// when en error is sent by the server, catch it and emit it through the subject
 		this.http
             .post<{ name: string }>(
                 'https://angular-course-app-eeedb.firebaseio.com/posts.json',
@@ -80,6 +82,7 @@ export class PostsService {
 				'https://angular-course-app-eeedb.firebaseio.com/posts.json'
 			)
 			.pipe(
+
 				map((response: { [key: string]: PostProps }) => {
 
 					// we will go from an object of objects to an array of objects
@@ -99,7 +102,16 @@ export class PostsService {
 
 					return responseArray;
 
-                })
+				}),
+
+				catchError(errorResponse => {
+
+					// maybe send to an analytics server...
+
+					// throwError returns an observable to which we can subscribe and listen for error responses
+					return throwError(errorResponse);
+
+				})
                 
 			);
 
