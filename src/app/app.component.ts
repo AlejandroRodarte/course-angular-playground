@@ -22,6 +22,8 @@ export class AppComponent implements OnInit {
 	// boolean flag to know when are we fetching data to load a loading text or gif
 	isFetching: boolean = false;
 
+	error = null;
+
 	// inject the posts service which will handle the http client requests and responses
     constructor(private postsService: PostsService) {
 
@@ -64,9 +66,14 @@ export class AppComponent implements OnInit {
 		// this component is interested in the http response of the get() request
 		// so we make this component subscribe to the get() observable and wait for the clean
 		// data to come to finally set the toggle to false and store the fetched posts
+
+		// second funciton argument: error handling, assign the error message to the error property
 		this.postsService.fetchPosts().subscribe((posts) => {
 			this.isFetching = false;
 			this.loadedPosts = posts;
+		}, (error) => {
+			this.error = error.message;
+			console.log(error);
 		});
 
 	}

@@ -111,10 +111,25 @@
 
 			</ul>
 
-			<!-- display the loading text while we are fetching -->
-			<p *ngIf="isFetching">
+			<!-- display the loading text while we are fetching and an error did not occur -->
+			<p *ngIf="isFetching && !error">
 				Loading...
 			</p>
+
+			<!-- display if an error exists -->
+			<div  class="alert alert-danger"
+				  *ngIf="error">
+
+				<h1>
+					An error occured
+				</h1>
+
+				<!-- print error message -->
+				<p>
+					{{ error }}
+				</p>
+
+			</div>
 
 		</div>
 
