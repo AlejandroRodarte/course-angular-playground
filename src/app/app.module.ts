@@ -22,6 +22,7 @@ import { ShoppingListService } from './shopping-list/shopping-list.service';
 import { AppRoutingModule } from './app-routing.module';
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
+import { AuthComponent } from './auth/auth.component';
 
 // here go the components/modules we will implement on our app
 // declarations : declare all components 
@@ -30,12 +31,10 @@ import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component
 
 // section 10: ShoppingListService becomes a global service since it will also be used
 // by the recipes components later on
-
 // section 12: add the App Routing module
-
 // section 16: added the reactive forms module
-
 // section 19: added the http client module
+// section 20: added the authentication component
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,7 +47,8 @@ import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component
     RecipeItemComponent,
     DropdownDirective,
     RecipeStartComponent,
-    RecipeEditComponent
+    RecipeEditComponent,
+    AuthComponent
   ],
   imports: [
     BrowserModule,

@@ -7,6 +7,7 @@ import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.com
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { RecipeResolverService } from './shared/recipe-resolver.service';
+import { AuthComponent } from './auth/auth.component';
 
 // application routes
 // root: redirect to /recipes
@@ -25,6 +26,12 @@ const appRoutes: Routes = [
     {
         path: 'shopping-list',
         component: ShoppingListComponent
+    },
+
+    // localhost:4200/auth
+    {
+        path: 'auth',
+        component: AuthComponent
     },
 
     // localhost:4200/recipes
