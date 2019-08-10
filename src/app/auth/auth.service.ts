@@ -12,6 +12,14 @@ export interface FirebaseSignupResponse {
     localId: string;
 }
 
+// firebase sign in response: same as sign up but with a registered boolean
+export interface FirebaseSigninResponse extends FirebaseSignupResponse {
+    registered: boolean;
+}
+
+// union type for all types of responses (signin and signup)
+export type FirebaseAuthResponse = FirebaseSignupResponse | FirebaseSignupResponse;
+
 // authentication service
 @Injectable({
     providedIn: 'root'
@@ -67,6 +75,22 @@ export class AuthService {
                             return throwError(errorMessage);
 
                         })
+                    );
+
+    }
+
+    // login() observable
+    login(email: string, password: string) {
+
+        // make the correct post() request to the correct endpoint
+        return this.http
+                    .post<FirebaseSigninResponse>(
+                        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA4TpfoACG8AiUd4lEIlhyibeBtbVECIa8',
+                        {
+                            email,
+                            password,
+                            returnSecureToken: true
+                        }
                     );
 
     }

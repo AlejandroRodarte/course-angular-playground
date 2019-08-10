@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService, FirebaseSignupResponse } from './auth.service';
+import { AuthService, FirebaseAuthResponse } from './auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-auth',
@@ -38,33 +39,36 @@ export class AuthComponent {
         const email = authForm.value.email;
         const password = authForm.value.password;
 
+        // set loading flag
         this.isLoading = true;
 
-        // if we are on login mode
+        // authentication action, login() or signup() observable
+        // FirebaseAuthResponse = FirebaseSigninResponse | FirebaseSignupResponse
+        let authAction: Observable<FirebaseAuthResponse>;
+
+        // if we are on login mode, use the login() observer
         if (this.isLoginMode) {
-
+            authAction = this.authService.login(email, password);
         } else {
-
-            // if user is signing up, subscribe to the signup() observable returned and log the response
-            // this should register the user into the Firebase server
-
-            // either if we are successful or get an error, set the loading flag to false
-            // on error, set error property to a hardcoded string
-
-            // update: thanks to the catchError() operator, which returns a throwError() observable so that we can still
-            // subscribe to wait for an error to pop up, we return as an argument a customized error message, not the full
-            // HttpErrorResponse object, so we can simply set the error property to the error message we get from there
-            this.authService
-                .signup(email, password)
-                .subscribe((responseData: FirebaseSignupResponse) => {
-                    console.log(responseData);
-                    this.isLoading = false;
-                }, (errorMessage: string) => {
-                    this.error = errorMessage;
-                    this.isLoading = false;
-                });
-
+            // if signing up, use the signup() observer
+            authAction = this.authService.signup(email, password);
         }
+
+        // on both cases, we get an observer we can subscribe to and get some response data
+        // we set the loading flag to false regardless if we get an error or not
+        // and in case of an custom error message we simply set its value to the component property
+
+        // thanks to the catchError() operator, which returns a throwError() observable so that we can still
+        // subscribe to wait for an error to pop up, we return as an argument a customized error message, not the full
+        // HttpErrorResponse object, so we can simply set the error property to the error message we get from there
+        authAction
+            .subscribe((responseData: FirebaseAuthResponse) => {
+                console.log(responseData);
+                this.isLoading = false;
+            }, (errorMessage: string) => {
+                this.error = errorMessage;
+                this.isLoading = false;
+            });
 
         authForm.reset();
 
