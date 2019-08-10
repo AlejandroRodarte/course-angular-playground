@@ -6,7 +6,7 @@ import { NgModule } from '@angular/core';
 
 // FormsModule enables directives to set model attributes
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // import root and custom components
 import { AppComponent } from './app.component';
@@ -24,6 +24,7 @@ import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.compon
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { AuthComponent } from './auth/auth.component';
 import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
+import { AuthInterceptorService } from './auth/auth-interceptor.service';
 
 
 // here go the components/modules we will implement on our app
@@ -37,6 +38,8 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 // section 16: added the reactive forms module
 // section 19: added the http client module
 // section 20: added the authentication component
+
+// added the AuthInterceptorService to append the user token on each subsequent request
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,7 +63,14 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [ShoppingListService],
+  providers: [
+    ShoppingListService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
