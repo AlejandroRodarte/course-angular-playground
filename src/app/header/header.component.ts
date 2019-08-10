@@ -62,22 +62,19 @@ export class HeaderComponent implements OnInit {
         // fetch all the recipe id's that will be deleted from the database
         const deletedRecipes = this.recipeService.getDeletedRecipes();
 
-        // 1. loop through all new recipes; call a recipeService method that will be in charge
-        // of persisting the recipe to the database (the task is ultimately delegated to the data storage service though)
+        // 1. loop through all new recipes; access the data storage service and save the recipes 1 by 1
         // in short, a burst of POST requests are made
         newRecipes.forEach((newRecipe: Recipe) => {
             this.dataStorageService.saveRecipe(newRecipe);
         });
 
-        // 2. loop through all recipe id's to delete and call the removeRecipe() recipeService method to delete
-        // the recipes from the database (the task is ultimately delegated to the data storage service though)
+        // 2. loop through all recipe id's to delete; access the data storage service and delete them 1 by 1
         // in short, a burst of DELETE requests are made
         deletedRecipes.forEach((recipeId: string) => {
             this.dataStorageService.deleteRecipe(recipeId);
         });
 
-        // 3. loop through all recipes to update and call the updateRecipe() recipeService method to update
-        // the recipes to the database (the task is ultimately delegated to the data storage service though)
+        // 3. loop through all recipes to update; access the data storage service and update them 1 by 1
         // in short, a burst of PUT requests are made
         updatedRecipes.forEach((updatedRecipe: Recipe) => {
             this.dataStorageService.updateRecipe(updatedRecipe);
@@ -108,8 +105,8 @@ export class HeaderComponent implements OnInit {
             // set the fetching flag to true
             this.fetching = true;
 
-            // subscribe to the get() request where we get as a response the transformed data thanks to the
-            // pipe() operators, which is a clean array of Recipes (with their Firebase id's)
+            // subscribe to the fetchService get() observable but just to trigger the request (the service already sets the recipes
+            // and triggers the recipeChanged subject to render the recipes, so no more work is required to do on the response)
             this.dataStorageService.fetchRecipes().subscribe();
 
             // set the first-time flag to true to never commit this action again

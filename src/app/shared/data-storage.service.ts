@@ -16,7 +16,7 @@ export type FirebaseRecipes = { [key: string]: Recipe };
 })
 export class DataStorageService {
 
-    // our http client dependency
+    // our http client dependency and recipe service dependency
     constructor(private http: HttpClient,
                 private recipeService: RecipeService) {
 
@@ -39,6 +39,9 @@ export class DataStorageService {
 
         // also, we desire to store this unique random Firebase id on the Recipe model so we can recognize fetched recipes from brand new recipes added by the user
         // and that have not been persisted yet; to do this, we simply assign the 'id' property of the recipe to the current loop value of the key
+
+        // after we get these Recipe[] array, we use the tap() intermediary to use the recipe service and set the fetched recipes into our local recipes array
+        // this setRecipes() method triggers through the Subject our components to render them on screen
         return this.http
                     .get<FirebaseRecipes>('https://angular-course-app-eeedb.firebaseio.com/recipes.json')
                     .pipe(

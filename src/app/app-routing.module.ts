@@ -34,6 +34,9 @@ const appRoutes: Routes = [
     // localhost:4200/recipes/id
     // localhost:4200/recipe/new -> load RecipeEditComponent to add a new recipe
     // localhost:4200/recipe/id/edit -> load RecipeEditComponent to edit an existing recipe
+
+    // http update: paths localhost:4200/recipes/id and localhost:4200/recipes/id/edit will resolve
+    // run the RecipeResolverService resolve() code before rendering their components (fetch data from db)
     {
         path: 'recipes',
         component: RecipesComponent,

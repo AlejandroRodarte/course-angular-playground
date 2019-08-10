@@ -71,6 +71,7 @@ export class RecipeService implements OnDestroy {
         return this.recipes.slice();
     }
 
+    // set the recipes and notify components
     setRecipes(recipes: Recipe[]): void {
         this.recipes = recipes;
         this.recipesChanged.next();
@@ -154,11 +155,6 @@ export class RecipeService implements OnDestroy {
         this.recipesChanged.next();
     }
 
-    // unsubscribe upon service destruction
-    ngOnDestroy() {
-        this.selectedRecipeSubscription.unsubscribe();
-    }
-
     // register a new recipe into the array that tracks all id's of recipes to update
     registerUpdatedRecipe(recipeId: string): void {
         this.recipesToUpdate.push(recipeId);
@@ -178,6 +174,11 @@ export class RecipeService implements OnDestroy {
             this.recipesToUpdate.splice(recipeToUpdateIndex, 1);
         }
 
+    }
+
+    // unsubscribe upon service destruction
+    ngOnDestroy() {
+        this.selectedRecipeSubscription.unsubscribe();
     }
 
 }
