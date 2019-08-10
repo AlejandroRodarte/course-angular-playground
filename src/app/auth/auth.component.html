@@ -36,14 +36,18 @@
             <div>
 
                 <!-- sign up button -->
-                <button class="btn btn-primary">
-                    Sign Up
+                <button class="btn btn-primary"
+                        type="submit">
+                    {{ isLoginMode ? 'Login' : 'Sign Up' }}
                 </button>
 
                 |
 
-                <button class="btn btn-primary">
-                    Switch to Login
+                <!-- toggle button to either login or signup -->
+                <button class="btn btn-primary"
+                        (click)="onSwitchMode()"
+                        type="button">
+                    Switch to {{ isLoginMode ? 'Sign Up' : 'Login' }}
                 </button>
 
             </div>
