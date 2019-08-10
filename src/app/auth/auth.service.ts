@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, Subject } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { UserModel } from './user.model';
 
 // when signing up with email/password on Firebase, we expect an object with these properties
 export interface FirebaseSignupResponse {
@@ -26,6 +27,9 @@ export type FirebaseAuthResponse = FirebaseSignupResponse | FirebaseSignupRespon
 })
 export class AuthService {
 
+    // user subject to store a user when signing up or logging in
+    user = new Subject<UserModel>();
+
     // inject the http client
     constructor(private http: HttpClient) {
 
@@ -46,10 +50,33 @@ export class AuthService {
                         }
                     )
                     .pipe(
+
                         // instead of inserting as an argument an arrow function to work as the handler,
                         // we place a reference to our handleError() method (no parentheses), so that it receives
                         // injected the HttpErrorResponse
-                        catchError(this.handleError)
+                        catchError(
+                            this.handleError
+                        ),
+
+                        // tap() to execute some middle-ware function
+                        tap(
+
+                            // with the response data from firebase
+                            (responseData: FirebaseSignupResponse) => {
+
+                                // call the authentication method and pass in the returned email, user id, token and
+                                // expiration timelapse
+                                this.handleAuthentication(
+                                    responseData.email, 
+                                    responseData.localId, 
+                                    responseData.idToken, 
+                                    +responseData.expiresIn
+                                );
+
+                            }
+
+                        )
+
                     );
 
     }
@@ -68,13 +95,59 @@ export class AuthService {
                         }
                     )
                     .pipe(
+
                         // instead of inserting as an argument an arrow function to work as the handler,
                         // we place a reference to our handleError() method (no parentheses), so that it receives
                         // injected the HttpErrorResponse
-                        catchError(this.handleError)
+                        catchError(this.handleError),
+
+                        // tap() to execute some middle-ware function
+                        tap(
+
+                            // with the response data from firebase
+                            (responseData: FirebaseSigninResponse) => {
+
+                                // call the authentication method and pass in the returned email, user id, token and
+                                // expiration timelapse
+                                this.handleAuthentication(
+                                    responseData.email, 
+                                    responseData.localId, 
+                                    responseData.idToken, 
+                                    +responseData.expiresIn
+                                );
+
+                            }
+
+                        )
+
                     );
 
     }
+
+    // handler for authentication
+    private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+
+        // the expiration date must be calculated, it must be a date in the future relative to the current time
+        // new Date().getTime() gets us the current time in milliseconds starting at some time at 1970
+        // to this, we add expiresIn, which is a time in seconds, so we multiply it by 1000 to handle the same units
+        const expirationDate = new Date(
+            new Date().getTime() + 
+            expiresIn * 1000
+        ); 
+
+        // create the user model
+        const user = new UserModel(
+            email, 
+            userId, 
+            token, 
+            expirationDate
+        );
+
+        // store the user for subscribers
+        this.user.next(user);
+
+    }
+    
 
     // transform HttpErrorResponse to custom error message
     // outsoutce the custom error message generation to this method
@@ -113,6 +186,6 @@ export class AuthService {
         // return an observable with the custom error message
         return throwError(errorMessage);
 
-    } 
+    }
 
 }
