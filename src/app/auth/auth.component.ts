@@ -50,13 +50,17 @@ export class AuthComponent {
 
             // either if we are successful or get an error, set the loading flag to false
             // on error, set error property to a hardcoded string
+
+            // update: thanks to the catchError() operator, which returns a throwError() observable so that we can still
+            // subscribe to wait for an error to pop up, we return as an argument a customized error message, not the full
+            // HttpErrorResponse object, so we can simply set the error property to the error message we get from there
             this.authService
                 .signup(email, password)
                 .subscribe((responseData: FirebaseSignupResponse) => {
                     console.log(responseData);
                     this.isLoading = false;
-                }, (error) => {
-                    this.error = 'An error occured';
+                }, (errorMessage: string) => {
+                    this.error = errorMessage;
                     this.isLoading = false;
                 });
 
