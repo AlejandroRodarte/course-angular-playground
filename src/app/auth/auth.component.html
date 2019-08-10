@@ -2,11 +2,26 @@
 
     <div class="col-xs-12 col-md-6 col-md-offset-3">
 
+        <!-- display error message if the error string is not null -->
+        <div class="alert alert-danger"
+             *ngIf="error !== null">
+            <p>
+                {{ error }}
+            </p>
+        </div>
+
+        <!-- display the loading spinner component if the isLoading flag is true -->
+        <div *ngIf="isLoading"
+              style="text-align: center;">
+            <app-loading-spinner></app-loading-spinner>
+        </div>
+
         <!-- auth form -->
         <!-- use template-driven approach -->
         <form   class="form"
                 #authForm="ngForm"
-                (ngSubmit)="onSubmit(authForm)">
+                (ngSubmit)="onSubmit(authForm)"
+                *ngIf="!isLoading">
 
             <div class="form-group">
 
