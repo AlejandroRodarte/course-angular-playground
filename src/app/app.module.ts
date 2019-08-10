@@ -6,6 +6,7 @@ import { NgModule } from '@angular/core';
 
 // FormsModule enables directives to set model attributes
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 // import root and custom components
 import { AppComponent } from './app.component';
@@ -31,6 +32,10 @@ import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component
 // by the recipes components later on
 
 // section 12: add the App Routing module
+
+// section 16: added the reactive forms module
+
+// section 19: added the http client module
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,7 +54,8 @@ import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [ShoppingListService],
   bootstrap: [AppComponent]

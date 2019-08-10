@@ -41,6 +41,53 @@
             <!-- second list, pushed to the right -->
             <ul class="nav navbar-nav navbar-right">
 
+                <!-- list item to place messages about interaction with database to user -->
+                <li>
+
+                    <!-- loading gif; renders while fetching or saving -->
+                    <img src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/09b24e31234507.564a1d23c07b4.gif" 
+                            alt="Loading..."
+                            *ngIf="fetching || saving"
+                            style="width: 40px;">
+                    
+                    <!-- alert user we are fetching data: active while the 'fetching' component flag is active -->
+                    <div class="alert alert-info"
+                         *ngIf="fetching"
+                         style="display: inline-block; margin: 0 10px 0 10px">
+                        <strong>
+                            Fetching from Database...
+                        </strong>
+                    </div>
+
+                    <!-- alert user we are saving data: active while the 'saving' component flag is active -->
+                    <div class="alert alert-info"
+                         *ngIf="saving"
+                         style="display: inline-block; margin: 0 10px 0 10px">
+                        <strong>
+                            Saving to Database...
+                        </strong>
+                    </div>
+
+                    <!-- inform user we successfully fetched the data: display while the 'fetchSuccessful' is active -->
+                    <div class="alert alert-success"
+                         *ngIf="fetchSuccessful"
+                         style="display: inline-block; margin: 0 10px 0 10px">
+                        <strong>
+                            Recipes Fetched!
+                        </strong>
+                    </div>
+
+                    <!-- inform user we successfully saved the data: display while the 'saveSuccessful' is active -->
+                    <div class="alert alert-success"
+                         *ngIf="saveSuccessful"
+                         style="display: inline-block; margin: 0 10px 0 10px">
+                        <strong>
+                            Recipes Saved!
+                        </strong>
+                    </div>
+
+                </li>
+
                 <!-- first list item: a dropdown menu -->
                 <li class="dropdown"
                     appDropdown>
@@ -58,16 +105,20 @@
 
                         <!-- link to save data -->
                         <!-- deleted href -->
+                        <!-- handler to save recipes -->
                         <li>
-                            <a style="cursor: pointer;">
+                            <a  style="cursor: pointer;"
+                                (click)="onSaveRecipes()">
                                 Save Data
                             </a>
                         </li>
 
                         <!-- link to fetch data -->
                         <!-- deleted href -->
+                        <!-- handler to fetch recipes -->
                         <li>
-                            <a style="cursor: pointer;">
+                            <a  style="cursor: pointer;"
+                                (click)="onFetchRecipes()">
                                 Fetch Data
                             </a>
                         </li>

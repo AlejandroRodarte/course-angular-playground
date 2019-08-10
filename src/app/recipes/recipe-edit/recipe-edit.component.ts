@@ -3,7 +3,6 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { FormGroup, FormControl, Validators, FormArray, AbstractControl } from '@angular/forms';
-import { Ingredient } from 'src/app/shared/ingredient.model';
 import { FormMode } from 'src/app/shared/form-mode.enum';
 
 // recipe edit component
@@ -98,6 +97,27 @@ export class RecipeEditComponent implements OnInit {
 	// when submitting
 	onSubmit(): void {
 
+		// recipe Firebase id
+		let recipeId: string = '';
+
+		// if we are on edit mode, this means that the 'recipe' property of this component is already defined
+		// so we can assign to the previos variable its id (undefined if unpersised recipe of existing if the user is editing a fetched recipe)
+
+		// if we are not in edit mode, this means the 'recipe' property is undefined, so assign directly the recipeId variable an undefined value
+		if (this.editMode) {
+			recipeId = this.recipe.id;
+		} else {
+			recipeId = undefined;
+		}
+
+		// if at the end of the if-else clause the recipeId variable remains undefined, it means that we are dealing with a recipe
+		// that has not been persisted yet
+
+		// if it is not undefined but has a string value, it means that the user edited a fetched recipe, so register it as a recipe to-update
+		if (recipeId !== undefined) {
+			this.recipeService.registerUpdatedRecipe(this.recipe.id);
+		}
+
 		// the value of the whole recipe form happens to match EXACTLY the structure of the Recipe object
 		// while keeping consistency between the Recipe/Ingredient model property names and the form control names
 		// example: the 'name' field on the Recipes model matches the 'name' form control where you place the recipe name
@@ -105,8 +125,10 @@ export class RecipeEditComponent implements OnInit {
 		// one by one and creating a recipe instance to inject to this method
 
 		// the second argument determines if we are either adding a new recipe or updating an existing one
-		this.recipeService.addOrUpdateRecipe(this.recipeForm.value, this.id);
-		
+
+		// http update: apart from the recipe form value, append the Firebase id (undefined if brand new or existing if fetched from database)
+		this.recipeService.addOrUpdateRecipe({ ...this.recipeForm.value, id: recipeId }, this.id);
+
 		// clear the form
 		this.recipeForm.reset();
 
@@ -156,18 +178,18 @@ export class RecipeEditComponent implements OnInit {
 		if (this.editMode) {
 
 			// fetch it
-			const recipe = this.recipeService.getRecipe(this.id);
+			this.recipe = this.recipeService.getRecipe(this.id);
 
 			// save its name, description and image path
-			recipeName = recipe.name;
-			recipeDescription = recipe.description;
-			recipeImagePath = recipe.imagePath;
+			recipeName = this.recipe.name;
+			recipeDescription = this.recipe.description;
+			recipeImagePath = this.recipe.imagePath;
 
 			// if this recipe has any ingredients...
-			if (recipe['ingredients']) {
+			if (this.recipe['ingredients']) {
 
 				// loop through each one of them
-				for (let ingredient of recipe.ingredients) {
+				for (let ingredient of this.recipe.ingredients) {
 
 					// and push the FormArray a new FormGropu with two controls for ingredient name and amount
 					// and set them initially to the value of the current ingredient object 

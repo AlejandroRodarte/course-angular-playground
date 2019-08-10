@@ -80,6 +80,13 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 		// call the delete recipe method from the service and pass the selected recipe index
 		this.recipeService.deleteRecipe(this.selectedIndex);
 
+		// check if this recipe has a Firebase id or not (brand new or fetched from the start)
+		// if it's fetched from Firebase, we will register it's id to know this recipe has been deleted by the user
+		// and should be deleted from the database once it syncs the data
+		if (this.recipe.id !== undefined) {
+			this.recipeService.registerDeletedRecipe(this.recipe.id);
+		}
+
 		// navigate on upper level than the current one
 		// when deleting a recipe, we are on path localhost:4200/recipes/id
 		// when deleting, we will go to path localhost:4200/recipes
