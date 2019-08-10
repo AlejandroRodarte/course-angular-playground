@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserModel } from './user.model';
+import { Router } from '@angular/router';
 
 // when signing up with email/password on Firebase, we expect an object with these properties
 export interface FirebaseSignupResponse {
@@ -34,7 +35,8 @@ export class AuthService {
     user = new BehaviorSubject<UserModel>(null);
 
     // inject the http client
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient,
+                private router: Router) {
 
     }
 
@@ -125,6 +127,14 @@ export class AuthService {
 
                     );
 
+    }
+
+    // logout: set user to null (disables recipes and management to user and forces to login/signup)
+    // navigate to /auth
+    // this is done in the service since we want to redirect the user no matter the component we are in
+    logout() {
+        this.user.next(null);
+        this.router.navigate(['/auth']);
     }
 
     // handler for authentication

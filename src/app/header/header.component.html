@@ -104,8 +104,8 @@
                 <!-- the logout button will appear if the user is authenticated -->
                 <li *ngIf="isAuthenticated">
 
-                    <a  href="#"
-                        style="cursor: pointer;">
+                    <a  style="cursor: pointer;"
+                        (click)="onLogout()">
                         Logout
                     </a>
 
