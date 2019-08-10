@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 // when signing up with email/password on Firebase, we expect an object with these properties
-interface FirebaseSignupResponse {
+export interface FirebaseSignupResponse {
     idToken: string;
     email: string;
     refreshToken: string;
