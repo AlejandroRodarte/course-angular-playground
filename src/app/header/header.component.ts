@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RecipeService } from '../recipes/recipe.service';
 import { Recipe } from '../recipes/recipe.model';
-import { FirebaseRecipes, DataStorageService } from '../shared/data-storage.service';
+import { DataStorageService } from '../shared/data-storage.service';
+import { Subscription } from 'rxjs';
 
 // header component
 @Component({
@@ -9,7 +10,7 @@ import { FirebaseRecipes, DataStorageService } from '../shared/data-storage.serv
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
     // one-time flag to know if user already fetched the data from database
     private alreadyFetched: boolean = false;
@@ -23,6 +24,9 @@ export class HeaderComponent implements OnInit {
     // saveSuccessful: flag active for 3 seconds to inform user data was fetched without issue
     private saving: boolean = false;
     private saveSuccessful: boolean = false;
+
+    // fetch recipes subscription
+    private fetchRecipesSubscription: Subscription;
 
     // recipe servce injection
     constructor(private dataStorageService: DataStorageService,
@@ -107,7 +111,7 @@ export class HeaderComponent implements OnInit {
 
             // subscribe to the fetchService get() observable but just to trigger the request (the service already sets the recipes
             // and triggers the recipeChanged subject to render the recipes, so no more work is required to do on the response)
-            this.dataStorageService.fetchRecipes().subscribe();
+            this.fetchRecipesSubscription = this.dataStorageService.fetchRecipes().subscribe();
 
             // set the first-time flag to true to never commit this action again
             this.alreadyFetched = true;
@@ -125,6 +129,11 @@ export class HeaderComponent implements OnInit {
 
         }
 
+    }
+
+    // unsubscriptions
+    ngOnDestroy(): void {
+        this.fetchRecipesSubscription.unsubscribe();
     }
 
 }

@@ -23,6 +23,9 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	// selected recipe service subscription
 	selectedRecipeSubscription: Subscription;
 
+	// route parameter subscription
+	private routeParamsSubscription: Subscription;
+
 	// inject the recipe service singleton
 	// inject the router to redirect user and route to redirect based on relative path
 	constructor(private recipeService: RecipeService,
@@ -42,7 +45,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 		// subscribe to the params observable: listen for changes in the id dynamic parameter
 		// on trigger, access the params and fetch the id
 		// and use the getRecipe() method to access the recipe to load through the service
-		this.route.params.subscribe((params: Params) => {
+		this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
 
 			const id = +params['id'];
 			
@@ -99,6 +102,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	// unsubscribe upon component destruction
 	ngOnDestroy() {
 		this.selectedRecipeSubscription.unsubscribe();
+		this.routeParamsSubscription.unsubscribe();
 	}
 
 }

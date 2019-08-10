@@ -2,8 +2,7 @@ import { Recipe } from './recipe.model';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
-import { Subject, Subscription, Observable } from 'rxjs';
-import { DataStorageService, FirebaseRecipes } from '../shared/data-storage.service';
+import { Subject, Subscription } from 'rxjs';
 
 // this service will receive as a dependency another service: shopping list service
 // to make it injectable, use this decorator

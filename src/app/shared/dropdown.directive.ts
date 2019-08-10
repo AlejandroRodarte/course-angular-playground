@@ -1,4 +1,4 @@
-import { Directive, ViewContainerRef, ElementRef, Renderer2, Input, HostListener } from '@angular/core';
+import { Directive, ElementRef, Renderer2, HostListener } from '@angular/core';
 
 // dropdown directive
 @Directive({

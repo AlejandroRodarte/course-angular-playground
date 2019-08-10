@@ -1,5 +1,6 @@
 // recipe model
 import { Ingredient } from 'src/app/shared/ingredient.model';
+
 // a model is defined as a plain old object
 export class Recipe {
 

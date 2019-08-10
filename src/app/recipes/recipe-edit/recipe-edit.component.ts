@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { FormGroup, FormControl, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { FormMode } from 'src/app/shared/form-mode.enum';
+import { Subscription } from 'rxjs';
 
 // recipe edit component
 @Component({
@@ -11,7 +12,7 @@ import { FormMode } from 'src/app/shared/form-mode.enum';
 	templateUrl: './recipe-edit.component.html',
 	styleUrls: ['./recipe-edit.component.css']
 })
-export class RecipeEditComponent implements OnInit {
+export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	// the recipe id
 	id: number;
@@ -37,6 +38,12 @@ export class RecipeEditComponent implements OnInit {
 	// current image path (for image preview)
 	currentImagePath: string = '';
 
+	// route parameter subscription
+	private routeParamsSubscription: Subscription;
+
+	// image path control subscrption
+	private imagePathSubscription: Subscription;
+
 	// inject recipe service and current route and the router to navigate
 	constructor(private recipeService: RecipeService,
 				private router: Router,
@@ -48,7 +55,7 @@ export class RecipeEditComponent implements OnInit {
 	ngOnInit() {
 
 		// subscribe to the current route parameters and...
-		this.route.params.subscribe((params: Params) => {
+		this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
 
 			// fetch the id each time it changes
 			this.id = +params['id'];
@@ -77,7 +84,7 @@ export class RecipeEditComponent implements OnInit {
 
 		// image preview logic: subscribe to value changes on the recipe image path
 		// and assign its value to the currentImagePath property
-		this.recipeForm.controls['imagePath'].valueChanges.subscribe((url: string) => {
+		this.imagePathSubscription = this.recipeForm.controls['imagePath'].valueChanges.subscribe((url: string) => {
 			this.currentImagePath = url;
 		});
 
@@ -268,6 +275,12 @@ export class RecipeEditComponent implements OnInit {
 			});
 		}
 
+	}
+
+	// unsubscription
+	ngOnDestroy(): void {
+		this.routeParamsSubscription.unsubscribe();
+		this.imagePathSubscription.unsubscribe();
 	}
 
 }
