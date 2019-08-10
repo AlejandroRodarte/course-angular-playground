@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Recipe } from '../recipes/recipe.model';
-import { map, tap } from 'rxjs/operators'
+import { map, tap, take, exhaustMap } from 'rxjs/operators'
 import { Observable } from 'rxjs';
 import { RecipeService } from '../recipes/recipe.service';
+import { AuthService } from '../auth/auth.service';
+import { UserModel } from './../auth/user.model';
 
 // type definition for the recipe structure we get from firebase
 // we get a set of random unique keys in a string format
@@ -18,56 +20,81 @@ export class DataStorageService {
 
     // our http client dependency and recipe service dependency
     constructor(private http: HttpClient,
-                private recipeService: RecipeService) {
+                private recipeService: RecipeService,
+                private authService: AuthService) {
 
     }
 
     // fetch all recipes from the database
-    // our header component is interesed in the response, since it will call a recipe service method (addOrUpdateRecipe)
+    // our header component is interesed in the response, since it will call a recipe service method (setRecipes)
     // to add all these recipes into the recipes array
-    // the addOrUpdateRecipe emits a subject which informs other components that the array has changed and thus render the response
+    // the setRecipes method emits a subject which informs other components that the array has changed and thus render the response
     // in essence, the header will use the recipe service to make calls to a method that ultimately informs other components to render the data
-
     // for the header to listen to such response we return the request observable so the component can subscribe to the response
+
+    // update: authentication
+    // we still return an observable of recipes, but we first subscribe to the user BehaviorSubject to fetch the current user data and immediately
+    // go back to working with Recipes by calling the exhaustMap() operator
     fetchRecipes(): Observable<Recipe[]> {
 
-        // get() is a generic, and by Firebase standards, we expect to get a structure defined in the FirebaseRecipes type
-        // before actually sending the response, we will transform it by instead sending an array of Recipe objects
+        return this
+                .authService
+                .user
+                .pipe(
 
-        // we will loop through all the random unique keys Firebase generates and extract the recipe to push it into a temporary array to return at the end
-        // of the loop
+                    // take(), allows us to subscribe to get the current last emitted user from this BehaviorSubject
+                    // and immediately unsubscribe
+                    take(1),
 
-        // also, we desire to store this unique random Firebase id on the Recipe model so we can recognize fetched recipes from brand new recipes added by the user
-        // and that have not been persisted yet; to do this, we simply assign the 'id' property of the recipe to the current loop value of the key
+                    // exhaustMap(), allows us to work with the previous fetched value (the user model), but forces us to return a new
+                    // observable, which in this case will be an observable of the firebase recipes we get from the server
+                    // this observable return is required since it will be what the fetchRecipes() method will return in the end
+                    exhaustMap((user: UserModel) => {
 
-        // after we get these Recipe[] array, we use the tap() intermediary to use the recipe service and set the fetched recipes into our local recipes array
-        // this setRecipes() method triggers through the Subject our components to render them on screen
-        return this.http
-                    .get<FirebaseRecipes>('https://angular-course-app-eeedb.firebaseio.com/recipes.json')
-                    .pipe(
+                        // get() is a generic, and by Firebase standards, we expect to get a structure defined in the FirebaseRecipes type
+                        // before actually sending the response, we will transform it by instead sending an array of Recipe objects
 
-                        map((firebaseRecipes: FirebaseRecipes) => {
-                            
-                            const recipes: Recipe[] = [];
+                        // we attach now the current user token to the request as a param (designed this way by Firebase)
+                        return this.http
+                                    .get<FirebaseRecipes>(
+                                        'https://angular-course-app-eeedb.firebaseio.com/recipes.json',
+                                        {
+                                            params: new HttpParams().set('auth', user.token)
+                                        }
+                                    );
 
-                            for (const key in firebaseRecipes) {
+                    }),
 
-                                const recipe: Recipe = firebaseRecipes[key];
-                                recipe.id = key;
+                    // we can use now the map() and tap() conventional operators to work with the recipes since exhaustMap() returns such observable
 
-                                recipes.push(recipe);
+                    // with the map() operator we will loop through all the random unique keys Firebase generates and 
+                    // extract the recipe to push it into a temporary array to return at the end of the loop
+                    // also, we desire to store this unique random Firebase id on the Recipe model so we can recognize fetched recipes from brand new recipes added by the user
+                    // and that have not been persisted yet; to do this, we simply assign the 'id' property of the recipe to the current loop value of the key
+                    map((firebaseRecipes: FirebaseRecipes) => {
+                                
+                        const recipes: Recipe[] = [];
 
-                            }
+                        for (const key in firebaseRecipes) {
 
-                            return recipes;
+                            const recipe: Recipe = firebaseRecipes[key];
+                            recipe.id = key;
 
-                        }),
+                            recipes.push(recipe);
 
-                        tap((recipes: Recipe[]) => {
-                            this.recipeService.setRecipes(recipes);
-                        })
+                        }
 
-                    );
+                        return recipes;
+
+                    }),
+
+                    // after we get these Recipe[] array, we use the tap() intermediary to use the recipe service and set the fetched recipes into our local recipes array
+                    // this setRecipes() method triggers through the Subject our components to render them on screen
+                    tap((recipes: Recipe[]) => {
+                        this.recipeService.setRecipes(recipes);
+                    })
+
+                );
 
     }
 

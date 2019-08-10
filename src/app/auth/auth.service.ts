@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, Subject } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserModel } from './user.model';
 
@@ -27,8 +27,11 @@ export type FirebaseAuthResponse = FirebaseSignupResponse | FirebaseSignupRespon
 })
 export class AuthService {
 
-    // user subject to store a user when signing up or logging in
-    user = new Subject<UserModel>();
+    // user behavior subject to store a user when signing up or logging in
+    // behavior subjects allow us to access the previous emitted value, this is so
+    // our data storage service can check for the last emitted user (currently active user)
+    // and attach its user token
+    user = new BehaviorSubject<UserModel>(null);
 
     // inject the http client
     constructor(private http: HttpClient) {
