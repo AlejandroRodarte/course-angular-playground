@@ -3,6 +3,8 @@ import { RecipeService } from '../recipes/recipe.service';
 import { Recipe } from '../recipes/recipe.model';
 import { DataStorageService } from '../shared/data-storage.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
+import { UserModel } from '../auth/user.model';
 
 // header component
 @Component({
@@ -28,14 +30,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // fetch recipes subscription
     private fetchRecipesSubscription: Subscription;
 
+    private userSubscription: Subscription;
+
+    private isAuthenticated: boolean = false;
+
     // recipe servce injection
     constructor(private dataStorageService: DataStorageService,
-                private recipeService: RecipeService) {
+                private recipeService: RecipeService,
+                private authService: AuthService) {
 
     }
 
     ngOnInit(): void {
         
+        this.userSubscription = this.authService.user.subscribe((user: UserModel) => {
+            this.isAuthenticated = !user ? false : true;
+        });
+
     }
 
     // when saving all the recipes, we enter into a 3-step process:
@@ -134,6 +145,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // unsubscriptions
     ngOnDestroy(): void {
         this.fetchRecipesSubscription.unsubscribe();
+        this.userSubscription.unsubscribe();
     }
 
 }

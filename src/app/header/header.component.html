@@ -22,7 +22,9 @@
 
                 <!-- link to /recipes -->
                 <!-- when active, add .active bootstrap class -->
-                <li routerLinkActive="active">
+                <!-- the /recipes link will disappear if the user is not authenticated -->
+                <li routerLinkActive="active"
+                    *ngIf="isAuthenticated">
                     <a [routerLink]="['/recipes']">
                         Recipes
                     </a>
@@ -38,7 +40,9 @@
 
                 <!-- link to /auth -->
                 <!-- when active, add .active bootstrap class -->
-                <li routerLinkActive="active">
+                <!-- the authenticate link will disappear if the user is authenticated -->
+                <li routerLinkActive="active"
+                    *ngIf="!isAuthenticated">
                     <a [routerLink]="['/auth']">
                         Authenticate
                     </a>
@@ -50,7 +54,8 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <!-- list item to place messages about interaction with database to user -->
-                <li>
+                <!-- all these database images and blocks will disappear if the user is not authenticated -->
+                <li *ngIf="isAuthenticated">
 
                     <!-- loading gif; renders while fetching or saving -->
                     <img src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/09b24e31234507.564a1d23c07b4.gif" 
@@ -96,9 +101,21 @@
 
                 </li>
 
+                <!-- the logout button will appear if the user is authenticated -->
+                <li *ngIf="isAuthenticated">
+
+                    <a  href="#"
+                        style="cursor: pointer;">
+                        Logout
+                    </a>
+
+                </li>
+
                 <!-- first list item: a dropdown menu -->
+                <!-- the whole dropdown won't appear if the user is not authenticated -->
                 <li class="dropdown"
-                    appDropdown>
+                    appDropdown
+                    *ngIf="isAuthenticated">
 
                     <!-- link to display the dropdown menu -->
                     <!-- deleted href -->
