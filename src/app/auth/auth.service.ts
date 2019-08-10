@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -46,35 +46,10 @@ export class AuthService {
                         }
                     )
                     .pipe(
-                        catchError((errorResponse) => {
-
-                            // to customize error, we can use pipe() with the catchError() operator, which should ALWAYS return
-                            // an observable under the name of throwError(), where we can pass to it as an argument whatever we want
-                            // our subscribers to receive as an error indicator (in this case, a customized error message)
-                            let errorMessage = 'An unknown error occured';
-
-                            // check if the received error has the correct format from Firebase; if not, send default error message through
-                            // the observable
-                            if (!errorResponse.error || !errorResponse.error.error) {
-                                return throwError(errorMessage);
-                            }
-
-                            // use a switch statement that checks for the Firebase error message and...
-                            switch (errorResponse.error.error.message) {
-
-                                // customize our message to send through the observable depending on each particular case
-                                case 'EMAIL_EXISTS':
-                                    errorMessage = 'This email already exists';
-                                    break;
-                                default:
-                                    errorMessage = 'An error occured';
-                                    break;
-
-                            }
-
-                            return throwError(errorMessage);
-
-                        })
+                        // instead of inserting as an argument an arrow function to work as the handler,
+                        // we place a reference to our handleError() method (no parentheses), so that it receives
+                        // injected the HttpErrorResponse
+                        catchError(this.handleError)
                     );
 
     }
@@ -91,8 +66,53 @@ export class AuthService {
                             password,
                             returnSecureToken: true
                         }
+                    )
+                    .pipe(
+                        // instead of inserting as an argument an arrow function to work as the handler,
+                        // we place a reference to our handleError() method (no parentheses), so that it receives
+                        // injected the HttpErrorResponse
+                        catchError(this.handleError)
                     );
 
     }
+
+    // transform HttpErrorResponse to custom error message
+    // outsoutce the custom error message generation to this method
+    private handleError(errorResponse: HttpErrorResponse): Observable<never> {
+
+        // to customize error, we can use pipe() with the catchError() operator, which should ALWAYS return
+        // an observable under the name of throwError(), where we can pass to it as an argument whatever we want
+        // our subscribers to receive as an error indicator (in this case, a customized error message)
+        let errorMessage = 'An unknown error occured';
+
+        // check if the received error has the correct format from Firebase; if not, send default error message through
+        // the observable
+        if (!errorResponse.error || !errorResponse.error.error) {
+            return throwError(errorMessage);
+        }
+
+        // use a switch statement that checks for the Firebase error message and...
+        switch (errorResponse.error.error.message) {
+
+            // customize our message to send through the observable depending on each particular case
+            case 'EMAIL_EXISTS':
+                errorMessage = 'This email already exists';
+                break;
+            case 'EMAIL_NOT_FOUND':
+                errorMessage = 'This email does not exist';
+                break;
+            case 'INVALID_PASSWORD':
+                errorMessage = 'This password is not correct';
+                break;
+            default:
+                errorMessage = 'An error occured';
+                break;
+
+        }
+
+        // return an observable with the custom error message
+        return throwError(errorMessage);
+
+    } 
 
 }
