@@ -40,6 +40,8 @@ import { RecipesModule } from './recipes/recipes.module';
 // section 21: added the AlertComponent, added the PlaceHolder Directive
 
 // entryComponents: components that should be loaded on runtime (via a factory)
+
+// update: deleted recipes component since they moved to the recipes.module.ts
 @NgModule({
   declarations: [
     AppComponent,
