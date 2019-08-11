@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService, FirebaseAuthResponse } from './auth.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { AlertComponent } from '../shared/alert/alert.component';
 
 @Component({
     selector: 'app-auth',
@@ -19,8 +20,11 @@ export class AuthComponent {
     // error messsage property
     error: string = null;
 
+    // using the component factory resolver to let angular instantiate components
+    // we desire to add dynamically
     constructor(private authService: AuthService,
-                private router: Router) {
+                private router: Router,
+                private componentFactoryResolver: ComponentFactoryResolver) {
 
     }
 
@@ -73,16 +77,37 @@ export class AuthComponent {
                 this.router.navigate(['/recipes']);
 
             }, (errorMessage: string) => {
+
                 this.error = errorMessage;
                 this.isLoading = false;
+
+                // imperative way of loading dynamic components: load it through a method
+                this.showErrorAlert(errorMessage);
+
             });
 
         authForm.reset();
 
     }
 
+    // child event emitter handler: set error strng to null
     onHandleError() {
         this.error = null;
+    }
+
+    // display error alery
+    private showErrorAlert(message: string) {
+
+        // using the component factory resolver to create a FACTORY of alert components
+        // this object now knows how to create AlertComponents
+        const alertComponentFactory = this
+                                        .componentFactoryResolver
+                                        .resolveComponentFactory(
+                                            AlertComponent
+                                        );
+        
+        // to know where to place the component
+
     }
 
 }

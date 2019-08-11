@@ -11,9 +11,11 @@ export class AlertComponent {
     @Input()
     private message: string;
 
+    // event emitter for parent component to listen
     @Output()
     close = new EventEmitter<void>();
 
+    // when close button is clicked, inform parent component
     onClose() {
         this.close.emit();
     }
