@@ -2,13 +2,11 @@
 
     <div class="col-xs-12 col-md-6 col-md-offset-3">
 
-        <!-- display error message if the error string is not null -->
-        <div class="alert alert-danger"
-             *ngIf="error !== null">
-            <p>
-                {{ error }}
-            </p>
-        </div>
+        <!-- display error message component if the error string is not null -->
+        <app-alert  *ngIf="error"
+                    [message]="error">
+            
+        </app-alert>
 
         <!-- display the loading spinner component if the isLoading flag is true -->
         <div *ngIf="isLoading"
