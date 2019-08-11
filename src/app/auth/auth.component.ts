@@ -143,7 +143,11 @@ export class AuthComponent implements OnDestroy {
 
     // unsubscribe
     ngOnDestroy() {
-        this.closeSubscription.unsubscribe();
+
+        if (this.closeSubscription) {
+            this.closeSubscription.unsubscribe();
+        }
+
     }
 
 }
