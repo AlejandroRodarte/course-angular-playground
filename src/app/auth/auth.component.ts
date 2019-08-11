@@ -1,7 +1,7 @@
-import { Component, ComponentFactoryResolver, ViewContainerRef, ViewChild } from '@angular/core';
+import { Component, ComponentFactoryResolver, ViewContainerRef, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService, FirebaseAuthResponse } from './auth.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
@@ -10,7 +10,7 @@ import { PlaceholderDirective } from './../shared/placeholder/placeholder.direct
     selector: 'app-auth',
     templateUrl: './auth.component.html'
 })
-export class AuthComponent {
+export class AuthComponent implements OnDestroy {
 
     // toggle between login and signup
     isLoginMode: boolean = true;
@@ -24,6 +24,9 @@ export class AuthComponent {
     // get first element that implements the placeholder directive
     @ViewChild(PlaceholderDirective, { static : false })
     private alertHost: PlaceholderDirective;
+
+    // close event emitter subscription
+    private closeSubscription: Subscription;
 
     // using the component factory resolver to let angular instantiate components
     // we desire to add dynamically
@@ -119,8 +122,28 @@ export class AuthComponent {
         hostViewContainerRef.clear();
 
         // now the use the component factory to create a component in the view container reference
-        hostViewContainerRef.createComponent(alertComponentFactory);
+        // get a reference to this component (type is actually ComponentRef)
+        const componentRef = hostViewContainerRef.createComponent(alertComponentFactory);
 
+        // the instance property of this component reference allows us to have access to its properties so
+        // we can set data normally
+        componentRef.instance.message = message;
+
+        // subscribe to the close event emitter
+        // basically the AlertComponent is subscribing to its own event emitter
+        this.closeSubscription = componentRef.instance.close.subscribe(() => {
+
+            // when data is emitted, unsubscribe and clear the view container reference to delete this component
+            this.closeSubscription.unsubscribe();
+            hostViewContainerRef.clear();
+
+        });
+
+    }
+
+    // unsubscribe
+    ngOnDestroy() {
+        this.closeSubscription.unsubscribe();
     }
 
 }

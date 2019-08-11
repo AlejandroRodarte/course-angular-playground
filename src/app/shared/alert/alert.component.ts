@@ -9,7 +9,7 @@ export class AlertComponent {
 
     // message received by parent component through property binding
     @Input()
-    private message: string;
+    message: string;
 
     // event emitter for parent component to listen
     @Output()
