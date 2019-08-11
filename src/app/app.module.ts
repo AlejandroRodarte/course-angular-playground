@@ -43,6 +43,8 @@ import { PlaceholderDirective } from './shared/placeholder/placeholder.directive
 
 // added the AuthInterceptorService to append the user token on each subsequent request
 // section 21: added the AlertComponent, added the PlaceHolder Directive
+
+// entryComponents: components that should be loaded on runtime (via a factory)
 @NgModule({
   declarations: [
     AppComponent,
@@ -76,6 +78,9 @@ import { PlaceholderDirective } from './shared/placeholder/placeholder.directive
       multi: true
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [
+    AlertComponent
+  ]
 })
 export class AppModule { }
