@@ -1,9 +1,10 @@
-import { Component, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, ViewContainerRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService, FirebaseAuthResponse } from './auth.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AlertComponent } from '../shared/alert/alert.component';
+import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
 
 @Component({
     selector: 'app-auth',
@@ -19,6 +20,10 @@ export class AuthComponent {
 
     // error messsage property
     error: string = null;
+
+    // get first element that implements the placeholder directive
+    @ViewChild(PlaceholderDirective, { static : false })
+    private alertHost: PlaceholderDirective;
 
     // using the component factory resolver to let angular instantiate components
     // we desire to add dynamically
@@ -106,7 +111,15 @@ export class AuthComponent {
                                             AlertComponent
                                         );
         
-        // to know where to place the component
+        // view container reference of the first element in the DOM that has the appPlaceholder directive
+        // with this view container reference we can add components inside it (the <ng-template>)
+        const hostViewContainerRef = this.alertHost.viewContainerRef;
+
+        // clear all components that have been rendered before inside this component
+        hostViewContainerRef.clear();
+
+        // now the use the component factory to create a component in the view container reference
+        hostViewContainerRef.createComponent(alertComponentFactory);
 
     }
 

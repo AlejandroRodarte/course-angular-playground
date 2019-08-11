@@ -10,6 +10,15 @@
             
         </app-alert> -->
 
+        <!-- imperative way to load dynamic components -->
+        <!-- ng-template to not render in the browser but stil manipulate it here -->
+        <!-- we append the the appPlaceholder so we can get a direct view container reference and access it -->
+        <!-- through ViewChild on this AuthComponent -->
+        <!-- it does not necessarily have to be here -->
+        <ng-template appPlaceholder>
+
+        </ng-template>
+
         <!-- display the loading spinner component if the isLoading flag is true -->
         <div *ngIf="isLoading"
               style="text-align: center;">
