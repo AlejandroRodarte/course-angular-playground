@@ -8,6 +8,7 @@ import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.compon
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { RecipeResolverService } from './shared/recipe-resolver.service';
 import { AuthComponent } from './auth/auth.component';
+import { AuthGuard } from './auth/auth.guard';
 
 // application routes
 // root: redirect to /recipes
@@ -44,9 +45,14 @@ const appRoutes: Routes = [
 
     // http update: paths localhost:4200/recipes/id and localhost:4200/recipes/id/edit will resolve
     // run the RecipeResolverService resolve() code before rendering their components (fetch data from db)
+
+    // the /recipes compoenent will now have the AuthGuard
     {
         path: 'recipes',
         component: RecipesComponent,
+        canActivate: [
+            AuthGuard
+        ],
         children: [
             {
                 path: '',

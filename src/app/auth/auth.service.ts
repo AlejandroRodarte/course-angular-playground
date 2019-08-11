@@ -145,7 +145,7 @@ export class AuthService {
 
         // if null, send user to /auth
         if (!user) {
-            this.router.navigate(['/auth']);
+            // this.router.navigate(['/auth']);
             return;
         }
 
@@ -170,7 +170,7 @@ export class AuthService {
             this.autoLogout(expirationDuration)
 
         } else {
-            this.router.navigate(['/auth']);
+            // this.router.navigate(['/auth']);
         }
 
     }
@@ -227,6 +227,7 @@ export class AuthService {
         // store the user for subscribers
         this.user.next(user);
 
+        // start logout timer
         this.autoLogout(expiresIn * 1000);
 
         // save the current user object into local storage (need to convert to a string first)
