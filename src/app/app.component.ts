@@ -1,7 +1,8 @@
 // component parent node selector goes here
 // component class definition goes here
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from './auth/auth.service';
 
 // this component will go inside an <app-root> html tag found on the index.html page
 @Component({
@@ -11,6 +12,16 @@ import { Component } from '@angular/core';
 })
 
 // component class definition
-export class AppComponent {
+export class AppComponent implements OnInit {
+
+    constructor(private authService: AuthService) {
+
+    }
+
+    // when loading the whole app, attempt to login
+    ngOnInit() {
+        this.authService.autoLogin();
+    }
+
 
 }

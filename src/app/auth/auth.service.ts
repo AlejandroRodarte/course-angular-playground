@@ -34,6 +34,9 @@ export class AuthService {
     // and attach its user token
     user = new BehaviorSubject<UserModel>(null);
 
+    // token expiration timer
+    private tokenExpirationTimer: NodeJS.Timer;
+
     // inject the http client
     constructor(private http: HttpClient,
                 private router: Router) {
@@ -129,12 +132,77 @@ export class AuthService {
 
     }
 
+    // auto login
+    autoLogin(): void {
+
+        // fetch the user from local storage
+        const user: {
+            email: string,
+            id: string,
+            _token: string,
+            _tokenExpirationDate: string
+        } = JSON.parse(localStorage.getItem('userData'));
+
+        // if null, send user to /auth
+        if (!user) {
+            this.router.navigate(['/auth']);
+            return;
+        }
+
+        // if not null, cast JSON to a user model to access getter
+        const fetchedUser = new UserModel(
+            user.email,
+            user.id,
+            user._token,
+            new Date(user._tokenExpirationDate)
+        )
+
+        // validate through getter if token has not expired
+        // if expired, route to /auth; if not, set the user on subject
+        if (fetchedUser.token) {
+
+            this.user.next(fetchedUser);
+
+            // calculate the expiration duration by substracting the expiration date from the current date
+            const expirationDuration = new Date(user._tokenExpirationDate).getTime() - new Date().getTime();
+
+            // call auto logout to set the timer
+            this.autoLogout(expirationDuration)
+
+        } else {
+            this.router.navigate(['/auth']);
+        }
+
+    }
+
     // logout: set user to null (disables recipes and management to user and forces to login/signup)
     // navigate to /auth
     // this is done in the service since we want to redirect the user no matter the component we are in
     logout() {
+
         this.user.next(null);
         this.router.navigate(['/auth']);
+
+        // if the auto-logout timer was triggered, then clear it
+        if (this.tokenExpirationTimer) {
+            clearTimeout(this.tokenExpirationTimer);
+        }
+
+        // clear the user data local storage item
+        localStorage.removeItem('userData');
+
+    }
+
+    // auto-logout
+    autoLogout(expirationDuration: number) {
+
+        // start up directly a timeout and wait for an amount of time equivalent
+        // to the expiration duration (token expiration date minus current date)
+        // when finishing, call logout()
+        this.tokenExpirationTimer = setTimeout(() => {
+            this.logout();
+        }, expirationDuration)
+
     }
 
     // handler for authentication
@@ -158,6 +226,11 @@ export class AuthService {
 
         // store the user for subscribers
         this.user.next(user);
+
+        this.autoLogout(expiresIn * 1000);
+
+        // save the current user object into local storage (need to convert to a string first)
+        localStorage.setItem('userData', JSON.stringify(user));
 
     }
     
