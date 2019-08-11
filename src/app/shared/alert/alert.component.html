@@ -1,5 +1,6 @@
 <!-- dark overlay -->
-<div class="backdrop">
+<div class="backdrop"
+     (click)="onClose()">
 
 </div>
 
@@ -14,7 +15,8 @@
     <!-- button -->
     <div class="alert-box-actions">
         <div class="btn btn-primary"
-             type="button">
+             type="button"
+             (click)="onClose()">
             Close
         </div>
     </div>

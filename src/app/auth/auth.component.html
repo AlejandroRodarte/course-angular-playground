@@ -4,7 +4,8 @@
 
         <!-- display error message component if the error string is not null -->
         <app-alert  *ngIf="error"
-                    [message]="error">
+                    [message]="error"
+                    (close)="onHandleError()">
             
         </app-alert>
 
