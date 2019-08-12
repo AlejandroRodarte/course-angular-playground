@@ -6,8 +6,9 @@ import { ShoppingListComponent } from './shopping-list.component';
 const shoppingListRoutes: Routes = [
 
     // localhost:4200/shopping-list
+    // cleared path since we are already loading it on AppModule with lazy-loading
     {
-        path: 'shopping-list',
+        path: '',
         component: ShoppingListComponent
     }
 

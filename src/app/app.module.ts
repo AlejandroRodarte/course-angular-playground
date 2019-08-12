@@ -8,10 +8,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
-import { AuthModule } from './auth/auth.module';
 
 
 // here go the components/modules we will implement on our app
@@ -42,6 +40,8 @@ import { AuthModule } from './auth/auth.module';
 
 // imported modules are loaded eagerly
 // since now the RecipesModule is loaded lazily (in a separate coed bundle), we delete it from here
+
+// also deleted eager loading of the AuthModule and ShoppingListModule
 @NgModule({
 
 	declarations: [
@@ -53,8 +53,6 @@ import { AuthModule } from './auth/auth.module';
 		BrowserModule,
 		AppRoutingModule,
 		HttpClientModule,
-		ShoppingListModule,
-		AuthModule,
 		SharedModule,
 		CoreModule
 	],

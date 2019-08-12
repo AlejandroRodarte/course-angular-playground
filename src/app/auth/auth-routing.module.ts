@@ -6,8 +6,9 @@ import { AuthComponent } from './auth.component';
 const authRoutes: Routes = [
 
     // localhost:4200/auth
+    // cleared path since we are already loading it on AppModule with lazy-loading
     {
-        path: 'auth',
+        path: '',
         component: AuthComponent
     }
 
