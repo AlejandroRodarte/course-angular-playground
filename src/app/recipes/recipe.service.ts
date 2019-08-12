@@ -1,5 +1,5 @@
 import { Recipe } from './recipe.model';
-import { Injectable, OnDestroy } from '@angular/core';
+import { OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
 import { Subject, Subscription } from 'rxjs';
@@ -10,9 +10,9 @@ import { Subject, Subscription } from 'rxjs';
 // update: this service was destroyed when leaving the /recipes path and instantiated when going back
 // to such path; this prevented the deletion of recipes
 // to solve this, we make this service a global singleton
-@Injectable({
-    providedIn: 'root'
-})
+// @Injectable({
+//     providedIn: 'root'
+// })
 export class RecipeService implements OnDestroy {
 
     // an array of Recipe models
