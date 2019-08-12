@@ -4,6 +4,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserModel } from './user.model';
 import { Router } from '@angular/router';
+import { environment } from './../../environments/environment';
 
 // when signing up with email/password on Firebase, we expect an object with these properties
 export interface FirebaseSignupResponse {
@@ -50,7 +51,7 @@ export class AuthService {
         // send as payload the email, password and a returnSecureToken flag set to true to get a JWT
         return this.http
                     .post<FirebaseSignupResponse>(
-                        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA4TpfoACG8AiUd4lEIlhyibeBtbVECIa8',
+                        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`,
                         {
                             email,
                             password,
@@ -95,7 +96,7 @@ export class AuthService {
         // make the correct post() request to the correct endpoint
         return this.http
                     .post<FirebaseSigninResponse>(
-                        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA4TpfoACG8AiUd4lEIlhyibeBtbVECIa8',
+                        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.firebaseAPIKey}`,
                         {
                             email,
                             password,
