@@ -19,20 +19,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     // fetching: flag active while making the GET request and rendering data to user
     // fetchSuccessful: flag active for 3 seconds to inform user data was fetched without issue
-    private fetching: boolean = false;
-    private fetchSuccessful: boolean = false;
+    fetching: boolean = false;
+    fetchSuccessful: boolean = false;
 
     // saving: flag active while making the GET request and rendering data to user
     // saveSuccessful: flag active for 3 seconds to inform user data was fetched without issue
-    private saving: boolean = false;
-    private saveSuccessful: boolean = false;
+    saving: boolean = false;
+    saveSuccessful: boolean = false;
 
     // fetch recipes subscription
     private fetchRecipesSubscription: Subscription;
 
     private userSubscription: Subscription;
 
-    private isAuthenticated: boolean = false;
+    isAuthenticated: boolean = false;
 
     // recipe servce injection
     constructor(private dataStorageService: DataStorageService,

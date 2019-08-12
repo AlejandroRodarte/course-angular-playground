@@ -13,7 +13,7 @@ import { FormMode } from 'src/app/shared/form-mode.enum';
 export class ShoppingEditComponent implements OnInit, OnDestroy {
 
 	// shopping list form (static true since we use it on the ngOnInit hook)
-	@ViewChild('shoppingListForm', { static : true })
+	@ViewChild('shoppingListForm', { static : false })
 	private shoppingListForm: NgForm;
 
 	// reference to the submit button (static false since we do not use it on the ngOnInit hook)
@@ -24,7 +24,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	private sendIngredientIndexSubscription: Subscription;
 
 	// edit mode flag
-	private editMode: boolean = false;
+	editMode: boolean = false;
 
 	// field to track currently selected ingredient
 	private ingredientIndex: number;
@@ -70,7 +70,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	}
 	
 	// listener for the submission button click
-	onSubmitClick(): void {
+	onSubmit(): void {
 
 		let name: string;
 
