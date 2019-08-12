@@ -1,5 +1,6 @@
-import { Ingredient } from '../shared/ingredient.model';
+import { Ingredient } from '../../shared/ingredient.model';
 import { Action } from '@ngrx/store';
+import { ADD_INGREDIENT } from './shopping-list.actions';
 
 // the initial state is, in most times, a javascript object
 // the shopping list service manages in essence just the array of ingredients
@@ -29,7 +30,8 @@ export function shoppingListReducer(state = initialState, action: Action) {
         // action type: add an ingredient; update the state accordingly
         // never touch the existing state: create a copy of it with the spread operator
         // attempt to add the new ingredient
-        case 'ADD_INGREDIENT':
+        // now we use a constant from the shopping-list.actions.ts to avoid typos and future problems
+        case ADD_INGREDIENT:
             return {
                 ...state,
                 ingredients: [...state.ingredients, action]
