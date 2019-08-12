@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router'
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router'
 
 // application routes
 // root: redirect to /recipes
@@ -47,10 +47,16 @@ const appRoutes: Routes = [
 
 // load application routes to module and export it
 // forRoot() loads the root routes once and the forChild() routes from other modules
+// preloadingStrategy: PreloadAllModules -> pre-load all lazy-loaded modules for further optimization
 @NgModule({
 
     imports: [
-        RouterModule.forRoot(appRoutes)
+        RouterModule.forRoot(
+            appRoutes,
+            {
+                preloadingStrategy: PreloadAllModules
+            }
+        )
     ],
 
     exports: [
