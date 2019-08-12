@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from './shopping-list.service';
-import { Subscription } from 'rxjs';
-import { LoggingService } from '../logging.service';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 // shopping list component
 @Component({
@@ -12,30 +12,31 @@ import { LoggingService } from '../logging.service';
 })
 export class ShoppingListComponent implements OnInit, OnDestroy {
 
-	// ingredients copy from service
-	ingredients: Ingredient[] = [];
-
-	// store the ingredientsChanged subject subscription
-	private ingredientsChangedSubscription: Subscription;
+	// ingredients: observable that resolves an object with an ingredients property that contains
+	// an array of ingredients (state resolved by the shoppingListReducer)
+	ingredients: Observable<{ ingredients: Ingredient[] }>;
 
 	// receive singleton of shopping list service
+	// injecting the store 
+	// generic: must define how the store looks
+	// keys: alias we provided in the app-module.ts forRoot() when mapping the reducers
+	// values: what the associated reducer will update to the overall state, which is just
+	// the array of ingredients state
 	constructor(private shoppingListService: ShoppingListService,
-				private loggingService: LoggingService) { 
+				private store: Store<{ 
+					shoppingList: { 
+						ingredients: Ingredient[] 
+					} 
+				}>) {
 		
 	}
 
 	// on initialization
 	ngOnInit() {
 
-		// get a copy of these ingredients through the service
-		this.ingredients = this.shoppingListService.getIngredients();
-
-		// subscribe to the ingredientsChanged emitter from the service and push to this copy the new ingredient
-		this.ingredientsChangedSubscription = this.shoppingListService.ingredientsChanged.subscribe(() => {
-			this.ingredients = this.shoppingListService.getIngredients();
-		});
-
-		this.loggingService.printLog('Hello from ShoppingListComponent: on ngOnInit()');
+		// selecting the shopping list part of my global store (application state); returns an observable of the
+		// part of the state the shoppingListReducer returns (object with ingredients property and an ingredient array value)
+		this.ingredients = this.store.select('shoppingList');
 
 	}
 
@@ -45,9 +46,8 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 		this.shoppingListService.sendIngredientIndex.next(index);
 	}
 
-	// upon destruction, unsubscribe from the service's subject
 	ngOnDestroy() {
-		this.ingredientsChangedSubscription.unsubscribe();
+
 	}
 
 }

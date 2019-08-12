@@ -3,7 +3,6 @@
 
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
-import { LoggingService } from './logging.service';
 
 // this component will go inside an <app-root> html tag found on the index.html page
 @Component({
@@ -15,15 +14,13 @@ import { LoggingService } from './logging.service';
 // component class definition
 export class AppComponent implements OnInit {
 
-    constructor(private authService: AuthService,
-                private loggingService: LoggingService) {
+    constructor(private authService: AuthService) {
 
     }
 
     // when loading the whole app, attempt to login
     ngOnInit() {
         this.authService.autoLogin();
-        this.loggingService.printLog('Hello from AppComponent: on ngOnInit()');
     }
 
 

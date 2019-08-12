@@ -4,7 +4,6 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
 import { PlaceholderDirective } from './placeholder/placeholder.directive';
 import { DropdownDirective } from './dropdown.directive';
 import { CommonModule } from '@angular/common';
-import { LoggingService } from '../logging.service';
 
 // shared module
 // we declare all the shared components, directives and modules
@@ -30,10 +29,6 @@ import { LoggingService } from '../logging.service';
         PlaceholderDirective,
         DropdownDirective,
         CommonModule
-    ],
-
-    providers: [
-        LoggingService
     ],
 
     entryComponents: [

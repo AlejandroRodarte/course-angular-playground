@@ -40,6 +40,10 @@ export function shoppingListReducer(state = initialState, action: ShoppingListAc
                 ...state,
                 ingredients: [...state.ingredients, action.payload]
             };
+        
+        // default state: manages our kickstart action (assign state to be the initial state on start)
+        default:
+            return state;
 
     }
 

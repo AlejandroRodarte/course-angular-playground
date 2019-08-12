@@ -15,9 +15,6 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 
 
-import { LoggingService } from './logging.service';
-
-
 import { shoppingListReducer } from './shopping-list/store/shopping-list.reducer';
 
 
@@ -63,10 +60,6 @@ import { shoppingListReducer } from './shopping-list/store/shopping-list.reducer
 		SharedModule,
 		CoreModule
 	],
-
-	// providers: [
-	// 	LoggingService
-	// ],
 
 	bootstrap: [
 		AppComponent
