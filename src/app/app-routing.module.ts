@@ -22,9 +22,11 @@ const appRoutes: Routes = [
     // (download code in a separate bundle when accessing the route)
     // we declare the path to our recipes.module.ts file, place a hashtag and then declare the name
     // of our module class
+
+    // es2015 new syntax for lazy-loading
     {
         path: 'recipes',
-        loadChildren: './recipes/recipes.module#RecipesModule'
+        loadChildren: () => import('./recipes/recipes.module').then(m => m.RecipesModule)
     }
 
 ]
