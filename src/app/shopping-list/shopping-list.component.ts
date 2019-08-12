@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from './shopping-list.service';
 import { Subscription } from 'rxjs';
+import { LoggingService } from '../logging.service';
 
 // shopping list component
 @Component({
@@ -18,7 +19,8 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 	private ingredientsChangedSubscription: Subscription;
 
 	// receive singleton of shopping list service
-	constructor(private shoppingListService: ShoppingListService) { 
+	constructor(private shoppingListService: ShoppingListService,
+				private loggingService: LoggingService) { 
 		
 	}
 
@@ -32,6 +34,8 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 		this.ingredientsChangedSubscription = this.shoppingListService.ingredientsChanged.subscribe(() => {
 			this.ingredients = this.shoppingListService.getIngredients();
 		});
+
+		this.loggingService.printLog('Hello from ShoppingListComponent: on ngOnInit()');
 
 	}
 

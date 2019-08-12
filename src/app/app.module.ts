@@ -10,6 +10,7 @@ import { HeaderComponent } from './header/header.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
+import { LoggingService } from './logging.service';
 
 
 // here go the components/modules we will implement on our app
@@ -56,6 +57,10 @@ import { CoreModule } from './core.module';
 		SharedModule,
 		CoreModule
 	],
+
+	// providers: [
+	// 	LoggingService
+	// ],
 
 	bootstrap: [
 		AppComponent
