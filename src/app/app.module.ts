@@ -42,37 +42,51 @@ import { RecipesModule } from './recipes/recipes.module';
 // entryComponents: components that should be loaded on runtime (via a factory)
 
 // update: deleted recipes component since they moved to the recipes.module.ts
+// RecipesModule imports RecipesRoutingModule, so we still have access to /recipes child routes
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    ShoppingListComponent,
-    ShoppingEditComponent,
-    DropdownDirective,
-    AuthComponent,
-    LoadingSpinnerComponent,
-    AlertComponent,
-    PlaceholderDirective
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    RecipesModule
-  ],
-  providers: [
-    ShoppingListService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptorService,
-      multi: true
-    }
-  ],
-  bootstrap: [AppComponent],
-  entryComponents: [
-    AlertComponent
-  ]
+
+	declarations: [
+		AppComponent,
+		HeaderComponent,
+		ShoppingListComponent,
+		ShoppingEditComponent,
+		DropdownDirective,
+		AuthComponent,
+		LoadingSpinnerComponent,
+		AlertComponent,
+		PlaceholderDirective
+	],
+
+	imports: [
+		BrowserModule,
+		FormsModule,
+		AppRoutingModule,
+		ReactiveFormsModule,
+		HttpClientModule,
+		RecipesModule
+	],
+
+	providers: [
+
+		ShoppingListService,
+
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: AuthInterceptorService,
+			multi: true
+		}
+
+	],
+
+	bootstrap: [
+		AppComponent
+	],
+
+	entryComponents: [
+		AlertComponent
+	]
+	
 })
-export class AppModule { }
+export class AppModule {
+
+}
