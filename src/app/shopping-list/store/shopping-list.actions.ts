@@ -14,6 +14,8 @@ export class AddIngredient implements Action {
 
     // payload: optional property by the Action interface
     // since we are adding an ingredient, the payload should be of type Ingredient
-    payload: Ingredient;
+    constructor(public payload: Ingredient) {
+
+    }
 
 }

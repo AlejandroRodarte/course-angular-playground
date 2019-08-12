@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 import { ShoppingListService } from './../shopping-list.service';
-import { NgForm, Form } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { FormMode } from 'src/app/shared/form-mode.enum';
+import { Store } from '@ngrx/store';
+
+import * as ShoppingListActions from '../store/shopping-list.actions';
 
 @Component({
     selector: 'app-shopping-edit',
@@ -30,7 +33,13 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	private ingredientIndex: number;
 
 	// get shopping list service singleton
-    constructor(private shoppingListService: ShoppingListService) {
+	// inject the store so we can dispatch actions
+	constructor(private shoppingListService: ShoppingListService,
+				private store: Store<{
+					shoppingList: {
+						ingredient: Ingredient[]
+					}
+				}>) {
 
 	}
 
@@ -87,7 +96,10 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 		const amount: number = +this.shoppingListForm.form.value.amount;
 
 		// add the ingredient through the service and set information whether we are 'adding' or 'updating'
-		this.shoppingListService.addIngredient(new Ingredient(name, amount), this.editMode);
+		// this.shoppingListService.addIngredient(new Ingredient(name, amount), this.editMode);
+
+		// dispatch an AddIngredient action with the Ingredient object to add
+		this.store.dispatch(new ShoppingListActions.AddIngredient(new Ingredient(name, amount)));
 
 		// clear the form
 		this.clearForm();
