@@ -22,9 +22,11 @@ const recipeRoutes: Routes = [
     // run the RecipeResolverService resolve() code before rendering their components (fetch data from db)
 
     // the /recipes compoenent will now have the AuthGuard to prevent access to this route on unauthorized users
+
+    // the root path will now be set as empty since we are already lazy-loading /recipes on the AppModule
     {
 
-        path: 'recipes',
+        path: '',
 
         component: RecipesComponent,
 

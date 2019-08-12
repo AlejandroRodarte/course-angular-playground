@@ -15,6 +15,16 @@ const appRoutes: Routes = [
         path: '',
         redirectTo: '/recipes',
         pathMatch: 'full'
+    },
+
+    // localhost:4200/recipes
+    // when accessing this parent route, we want to load its children in a lazy manner
+    // (download code in a separate bundle when accessing the route)
+    // we declare the path to our recipes.module.ts file, place a hashtag and then declare the name
+    // of our module class
+    {
+        path: 'recipes',
+        loadChildren: './recipes/recipes.module#RecipesModule'
     }
 
 ]

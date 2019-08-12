@@ -8,7 +8,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { AppRoutingModule } from './app-routing.module';
-import { RecipesModule } from './recipes/recipes.module';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
@@ -40,6 +39,9 @@ import { AuthModule } from './auth/auth.module';
 
 // added the core module to notify angular of our root services
 // added now the AuthModule
+
+// imported modules are loaded eagerly
+// since now the RecipesModule is loaded lazily (in a separate coed bundle), we delete it from here
 @NgModule({
 
 	declarations: [
@@ -51,7 +53,6 @@ import { AuthModule } from './auth/auth.module';
 		BrowserModule,
 		AppRoutingModule,
 		HttpClientModule,
-		RecipesModule,
 		ShoppingListModule,
 		AuthModule,
 		SharedModule,
