@@ -1,9 +1,9 @@
-import { Recipe } from '../recipes/recipe.model';
+import { Recipe } from './recipe.model';
 import { Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { RecipeService } from '../recipes/recipe.service';
-import { DataStorageService } from './data-storage.service';
+import { RecipeService } from './recipe.service';
+import { DataStorageService } from '../shared/data-storage.service';
 
 // recipe resolver service
 // guarantees that, when accessing routes such as

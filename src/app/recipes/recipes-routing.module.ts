@@ -4,7 +4,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { RecipeStartComponent } from './recipe-start/recipe-start.component';
 import { RecipeEditComponent } from './recipe-edit/recipe-edit.component';
 import { RecipeDetailComponent } from './recipe-detail/recipe-detail.component';
-import { RecipeResolverService } from '../shared/recipe-resolver.service';
+import { RecipeResolverService } from './recipe-resolver.service';
 import { NgModule } from '@angular/core';
 
 // /recipes routes and children

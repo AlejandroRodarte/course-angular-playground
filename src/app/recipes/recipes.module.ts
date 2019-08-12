@@ -5,9 +5,9 @@ import { RecipeListComponent } from './recipe-list/recipe-list.component';
 import { RecipeItemComponent } from './recipe-list/recipe-item/recipe-item.component';
 import { RecipeStartComponent } from './recipe-start/recipe-start.component';
 import { RecipeEditComponent } from './recipe-edit/recipe-edit.component';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RecipesRoutingModule } from './recipes-routing.module';
+import { SharedModule } from '../shared/shared.module';
 
 // module to handle everything related to recipes
 // RecipesRoutingModule: Module with all the /recipes child routes declared
@@ -17,6 +17,7 @@ import { RecipesRoutingModule } from './recipes-routing.module';
 // since the all the recipe components are not loaded by the app module or any of its components,
 // and we load them only through the RecipesRoutingModule, there is no need to export them, but stil
 // declare them here to use them on our RecipesRoutingModule
+// now using shared module to have access to shared components/directives/modules
 @NgModule({
 
     declarations: [
@@ -30,8 +31,8 @@ import { RecipesRoutingModule } from './recipes-routing.module';
 
     imports: [
         RecipesRoutingModule,
-        CommonModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        SharedModule
     ]
 
 })
