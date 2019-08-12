@@ -13,6 +13,10 @@ import { RecipesRoutingModule } from './recipes-routing.module';
 // RecipesRoutingModule: Module with all the /recipes child routes declared
 // CommonModule: replacement for BrowserModule to get access to directives such as *ngIf anf *ngFor
 // ReactiveFormsModule: we use reactive form to add/update a recipe
+
+// since the all the recipe components are not loaded by the app module or any of its components,
+// and we load them only through the RecipesRoutingModule, there is no need to export them, but stil
+// declare them here to use them on our RecipesRoutingModule
 @NgModule({
 
     declarations: [
@@ -28,15 +32,6 @@ import { RecipesRoutingModule } from './recipes-routing.module';
         RecipesRoutingModule,
         CommonModule,
         ReactiveFormsModule
-    ],
-
-    exports: [
-        RecipesComponent,
-        RecipeDetailComponent,
-        RecipeListComponent,
-        RecipeItemComponent,
-        RecipeStartComponent,
-        RecipeEditComponent
     ]
 
 })
