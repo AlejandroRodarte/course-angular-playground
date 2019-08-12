@@ -11,8 +11,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 // import root and custom components
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
-import { ShoppingListComponent } from './shopping-list/shopping-list.component';
-import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-edit.component';
 import { DropdownDirective } from './shared/dropdown.directive';
 import { ShoppingListService } from './shopping-list/shopping-list.service';
 import { AppRoutingModule } from './app-routing.module';
@@ -22,6 +20,7 @@ import { AuthInterceptorService } from './auth/auth-interceptor.service';
 import { AlertComponent } from './shared/alert/alert.component';
 import { PlaceholderDirective } from './shared/placeholder/placeholder.directive';
 import { RecipesModule } from './recipes/recipes.module';
+import { ShoppingListModule } from './shopping-list/shopping-list.module';
 
 
 // here go the components/modules we will implement on our app
@@ -43,13 +42,13 @@ import { RecipesModule } from './recipes/recipes.module';
 
 // update: deleted recipes component since they moved to the recipes.module.ts
 // RecipesModule imports RecipesRoutingModule, so we still have access to /recipes child routes
+
+// updated: deleted shopping list components and declared them on the shopping-list.module.ts
 @NgModule({
 
 	declarations: [
 		AppComponent,
 		HeaderComponent,
-		ShoppingListComponent,
-		ShoppingEditComponent,
 		DropdownDirective,
 		AuthComponent,
 		LoadingSpinnerComponent,
@@ -63,7 +62,8 @@ import { RecipesModule } from './recipes/recipes.module';
 		AppRoutingModule,
 		ReactiveFormsModule,
 		HttpClientModule,
-		RecipesModule
+		RecipesModule,
+		ShoppingListModule
 	],
 
 	providers: [

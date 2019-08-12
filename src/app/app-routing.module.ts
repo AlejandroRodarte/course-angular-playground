@@ -9,6 +9,7 @@ import { AuthComponent } from './auth/auth.component';
 // /shopping-list: load ShoppingListComponent
 
 // updated: /recipes child routes moved to recipes-routing.module.ts
+// updated: /shopping-list route moved to shopping-list-routing.module.ts
 const appRoutes: Routes = [
 
     // localhost:4200
@@ -16,12 +17,6 @@ const appRoutes: Routes = [
         path: '',
         redirectTo: '/recipes',
         pathMatch: 'full'
-    },
-
-    // localhost:4200/shopping-list
-    {
-        path: 'shopping-list',
-        component: ShoppingListComponent
     },
 
     // localhost:4200/auth
