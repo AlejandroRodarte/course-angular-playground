@@ -57,17 +57,37 @@ export function shoppingListReducer(
         // attempt to add the new ingredient with the action payload
         // now we use a constant from the shopping-list.actions.ts to avoid typos and future problems
         case ShoppingListActions.ADD_INGREDIENT:
+            
+            // create copy of the state ingredients
+            const addIngredientUpdatedIngredients = [...state.ingredients];
+
+            // call method to either push the new ingreident to the array or add the amount to an existing one
+            pushOrAddMore(action.payload, addIngredientUpdatedIngredients)
+
+            // return the previous state and overwrite the ingredients property with the new ingredients array (copy)
             return {
                 ...state,
-                ingredients: [...state.ingredients, action.payload]
+                ingredients: addIngredientUpdatedIngredients
             };
-        
         
         // action type, add a set of ingredients
         case ShoppingListActions.ADD_INGREDIENTS:
+
+            // create copy of the state ingredients
+            const addIngredientsUpdatedIngredients = [...state.ingredients];
+
+            // for each ingredient in the payload, call the method to either add the brand new ingredient
+            // or add its amount to an existing one
+            // the method that calls this action provides as an argument a reference to the ingredients of a particular recipe,
+            // so we create a new Ingredient instance and pass it as an argument to avoid strange behavior in our app
+            action.payload.forEach((ingredient: Ingredient) => {
+                pushOrAddMore(new Ingredient(ingredient.name, ingredient.amount), addIngredientsUpdatedIngredients);
+            });
+
+            // return the old state with the new ingredients property overwritten
             return {
                 ...state,
-                ingredients: [...state.ingredients, ...action.payload]
+                ingredients: addIngredientsUpdatedIngredients
             }
         
         // update an ingredient: update an existing ingredient
@@ -128,6 +148,35 @@ export function shoppingListReducer(
         default:
             return state;
 
+    }
+
+}
+
+// push new ingredient to array or add amount to existing one
+function pushOrAddMore(ingredient: Ingredient, stateIngredients: Ingredient[]): void {
+
+    // tracker flag
+    let existed: boolean = false;
+    
+    // loop through all ingredients on the latest state
+    for (let i = 0; i < stateIngredients.length; i++) {
+
+        // if the ingredient to add already exists on the list, just add the new amount
+        // to the existing one; end the loop and mark as existing
+        if (stateIngredients[i].name === ingredient.name) {
+            
+            stateIngredients[i].amount += ingredient.amount;
+
+            existed = true;
+            break;
+
+        }
+
+    }
+
+    // if the ingredient did not exist, push the ingredient to the array
+    if (!existed) {
+        stateIngredients.push(ingredient);
     }
 
 }

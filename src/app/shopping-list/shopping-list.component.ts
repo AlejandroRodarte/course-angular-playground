@@ -1,13 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
-import { ShoppingListService } from './shopping-list.service';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
-
-// import everything from the reducer file
-// fromShoppingList: naming convention
 import * as fromShoppingList from './store/shopping-list.reducer';
 
 // shopping list component
@@ -20,7 +16,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
 	// ingredients: observable that resolves an object with an ingredients property that contains
 	// an array of ingredients (state resolved by the shoppingListReducer)
-	ingredients: Observable<{ ingredients: Ingredient[] }>;
+	ingredients: Observable<fromShoppingList.ShoppingListReducerState>;
 
 	// receive singleton of shopping list service
 	// injecting the store 
@@ -30,8 +26,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 	// the array of ingredients state
 
 	// now using the appState interface
-	constructor(private shoppingListService: ShoppingListService,
-				private store: Store<fromShoppingList.AppState>) {
+	constructor(private store: Store<fromShoppingList.AppState>) {
 		
 	}
 
