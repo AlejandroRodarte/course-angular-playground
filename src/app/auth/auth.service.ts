@@ -6,8 +6,8 @@ import { UserModel } from './user.model';
 import { Router } from '@angular/router';
 import { environment } from './../../environments/environment';
 import { Store } from '@ngrx/store';
-import * as fromApp from '../store/app.reducer'
-import * as AuthActions from './store/auth-actions'
+import * as fromApp from '../store/app.reducer';
+import * as AuthActions from './store/auth-actions';
 
 // firebase response when signing up through email/password
 export interface FirebaseSignupResponse {
@@ -31,9 +31,6 @@ export type FirebaseAuthResponse = FirebaseSignupResponse | FirebaseSignupRespon
     providedIn: 'root'
 })
 export class AuthService {
-
-    // behavior subject to inform other components about the currently logged in user
-    user = new BehaviorSubject<UserModel>(null);
 
     // token expiration timer
     private tokenExpirationTimer: NodeJS.Timer;
@@ -162,6 +159,7 @@ export class AuthService {
         // access token getter to validate its expiration date
         if (fetchedUser.token) {
 
+            // dispatch a login action with the user information
             this.store.dispatch(new AuthActions.Login({
                 email: fetchedUser.email,
                 userId: fetchedUser.id,
@@ -182,6 +180,7 @@ export class AuthService {
     // logout
     logout() {
 
+        // dispatch the logout action
         this.store.dispatch(new AuthActions.Logout());
 
         // redirect user to /auth
@@ -222,6 +221,7 @@ export class AuthService {
             expirationDate
         );
 
+        // dispatch the login action
         this.store.dispatch(new AuthActions.Login({
             email: email,
             userId: userId,

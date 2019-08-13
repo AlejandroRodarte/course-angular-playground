@@ -5,6 +5,10 @@ import { map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
+import * as fromApp from '../store/app.reducer'
+import * as fromAuth from './store/auth-reducer';
+import { Store } from '@ngrx/store';
+
 // authentication guard
 @Injectable({
     providedIn: 'root'
@@ -12,21 +16,26 @@ import { Injectable } from '@angular/core';
 export class AuthGuard implements CanActivate {
 
     // inject authentication service and router in case we need to redirect user
-    constructor(private authService: AuthService,
-                private router: Router) {
+    constructor(private router: Router,
+                private store: Store<fromApp.AppState>) {
 
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
 
-        // access user BehaviorSubject
+        // access auth state
         return this
-                .authService
-                .user
+                .store
+                .select('auth')
                 .pipe(
 
-                    // take(): fetch latest emitted user and unsubscribe and unsubscribe from such BehaviorSubject
+                    // take(): fetch latest auth state
                     take(1),
+
+                    // map(): access auth state and use the user property so the next map() can work with it
+                    map((authState: fromAuth.AuthReducerState) => {
+                        return authState.user;
+                    }),
 
                     // map(): work with fetched user data
                     map((user: UserModel) => {

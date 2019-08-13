@@ -6,6 +6,12 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { UserModel } from '../auth/user.model';
 
+import * as fromApp from '../store/app.reducer'
+import * as fromAuth from '../auth/store/auth-reducer';
+import { Store } from '@ngrx/store';
+import { AuthReducerState } from './../auth/store/auth-reducer';
+import { map } from 'rxjs/operators';
+
 // header component
 @Component({
     selector: 'app-header',
@@ -37,17 +43,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // inject data storage service, recipe service and authentication service
     constructor(private dataStorageService: DataStorageService,
                 private recipeService: RecipeService,
-                private authService: AuthService) {
+                private authService: AuthService,
+                private store: Store<fromApp.AppState>) {
 
     }
 
     // initialization
-    // subscribe to user subject: if user is null, authentication flag will be cleared,
-    // and if user exists, authentication will be set
+    // access auth state, extract the user property and check if null or not to define authentication
     ngOnInit(): void {
-        this.userSubscription = this.authService.user.subscribe((user: UserModel) => {
-            this.isAuthenticated = !user ? false : true;
-        });
+        this.userSubscription = this
+                                    .store
+                                    .select('auth')
+                                    .pipe(
+                                        map((authState: fromAuth.AuthReducerState) => {
+                                            return authState.user;
+                                        })
+                                    )
+                                    .subscribe((user: UserModel) => {
+                                        this.isAuthenticated = !user ? false : true;
+                                    });
     }
 
     // 'Save Recipes' button handler
