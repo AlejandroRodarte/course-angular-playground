@@ -3,6 +3,9 @@ import { OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
 import { Subject, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+
+import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
 
 // this service will receive as a dependency another service: shopping list service
 // to make it injectable, use this decorator
@@ -38,7 +41,13 @@ export class RecipeService implements OnDestroy {
     selectedRecipeSubscription: Subscription;
     
     // inject the shopping list global service
-    constructor(private shoppingListService: ShoppingListService) {
+    // inject the store
+    constructor(private shoppingListService: ShoppingListService,
+                private store: Store<{
+                    shoppingList: {
+                        ingredient: Ingredient[]
+                    }
+                }>) {
 
         // make this service subscribe to its own emitter
         this.selectedRecipeSubscription = this.selectedRecipe.subscribe((index: number) => {
@@ -145,7 +154,12 @@ export class RecipeService implements OnDestroy {
 
     // addToShoppingList() handler: delegate the task to the shopping list service
     addToShoppingList(ingredients: Ingredient[]): void {
-        this.shoppingListService.addIngredients(ingredients);
+
+        // this.shoppingListService.addIngredients(ingredients);
+
+        // using the dispatcher to dispatch an AddIngredients action with the ingredients to add
+        this.store.dispatch(new ShoppingListActions.AddIngredients(ingredients));
+
     }
 
     // delete a recipe based on id and notify subscribers

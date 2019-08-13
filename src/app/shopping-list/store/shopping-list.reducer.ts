@@ -25,7 +25,7 @@ const initialState = {
 // on subsequent calls, NgRx will load the previous state
 
 // update: make the action argument be of type AddIngredient to know we are expecting a payload
-export function shoppingListReducer(state = initialState, action: ShoppingListActions.AddIngredient) {
+export function shoppingListReducer(state = initialState, action: ShoppingListActions.ShoppingListActions) {
 
     // inside of the reducer: determine the kind of action we receive to know
     // how to update the state -> we usually use a switch case statement
@@ -40,6 +40,14 @@ export function shoppingListReducer(state = initialState, action: ShoppingListAc
                 ...state,
                 ingredients: [...state.ingredients, action.payload]
             };
+        
+        
+        // action type, add a set of ingredients
+        case ShoppingListActions.ADD_INGREDIENTS:
+            return {
+                ...state,
+                ingredients: [...state.ingredients, ...action.payload]
+            }
         
         // default state: manages our kickstart action (assign state to be the initial state on start)
         default:
