@@ -2,12 +2,13 @@ import { Action } from '@ngrx/store';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 
 // constants for actions and evade typos
-export const ADD_INGREDIENT = 'ADD_INGREDIENT';
-export const ADD_INGREDIENTS = 'ADD_INGREDIENTS';
-export const UPDATE_INGREDIENT = 'UPDATE_INGREDIENT';
-export const DELETE_INGREDIENT = 'DELETE_INGREDIENT';
-export const START_EDIT = 'START_EDIT';
-export const STOP_EDIT = 'STOP_EDIT';
+// following prefixing conventions to ensure type actions are unique across all reducers
+export const ADD_INGREDIENT = '[Shopping List] Add Ingredient';
+export const ADD_INGREDIENTS = '[Shopping List] Add Ingredients';
+export const UPDATE_INGREDIENT = '[Shopping List] Update Ingredient';
+export const DELETE_INGREDIENT = '[Shopping List] Delete Ingredient';
+export const START_EDIT = '[Shopping List] Start Edit';
+export const STOP_EDIT = '[Shopping List] Stop Edit';
 
 // union type that defines all actions managed by the shopping list reducer
 export type ShoppingListActions = 
