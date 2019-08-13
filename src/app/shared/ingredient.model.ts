@@ -14,9 +14,9 @@ export class Ingredient {
     }
 
     // equals() method
-    equals(ingredient: Ingredient): boolean {
-        return this.name === ingredient.name &&
-        this.amount === ingredient.amount;
-    }
+    // equals(ingredient: Ingredient): boolean {
+    //     return this.name === ingredient.name &&
+    //     this.amount === ingredient.amount;
+    // }
 
 }

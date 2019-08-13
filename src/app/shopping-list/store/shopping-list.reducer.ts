@@ -49,6 +49,41 @@ export function shoppingListReducer(state = initialState, action: ShoppingListAc
                 ingredients: [...state.ingredients, ...action.payload]
             }
         
+        // update an ingredient: update an existing ingredient
+        case ShoppingListActions.UPDATE_INGREDIENT:
+
+            // get a reference to the ingredient object to update
+            const ingredient = state.ingredients[action.payload.index];
+
+            // create a new copy of this ingredient
+            // first place the old ingredient data
+            // and then overwrite it with the new payload ingredient data
+            const updatedIngredient = {
+                ...ingredient,
+                ...action.payload.ingredient
+            };
+
+            // get a copy of the array of ingredients of the old state
+            const updatedIngredients = [...state.ingredients];
+
+            // place the new ingredient on the right index of the copied array of ingredients
+            updatedIngredients[action.payload.index] = updatedIngredient;
+
+            // return the old state and the updated ingredients copy with the new ingredient
+            return {
+                ...state,
+                ingredients: updatedIngredients
+            }
+        
+        // delete an ingredient: simply apply splice and delete the ingredient at that index
+        case ShoppingListActions.DELETE_INGREDIENT:
+            return {
+                ...state,
+                ingredients: state.ingredients.filter((ingredient: Ingredient, index: number) => {
+                    return action.payload !== index;
+                })
+            }
+        
         // default state: manages our kickstart action (assign state to be the initial state on start)
         default:
             return state;

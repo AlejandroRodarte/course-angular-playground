@@ -99,7 +99,15 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 		// this.shoppingListService.addIngredient(new Ingredient(name, amount), this.editMode);
 
 		// dispatch an AddIngredient action with the Ingredient object to add
-		this.store.dispatch(new ShoppingListActions.AddIngredient(new Ingredient(name, amount)));
+
+		if (this.editMode) {
+			this.store.dispatch(new ShoppingListActions.UpdateIngredient({
+				index: this.ingredientIndex,
+				ingredient: new Ingredient(name, amount)
+			}));
+		} else {
+			this.store.dispatch(new ShoppingListActions.AddIngredient(new Ingredient(name, amount)));
+		}
 
 		// clear the form
 		this.clearForm();
@@ -114,8 +122,13 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	// when deleting, call the service delete method and pass the currently selected ingredient index
 	// also, clear the form
 	onDeleteClick(): void {
-		this.shoppingListService.deleteIngredient(this.ingredientIndex);
+
+		// this.shoppingListService.deleteIngredient(this.ingredientIndex);
+
+		this.store.dispatch(new ShoppingListActions.DeleteIngredient(this.ingredientIndex));
+
 		this.clearForm();
+
 	}
 
 	// clear form
