@@ -5,6 +5,9 @@ import { catchError, tap } from 'rxjs/operators';
 import { UserModel } from './user.model';
 import { Router } from '@angular/router';
 import { environment } from './../../environments/environment';
+import { Store } from '@ngrx/store';
+import * as fromApp from '../store/app.reducer'
+import * as AuthActions from './store/auth-actions'
 
 // firebase response when signing up through email/password
 export interface FirebaseSignupResponse {
@@ -37,7 +40,8 @@ export class AuthService {
 
     // inject http client and router to redirect user
     constructor(private http: HttpClient,
-                private router: Router) {
+                private router: Router,
+                private store: Store<fromApp.AppState>) {
 
     }
 
@@ -158,8 +162,12 @@ export class AuthService {
         // access token getter to validate its expiration date
         if (fetchedUser.token) {
 
-            // if token has not expired: submit user instance to BehaviorSubject
-            this.user.next(fetchedUser);
+            this.store.dispatch(new AuthActions.Login({
+                email: fetchedUser.email,
+                userId: fetchedUser.id,
+                token: fetchedUser.token,
+                expirationDate: new Date(user._tokenExpirationDate)
+            }));
 
             // calculate remaining time in milliseconds of user token
             const expirationDuration = new Date(user._tokenExpirationDate).getTime() - new Date().getTime();
@@ -174,8 +182,7 @@ export class AuthService {
     // logout
     logout() {
 
-        // submit a null user
-        this.user.next(null);
+        this.store.dispatch(new AuthActions.Logout());
 
         // redirect user to /auth
         this.router.navigate(['/auth']);
@@ -215,8 +222,12 @@ export class AuthService {
             expirationDate
         );
 
-        // submit new user to BehaviorSubject
-        this.user.next(user);
+        this.store.dispatch(new AuthActions.Login({
+            email: email,
+            userId: userId,
+            token: token,
+            expirationDate: expirationDate
+        }));
 
         // kickoff auto-logout timer
         this.autoLogout(expiresIn * 1000);
