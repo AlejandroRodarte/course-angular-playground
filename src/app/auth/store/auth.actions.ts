@@ -28,6 +28,19 @@ export class Login implements Action {
 
 }
 
+export class LoginStart implements Action {
+
+    readonly type = LOGIN_START;
+
+    constructor(public payload: {
+        email: string,
+        password: string
+    }) {
+        
+    }
+
+}
+
 // logout action
 export class Logout implements Action {
     readonly type = LOGOUT;
