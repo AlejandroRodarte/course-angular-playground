@@ -4,6 +4,10 @@ import { ShoppingListService } from './shopping-list.service';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
+// import everything from the reducer file
+// fromShoppingList: naming convention
+import * as fromShoppingList from './store/shopping-list.reducer';
+
 // shopping list component
 @Component({
 	selector: 'app-shopping-list',
@@ -22,12 +26,10 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 	// keys: alias we provided in the app-module.ts forRoot() when mapping the reducers
 	// values: what the associated reducer will update to the overall state, which is just
 	// the array of ingredients state
+
+	// now using the appState interface
 	constructor(private shoppingListService: ShoppingListService,
-				private store: Store<{ 
-					shoppingList: { 
-						ingredients: Ingredient[] 
-					} 
-				}>) {
+				private store: Store<fromShoppingList.AppState>) {
 		
 	}
 

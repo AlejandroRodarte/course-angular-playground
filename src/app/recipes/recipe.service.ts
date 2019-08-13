@@ -7,6 +7,10 @@ import { Store } from '@ngrx/store';
 
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
 
+// import everything from the reducer file
+// fromShoppingList: naming convention
+import * as fromShoppingList from '../shopping-list/store/shopping-list.reducer';
+
 // this service will receive as a dependency another service: shopping list service
 // to make it injectable, use this decorator
 
@@ -42,12 +46,10 @@ export class RecipeService implements OnDestroy {
     
     // inject the shopping list global service
     // inject the store
+
+    // now using the appState interface
     constructor(private shoppingListService: ShoppingListService,
-                private store: Store<{
-                    shoppingList: {
-                        ingredient: Ingredient[]
-                    }
-                }>) {
+                private store: Store<fromShoppingList.AppState>) {
 
         // make this service subscribe to its own emitter
         this.selectedRecipeSubscription = this.selectedRecipe.subscribe((index: number) => {

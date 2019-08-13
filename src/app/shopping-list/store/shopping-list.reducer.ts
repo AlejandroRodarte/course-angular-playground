@@ -4,15 +4,34 @@ import { Ingredient } from '../../shared/ingredient.model';
 // and give it the 'ShoppingListActions' alias to access all the imports through it
 import * as ShoppingListActions from './shopping-list.actions';
 
+// description of the app state that is altered by this reducer
+export interface AppState {
+    shoppingList: ShoppingListReducerState
+}
+
+// description of the state of this reducer
+export interface ShoppingListReducerState {
+    ingredients: Ingredient[];
+    editedIngredient: Ingredient;
+    editedIngredientIndex: number;
+}
+
 // the initial state is, in most times, a javascript object
 // the shopping list service manages in essence just the array of ingredients
 // so we set here the initial ingredients that our app state will start with
-const initialState = {
+const initialState: ShoppingListReducerState = {
 
+    // list of ingredients
     ingredients: [
 		new Ingredient('Apples', 5),
 		new Ingredient('Tomatoes', 10)
-    ]
+    ],
+
+    // ingredient we are editing
+    editedIngredient: null,
+
+    // index of the ingredient to edit
+    editedIngredientIndex: -1
 
 }
 
@@ -25,7 +44,9 @@ const initialState = {
 // on subsequent calls, NgRx will load the previous state
 
 // update: make the action argument be of type AddIngredient to know we are expecting a payload
-export function shoppingListReducer(state = initialState, action: ShoppingListActions.ShoppingListActions) {
+export function shoppingListReducer(
+    state: ShoppingListReducerState = initialState, 
+    action: ShoppingListActions.ShoppingListActions) {
 
     // inside of the reducer: determine the kind of action we receive to know
     // how to update the state -> we usually use a switch case statement

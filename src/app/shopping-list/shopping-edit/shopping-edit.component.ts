@@ -8,6 +8,10 @@ import { Store } from '@ngrx/store';
 
 import * as ShoppingListActions from '../store/shopping-list.actions';
 
+// import everything from the reducer file
+// fromShoppingList: naming convention
+import * as fromShoppingList from '../store/shopping-list.reducer';
+
 @Component({
     selector: 'app-shopping-edit',
     templateUrl: './shopping-edit.component.html',
@@ -34,12 +38,10 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 
 	// get shopping list service singleton
 	// inject the store so we can dispatch actions
+
+	// now using the appState interface
 	constructor(private shoppingListService: ShoppingListService,
-				private store: Store<{
-					shoppingList: {
-						ingredient: Ingredient[]
-					}
-				}>) {
+				private store: Store<fromShoppingList.AppState>) {
 
 	}
 
