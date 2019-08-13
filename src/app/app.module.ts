@@ -9,7 +9,7 @@ import { StoreModule } from '@ngrx/store';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 
-import { shoppingListReducer } from './shopping-list/store/shopping-list.reducer';
+import { appReducer } from './store/app.reducer';
 
 // app module
 @NgModule({
@@ -22,13 +22,12 @@ import { shoppingListReducer } from './shopping-list/store/shopping-list.reducer
 
 	// imports: main routing module, http client, NgRx store (add Action-Reducer Map),
 	// shared module and core module for services
+	// to declare the ActionReducerMap, we access its definition found on the app.reducer.ts file
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
 		HttpClientModule,
-		StoreModule.forRoot({
-			shoppingList: shoppingListReducer
-		}),
+		StoreModule.forRoot(appReducer),
 		SharedModule,
 		CoreModule
 	],

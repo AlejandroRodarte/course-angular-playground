@@ -4,11 +4,6 @@ import { Ingredient } from '../../shared/ingredient.model';
 // and give it the 'ShoppingListActions' alias to access all the imports through it
 import * as ShoppingListActions from './shopping-list.actions';
 
-// description of the app state that is altered by this reducer
-export interface AppState {
-    shoppingList: ShoppingListReducerState
-}
-
 // description of the state of this reducer
 export interface ShoppingListReducerState {
     ingredients: Ingredient[];
