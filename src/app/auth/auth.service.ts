@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { environment } from './../../environments/environment';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../store/app.reducer';
-import * as AuthActions from './store/auth-actions';
+import * as AuthActions from './store/auth.actions';
 
 // firebase response when signing up through email/password
 export interface FirebaseSignupResponse {

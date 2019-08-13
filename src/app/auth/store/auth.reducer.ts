@@ -1,6 +1,6 @@
 import { UserModel } from '../user.model';
 
-import * as AuthActions from './auth-actions';
+import * as AuthActions from './auth.actions';
 
 // auth reducer state definition
 export interface AuthReducerState {

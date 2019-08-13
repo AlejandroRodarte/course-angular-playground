@@ -6,7 +6,7 @@ import { take, exhaustMap, map } from 'rxjs/operators';
 import { UserModel } from './user.model';
 
 import * as fromApp from '../store/app.reducer'
-import * as fromAuth from './store/auth-reducer';
+import * as fromAuth from './store/auth.reducer';
 import { Store } from '@ngrx/store';
 
 // http interceptor for authentication purposes

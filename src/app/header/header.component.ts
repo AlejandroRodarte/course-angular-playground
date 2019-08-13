@@ -7,9 +7,9 @@ import { AuthService } from '../auth/auth.service';
 import { UserModel } from '../auth/user.model';
 
 import * as fromApp from '../store/app.reducer'
-import * as fromAuth from '../auth/store/auth-reducer';
+import * as fromAuth from '../auth/store/auth.reducer';
 import { Store } from '@ngrx/store';
-import { AuthReducerState } from './../auth/store/auth-reducer';
+import { AuthReducerState } from '../auth/store/auth.reducer';
 import { map } from 'rxjs/operators';
 
 // header component
