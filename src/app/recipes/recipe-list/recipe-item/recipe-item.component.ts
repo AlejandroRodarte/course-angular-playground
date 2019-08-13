@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Recipe } from '../../recipe.model';
 import { RecipeService } from '../../recipe.service';
 
+// recipe item component
 @Component({
 	selector: 'app-recipe-item',
 	templateUrl: './recipe-item.component.html',
@@ -9,17 +10,15 @@ import { RecipeService } from '../../recipe.service';
 })
 export class RecipeItemComponent implements OnInit {
 
-	// recipe property that catches the current recipe iteration value
-	// from the recipes array found on the RecipeListComponent
+	// recipe object
 	@Input()
 	recipe: Recipe;
 
-	// we will embed to each recipe item an id for future use
+	// recipe index
 	@Input()
 	index: number;
 
-	// receive recipeService singleton from RecipesComponent parent
-	// renderer and element reference injections
+	// inject recipe service
 	constructor(private recipeService: RecipeService) { 
 
 	}
@@ -28,9 +27,8 @@ export class RecipeItemComponent implements OnInit {
 
 	}
 
-	// on recipe item click
+	// when clicking on a recipe item link, emit its index
 	onRecipeItemClick() {
-		// emit its index
 		this.recipeService.selectedRecipe.next(this.index);
 	}
 

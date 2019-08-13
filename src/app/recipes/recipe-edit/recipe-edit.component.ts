@@ -14,21 +14,19 @@ import { Subscription } from 'rxjs';
 })
 export class RecipeEditComponent implements OnInit, OnDestroy {
 
-	// the recipe id
+	// recipe index
 	id: number;
 
-	// the recipe information
+	// recipe object reference
 	recipe: Recipe;
 
-	// edit mode
-	// true: editing an existing recipe
-	// false: creating a new recipe
+	// edit mode flag
 	editMode: boolean = false;
 
 	// recipe form
 	recipeForm: FormGroup;
 
-	// access to the submit recipe button
+	// submit form button reference
 	@ViewChild('submitRecipeButton', { static : true })
 	submitRecipeButton: ElementRef;
 
@@ -44,42 +42,36 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// image path control subscrption
 	private imagePathSubscription: Subscription;
 
-	// inject recipe service and current route and the router to navigate
+	// inject recipe service, router and route that loaded this component
 	constructor(private recipeService: RecipeService,
 				private router: Router,
 				private route: ActivatedRoute) {
 
 	}
 
-	// when the component is instantiated...
+	// initialization
 	ngOnInit() {
 
-		// subscribe to the current route parameters and...
+		// subscribe to the current route parameters
 		this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
 
-			// fetch the id each time it changes
+			// fetch recipe index
 			this.id = +params['id'];
 
-			// if id is a number, it means the current route is
-			// localhost:4200/recipes/id/edit to edit an existing recipe
-
-			// so set the mode of this form to 'update' mode (set editMode flag to true and change the submit button text
-			// to 'Update Recipe'
-
-			// if id is not a number, it means that we are adding a new recipe, so set the form mode
-			// to 'add' mode
+			// index exists -> user is on /recipes/id/edit -> set 'update' recipe mode
+			// index does not exist -> user is on /recipes/new -> set 'add' recipe mode
 			if (!isNaN(this.id)) {
 				this.setMode(FormMode.Update);
 			} else {
 				this.setMode(FormMode.Add);
 			}
 
-			// load and initialize the recipe form
+			// load recipe form
 			this.loadForm();
 
 		});
 
-		// set the current image path to the one in the form input
+		// initialize current image path property to the one in the form input
 		this.currentImagePath = this.recipeForm.value.imagePath;
 
 		// image preview logic: subscribe to value changes on the recipe image path
@@ -90,10 +82,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	}
 
-	// handler when desiring to add a new ingredient form group
-	// push a new form group with two form controls
-	// ingredient name: must not be empty
-	// ingredient amount: must not be empty and must be a number greater or equal than 1; default value is 1
+	// add new ingredient FormGroup: push to FormArray two FormControls
+	// for ingredient name and ingredient amount
 	onAddIngredient(): void {
 		this.getFormArray('ingredients').push(new FormGroup({
 			'name': new FormControl(null, Validators.required),
@@ -101,39 +91,30 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		}));
 	}
 
-	// when submitting
+	// submission handler
 	onSubmit(): void {
 
 		// recipe Firebase id
 		let recipeId: string = '';
 
-		// if we are on edit mode, this means that the 'recipe' property of this component is already defined
-		// so we can assign to the previos variable its id (undefined if unpersised recipe of existing if the user is editing a fetched recipe)
-
-		// if we are not in edit mode, this means the 'recipe' property is undefined, so assign directly the recipeId variable an undefined value
+		// if editing an existing recipe: assign to variable the recipe's current Firebase id
+		// (undefined if not persisted yet or a string if already persisted)
+		// if adding a new recipe: set recipe id to undefined
 		if (this.editMode) {
 			recipeId = this.recipe.id;
 		} else {
 			recipeId = undefined;
 		}
 
-		// if at the end of the if-else clause the recipeId variable remains undefined, it means that we are dealing with a recipe
-		// that has not been persisted yet
-
-		// if it is not undefined but has a string value, it means that the user edited a fetched recipe, so register it as a recipe to-update
+		// if recipe id is not undefined, it means the user edited a fetched recipe,
+		// so register as a recipe to update on database when saving changes
 		if (recipeId !== undefined) {
 			this.recipeService.registerUpdatedRecipe(this.recipe.id);
 		}
 
-		// the value of the whole recipe form happens to match EXACTLY the structure of the Recipe object
-		// while keeping consistency between the Recipe/Ingredient model property names and the form control names
-		// example: the 'name' field on the Recipes model matches the 'name' form control where you place the recipe name
-		// in this particular scenario, we can DIRECTLY inject the recipe form value instead of extracting the form inputs
-		// one by one and creating a recipe instance to inject to this method
-
-		// the second argument determines if we are either adding a new recipe or updating an existing one
-
-		// http update: apart from the recipe form value, append the Firebase id (undefined if brand new or existing if fetched from database)
+		// use service to add or update recipe on UI with the recipe form value and the calculated if (undefined or a string)
+		// note: we can pass a javascript object and not an instance of the Recipe class since the final object resembles
+		// the Recipe model
 		this.recipeService.addOrUpdateRecipe({ ...this.recipeForm.value, id: recipeId }, this.id);
 
 		// clear the form
@@ -150,13 +131,12 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		this.routeUser();
 	}
 
-	// handler when deleting a recipe ingredient
+	// delete recipe ingredient FormGroup
 	onDeleteRecipeIngredient(index: number) {
 		this.getFormArray('ingredients').removeAt(index);
 	}
 
-	// handler when deleting all ingredient form groups
-	// call clear() on form array
+	// delete all ingredient FormGroups
 	onDeleteAllIngredients(): void {
 		this.getFormArray('ingredients').clear();
 	}
@@ -171,20 +151,19 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		return <FormArray> this.recipeForm.get(path);
 	}
 
-	// load a form
+	// load form
 	loadForm(): void {
 
-		// set initial values to the recipe name, description and image path on generic variables
-		// the recipe ingredients variable will be at the end an array of form groups, so declare a new instance of an empty FormArray
+		// initializing values
 		let recipeName: string = '';
 		let recipeDescription: string = '';
 		let recipeImagePath: string = '';
 		let recipeIngredients: FormArray = new FormArray([]);
 
-		// if we are going to edit an existing recipe...
+		// if editing
 		if (this.editMode) {
 
-			// fetch it
+			// fetch the recipe to edit
 			this.recipe = this.recipeService.getRecipe(this.id);
 
 			// save its name, description and image path
@@ -192,35 +171,23 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			recipeDescription = this.recipe.description;
 			recipeImagePath = this.recipe.imagePath;
 
-			// if this recipe has any ingredients...
+			// if recipe has ingredients
 			if (this.recipe['ingredients']) {
 
-				// loop through each one of them
+				// loop through all of them and push on each iteration a new FormGroup with initialized
+				// FormContrls for ingredient name and ingredient amount
 				for (let ingredient of this.recipe.ingredients) {
-
-					// and push the FormArray a new FormGropu with two controls for ingredient name and amount
-					// and set them initially to the value of the current ingredient object 
 					recipeIngredients.push(new FormGroup({
 						'name': new FormControl(ingredient.name, Validators.required),
 						'amount': new FormControl(ingredient.amount, [Validators.required, Validators.min(1)])
 					}));
-
 				}
 
 			}
 
 		}
 
-		// define the recipe form
-		// three form controls: recipe name, recipe description and recipe image path
-		// one form array: ingredients
-		// each element in this form array will be a form group with two form controls: ingredient name and amount
-
-		// the recipe name must not be empty
-		// the recipe description must not be empty
-		// the recipe image path must not be empty and be a valid url
-
-		// set this form controls to the variables we declared initially
+		// define the recipe form with their validators
 		this.recipeForm = new FormGroup({
 			'name': new FormControl(recipeName, Validators.required),
 			'description': new FormControl(recipeDescription, Validators.required),
@@ -254,17 +221,13 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	}
 
-	// route the user when adding/updating/canceling a form
+	// route user when adding/updating/canceling a form
 	private routeUser(): void {
 
-		// if we were not on edit mode (adding), it means we are on path localhost:4200/recipes/new
-		// we desire to route the user to the recently created recipe, so we extract from the service the length of the recipes array
-		// and use it to route the user to such new recipe path
-
-		// before: localhost:4200/recipes/new
-		// after: localhost:4200/recipes/id
-
-		// if we were on edit mode (updating), we will route the user one level upwards so exit him from the /edit path
+		// if user added a brand new recipe, go to its recipe details by moving from
+		// /recipes/new -> /recipes/id
+		// if user edited a recipe, simply go up one level
+		// /recipes/id/edit -> /recipes/id
 		if (!this.editMode) {
 			this.router.navigate(['..', this.recipeService.length - 1], {
 				relativeTo: this.route
@@ -277,7 +240,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	}
 
-	// unsubscription
+	// unsubscriptions
 	ngOnDestroy(): void {
 		this.routeParamsSubscription.unsubscribe();
 		this.imagePathSubscription.unsubscribe();

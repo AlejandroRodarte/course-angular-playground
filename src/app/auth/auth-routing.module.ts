@@ -6,7 +6,6 @@ import { AuthComponent } from './auth.component';
 const authRoutes: Routes = [
 
     // localhost:4200/auth
-    // cleared path since we are already loading it on AppModule with lazy-loading
     {
         path: '',
         component: AuthComponent
@@ -14,14 +13,14 @@ const authRoutes: Routes = [
 
 ]
 
-// import router module and load authentication routes
-// export the router module with routes loaded
 @NgModule({
 
+    // import router module: load auth routes
     imports:[
         RouterModule.forChild(authRoutes)
     ],
 
+    // export router module with loaded routes
     exports: [
         RouterModule
     ]

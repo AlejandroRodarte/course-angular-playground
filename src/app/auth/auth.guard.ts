@@ -11,6 +11,7 @@ import { Injectable } from '@angular/core';
 })
 export class AuthGuard implements CanActivate {
 
+    // inject authentication service and router in case we need to redirect user
     constructor(private authService: AuthService,
                 private router: Router) {
 
@@ -18,21 +19,24 @@ export class AuthGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
 
-        // fetch the latest registered user with take() by subscribing and unsubscribing
+        // access user BehaviorSubject
         return this
                 .authService
                 .user
                 .pipe(
 
+                    // take(): fetch latest emitted user and unsubscribe and unsubscribe from such BehaviorSubject
                     take(1),
 
+                    // map(): work with fetched user data
                     map((user: UserModel) => {
 
-                        // check if ther is not null
+                        // user null: user is not authenticated
+                        // user exists: user is authenticated
                         const isUserAuthenticated: boolean = !user ? false : true;
 
-                        // if not null, then return true and load the route's component
-                        // if null, route the user to /auth
+                        // if authenticated, grant access to route
+                        // if not authenticated, redirect user to /auth
                         if (isUserAuthenticated) {
                             return true;
                         } else {

@@ -1,37 +1,31 @@
-<!-- recipe detail html -->
-
 <!-- render flag wrapper -->
 <div *ngIf="renderFlag">
 
-    <!-- grid: recipe image -->
+    <!-- recipe image -->
     <div class="row">
-    
         <div class="col-xs-12">
-            <img [src]="recipe.imagePath" alt="" class="img-responsive" style="max-height: 300px;">
+            <img [src]="recipe.imagePath" 
+                 alt="" 
+                 class="img-responsive" 
+                 style="max-height: 300px;">
         </div>
-    
     </div>
     
-    <!-- grid: recipe name -->
+    <!-- recipe name -->
     <div class="row">
-    
         <div class="col-xs-12">
             <h1>
                 {{ recipe.name }}
             </h1>
         </div>
-    
     </div>
     
-    <!-- grid -->
     <div class="row">
     
-        <!-- column -->
         <div class="col-xs-12">
     
             <!-- dropdown -->
-            <!-- appDropdown directive will dynamicall add to this html elemen the .open class -->
-            <!-- from Bootstrap which actually displays the dropdown links -->
+            <!-- DropdownDirective adds .open bootstrap class to enable dropdown animation -->
             <div class="btn-group"
                  appDropdown>
     
@@ -41,11 +35,10 @@
                     Manage Recipe <span class="caret"></span>
                 </button>
     
-                <!-- dropdown meny -->
+                <!-- dropdown menu -->
                 <ul class="dropdown-menu">
     
-                    <!-- add to shopping list -->
-                    <!-- deleted href -->
+                    <!-- add to shopping list link -->
                     <li>
                         <a  (click)="addToShoppingList()"
                             style="cursor: pointer;">
@@ -53,9 +46,7 @@
                         </a>
                     </li>
     
-                    <!-- edit the recipe -->
-                    <!-- deleted href -->
-                    <!-- routerLink to go to localhost:4200/recipes/id/edit -->
+                    <!-- edit recipe link: route to /id/edit -->
                     <li>
                         <a  [routerLink]="['edit']"
                             style="cursor: pointer;">
@@ -63,9 +54,7 @@
                         </a>
                     </li>
     
-                    <!-- delete the recipe -->
-                    <!-- deleted href -->
-                    <!-- call event handler to delete a particular recipe -->
+                    <!-- delete recipe link -->
                     <li>
                         <a  style="cursor: pointer;"
                             (click)="onDeleteRecipe()">
@@ -81,21 +70,21 @@
     
     </div>
     
-    <!-- grid: recipe description -->
+    <!-- recipe description -->
     <div class="row">
         <div class="col-xs-12">
             {{ recipe.description }}
         </div>
     </div>
     
-    <!-- grid: recipe ingredients -->
+    <!-- recipe ingredients -->
     <div class="row">
     
         <div class="col-xs-12">
     
             <ul class="list-group">
     
-                <!-- loop through each ingredient in the array and print their values -->
+                <!-- loop through ingredients in the array and print their values -->
                 <li class="list-group-item"
                     *ngFor="let ingredient of recipe.ingredients">
     

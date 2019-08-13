@@ -1,121 +1,102 @@
-<!-- shopping edit component -->
-
-<!-- grid -->
 <div class="row">
 
-    <!-- column -->
     <div class="col-xs-12">
 
-        <!-- ingredient form -->
+        <!-- form: template-driven -->
+        <form   (ngSubmit)="onSubmit()" 
+                #shoppingListForm="ngForm">
+        
+            <!-- ingredient name -->
+            <div class="col-sm-5 form-group">
 
-        <!-- grid -->
-        <div class="row">
+                <label for="name">
+                    Name
+                </label>
 
-            <!-- template-driven form -->
-            <form   (ngSubmit)="onSubmit()" 
-                    #shoppingListForm="ngForm">
-            
-                <!-- first column -->
-                <div class="col-sm-5 form-group">
+                <!-- required validator and disable if we are on edit mode -->
+                <input 
+                    type="text" 
+                    name="name"
+                    id="name" 
+                    class="form-control"
+                    ngModel
+                    required
+                    [disabled]="editMode"
+                    #name="ngModel">
+                
+                <!-- invalid ingredient name text -->
+                <span   *ngIf="!name.valid && name.touched"
+                        class="help-block">
+                    This field is required.
+                </span>
 
-                    <!-- first input: ingredient name -->
-                    <label for="name">
-                        Name
-                    </label>
+            </div>
 
-                    <!-- place a local reference to use on the .ts file -->
-                    <!-- ngModel: this will be a control with name name -->
-                    <!-- required: can't be empty -->
-                    <!-- make this field disabled whenever we are on 'update' mode so the user can't change the name -->
-                    <input 
-                        type="text" 
-                        name="name"
-                        id="name" 
-                        class="form-control"
-                        ngModel
-                        required
-                        [disabled]="editMode"
-                        #name="ngModel">
-                    
-                    <!-- display this text if ingredient name is invalid and touched -->
-                    <span   *ngIf="!name.valid && name.touched"
-                            class="help-block">
-                        This field is required.
-                    </span>
+            <!-- second input: ingredient amount -->
+            <div class="col-sm-2 form-group">
 
-                </div>
+                <label for="amount">
+                    Amount
+                </label>
 
-                <!-- second input: ingredient amount -->
-                <div class="col-sm-2 form-group">
+                <!-- required validator, initial value of 1, pattern validator to -->
+                <!-- ensure user places a positive number -->
+                <input 
+                    type="number"
+                    name="amount"
+                    id="amount" 
+                    class="form-control"
+                    [ngModel]="1"
+                    [pattern]="'^[1-9]+[0-9]*$'"
+                    required
+                    #amount="ngModel">
+                
+                <!-- ingredient amount invalid message -->
+                <span   *ngIf="!amount.valid && amount.touched"
+                        class="help-block">
+                    Wrong amount.
+                </span>
 
-                    <label for="amount">
-                        Amount
-                    </label>
+            </div>
 
-                    <!-- place a local reference to use on the .ts file -->
-                    <!-- set initially the amount of 1 -->
-                    <!-- [pattern] to express a regexp to allow only number higher than 1 -->
-                    <!-- required: field can't be empty -->
-                    <input 
-                        type="number"
-                        name="amount"
-                        id="amount" 
-                        class="form-control"
-                        [ngModel]="1"
-                        [pattern]="'^[1-9]+[0-9]*$'"
-                        required
-                        #amount="ngModel">
-                    
-                    <!-- display text if field is invalid and touched -->
-                    <span   *ngIf="!amount.valid && amount.touched"
-                            class="help-block">
-                        Wrong amount.
-                    </span>
+            <!-- buttons -->
+            <div class="row">
+    
+                <!-- column -->
+                <div class="col-xs-12">
+    
+                    <!-- add ingredient submit form button -->
+                    <!-- disable if form is not valid -->
+                    <!-- add .btn-edit class if we are on edit mode -->
+                    <button type="submit" 
+                            class="btn btn-success"
+                            [disabled]="!shoppingListForm.valid"
+                            [ngClass]="{ 'btn-edit': editMode }"
+                            #submitButton>
+                        Add
+                    </button>
+    
+                    <!-- delete an ingredient -->
+                    <!-- disable if we are not on edit mode -->
+                    <button type="button" 
+                            class="btn btn-danger"
+                            [disabled]="!editMode"
+                            (click)="onDeleteClick()">
+                        Delete
+                    </button>
+    
+                    <!-- clear ingredient form -->
+                    <button type="button" 
+                            class="btn btn-primary"
+                            (click)="onClearClick()">
+                        Clear
+                    </button>
     
                 </div>
-
-                <!-- grid inside form: buttons -->
-                <div class="row">
-        
-                    <!-- column -->
-                    <div class="col-xs-12">
-        
-                        <!-- add an ingredient to shopping list -->
-                        <!-- on click, call onSubmitClick() event handler -->
-                        <!-- disable submit button while form is invalid -->
-                        <!-- add class .btn-edit when edit mode is active -->
-                        <!-- create a local reference to use in the component class -->
-                        <button type="submit" 
-                                class="btn btn-success"
-                                [disabled]="!shoppingListForm.valid"
-                                [ngClass]="{ 'btn-edit': editMode }"
-                                #submitButton>
-                            Add
-                        </button>
-        
-                        <!-- delete an ingredient from shopping list -->
-                        <button type="button" 
-                                class="btn btn-danger"
-                                [disabled]="!editMode"
-                                (click)="onDeleteClick()">
-                            Delete
-                        </button>
-        
-                        <!-- clear ingredient form -->
-                        <!-- when clicked, call clear event handler -->
-                        <button type="button" 
-                                class="btn btn-primary"
-                                (click)="onClearClick()">
-                            Clear
-                        </button>
-        
-                    </div>
-        
-                </div>
-                    
-            </form>
-
-        </div>
+    
+            </div>
+                
+        </form>
 
     </div>
 

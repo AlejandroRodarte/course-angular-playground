@@ -12,11 +12,5 @@ export class Ingredient {
         this.name = name;
         this.amount = amount;
     }
-
-    // equals() method
-    // equals(ingredient: Ingredient): boolean {
-    //     return this.name === ingredient.name &&
-    //     this.amount === ingredient.amount;
-    // }
-
+    
 }

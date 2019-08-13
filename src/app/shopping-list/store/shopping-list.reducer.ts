@@ -105,6 +105,25 @@ export function shoppingListReducer(
                 })
             }
         
+        // start editing action
+        // editedIngredient state will receive a brand new copy of the state ingredient selected
+        // also attach such index
+        case ShoppingListActions.START_EDIT:
+            return {
+                ...state,
+                editedIngredient: {...state.ingredients[action.payload]},
+                editedIngredientIndex: action.payload
+            }
+        
+        // stop editing action
+        // set the edited ingredient and its index to their default values
+        case ShoppingListActions.STOP_EDIT:
+            return {
+                ...state,
+                editedIngredient: null,
+                editedIngredientIndex: -1
+            }
+        
         // default state: manages our kickstart action (assign state to be the initial state on start)
         default:
             return state;

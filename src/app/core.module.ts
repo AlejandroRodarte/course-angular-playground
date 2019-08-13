@@ -7,6 +7,7 @@ import { AuthInterceptorService } from './auth/auth-interceptor.service';
 // core module: services
 @NgModule({
 
+	// services and interceptors
     providers: [
 
         ShoppingListService,

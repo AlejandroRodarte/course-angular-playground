@@ -5,44 +5,42 @@ import { AuthService } from './auth.service';
 import { take, exhaustMap } from 'rxjs/operators';
 import { UserModel } from './user.model';
 
-// update: authentication -> interceptor service to add to each subsequent request the user token
-// we first subscribe to the user BehaviorSubject to fetch the current user data and immediately
-// go back to working with the Observable of the HttpEvent to occur
+// http interceptor for authentication purposes
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {
 
-    // inject the authentication service
+    // inject authentication service
     constructor(private authService: AuthService) {
 
     }
 
+    // intercept implementation
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-        // access the user BehaviorSubject
+        // access user BehaviorSubject and enter pipe to transform output
         return this
             .authService
             .user
             .pipe(
 
-                // take(), allows us to subscribe to get the current last emitted user from this BehaviorSubject
-                // and immediately unsubscribe
+                // take(): fetch latest emitted user data and unsubscribe from such BehaviorSubject
                 take(1),
 
-                // exhaustMap(), allows us to work with the previous fetched value (the user model), but forces us to return a new
-                // observable, which in this case will be an observable of the HttpEvent that is ongoing
+                // exhaustMap(): switch returned observable from UserModel to whatever the callback returned observable
+                // handles (HttpEvent<any>)
                 exhaustMap((user: UserModel) => {
 
-                    // if the user is null (user has not even signup or login, we will not append a token)
+                    // user null: do not attach token; continue with normal request
                     if (user === null) {
                         return next.handle(req);
                     }
 
-                    // set the token by cloning the request and adding it manually
+                    // user not null: get clone of request and attach an 'auth' param with user token
                     const modifiedRequest = req.clone({
                         params: new HttpParams().set('auth', user.token)
                     });
 
-                    // return the requires HttpEvent Observable so the intercept() return returns it
+                    // return Observable<HttpEvent<any>> by delivering modified request
                     return next.handle(modifiedRequest);
 
                 })

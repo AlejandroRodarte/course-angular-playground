@@ -14,126 +14,110 @@ import { UserModel } from '../auth/user.model';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
-    // one-time flag to know if user already fetched the data from database
+    // one-time fetch flag
     private alreadyFetched: boolean = false;
 
-    // fetching: flag active while making the GET request and rendering data to user
-    // fetchSuccessful: flag active for 3 seconds to inform user data was fetched without issue
+    // fetching flag and fetchSuccessful flag
     fetching: boolean = false;
     fetchSuccessful: boolean = false;
 
-    // saving: flag active while making the GET request and rendering data to user
-    // saveSuccessful: flag active for 3 seconds to inform user data was fetched without issue
+    // saving flag and saveSuccessful flag
     saving: boolean = false;
     saveSuccessful: boolean = false;
+
+    // authentication flag
+    isAuthenticated: boolean = false;
 
     // fetch recipes subscription
     private fetchRecipesSubscription: Subscription;
 
+    // user data subscription
     private userSubscription: Subscription;
 
-    isAuthenticated: boolean = false;
-
-    // recipe servce injection
+    // inject data storage service, recipe service and authentication service
     constructor(private dataStorageService: DataStorageService,
                 private recipeService: RecipeService,
                 private authService: AuthService) {
 
     }
 
+    // initialization
+    // subscribe to user subject: if user is null, authentication flag will be cleared,
+    // and if user exists, authentication will be set
     ngOnInit(): void {
-        
         this.userSubscription = this.authService.user.subscribe((user: UserModel) => {
             this.isAuthenticated = !user ? false : true;
         });
-
     }
 
-    // when saving all the recipes, we enter into a 3-step process:
-
-    // 1. POST all the brand new recipes that have not been persisted (recipe Firebase id is undefined)
-
-    // 2. DELETE all existing recipes that were deleted from the UI via the RecipeDetailComponent 'Delete Recipe' dropdown link
-    // When the user makes such action, we will add that recipe's Firebase id (if it exists) to an array that will keep track of all
-    // the recipes to delete on the database once the user synchronizes its local data through the 'Save Data' dropwdown link
-    // as an additional step, we will check if such to-delete recipe was one that was updated and registered as a recipe to update into the database;
-    // if that was the case, then we delete that recipe id from the recipe-to-update tracker, since it will be deleted anyway
-
-    // 2. PUT (UPDATE) all existing recipes that were updated from the UI via the RecipeEditComponent when the 'Update Recipe' form submit button is pressed
-    // When the user makes such action, we will add that recipe's Firebase id (if it exists) to an array that will keep track of all
-    // the recipes to update on the database once the user synchronizes its local data through the 'Save Data' dropwdown link
-
+    // 'Save Recipes' button handler
     onSaveRecipes() {
         
         // set the 'saving' flag to true
         this.saving = true;
 
-        // fetch the brand new recipes (Firebase id undefined)
+        // fetch new recipes added by user before saving
         const newRecipes = this.recipeService.getNewRecipes();
 
-        // fetch the recipes to update and that were fetched from the start from the database
+        // fetch existing recipes that got updated by user before saving
         const updatedRecipes = this.recipeService.getUpdatedRecipes();
 
-        // fetch all the recipe id's that will be deleted from the database
+        // fetch recipe id's that got deleted by user before saving
         const deletedRecipes = this.recipeService.getDeletedRecipes();
 
-        // 1. loop through all new recipes; access the data storage service and save the recipes 1 by 1
-        // in short, a burst of POST requests are made
+        // burst of POST requests to add all new recipes
         newRecipes.forEach((newRecipe: Recipe) => {
             this.dataStorageService.saveRecipe(newRecipe);
         });
 
-        // 2. loop through all recipe id's to delete; access the data storage service and delete them 1 by 1
-        // in short, a burst of DELETE requests are made
+        // burst of DELETE requests to delete existing recipes
         deletedRecipes.forEach((recipeId: string) => {
             this.dataStorageService.deleteRecipe(recipeId);
         });
 
-        // 3. loop through all recipes to update; access the data storage service and update them 1 by 1
-        // in short, a burst of PUT requests are made
+        // burst of PUT requests to update existing recipes
         updatedRecipes.forEach((updatedRecipe: Recipe) => {
             this.dataStorageService.updateRecipe(updatedRecipe);
         });
 
-        // clear the arrays that held the Firebase id's of the recipes to update and delete
+        // clear update and delete queued tasks
         this.recipeService.flushRegisteredRecipes();
 
-        // set the 'saving' flag to false
+        // clear the saving flag
         this.saving = false;
 
-        // set the 'saveSuccessful' active to display...
+        // set the saveSuccessful flag
         this.saveSuccessful = true;
 
-        // ...a success message to the user for 3 seconds
+        // clear the saveSuccessful flag in 3 seconds
         setTimeout(() => {
             this.saveSuccessful = false;
         }, 3000);
 
     }
 
-    // when fetching recipes
+    // 'Fetch Recipes' handler
     onFetchRecipes() {
 
-        // check if it's the first time 
+        // check if first time
         if (!this.alreadyFetched) {
 
-            // set the fetching flag to true
-            this.fetching = true;
-
-            // subscribe to the fetchService get() observable but just to trigger the request (the service already sets the recipes
-            // and triggers the recipeChanged subject to render the recipes, so no more work is required to do on the response)
-            this.fetchRecipesSubscription = this.dataStorageService.fetchRecipes().subscribe();
-
-            // set the first-time flag to true to never commit this action again
+            // set first-time flag to never fetch again
             this.alreadyFetched = true;
 
-            // set the fetching task flag to false
+            // set fetching flag
+            this.fetching = true;
+
+            // subscribe to the fetchRecipes() returned observable to trigger request (not interested in response)
+            this.fetchRecipesSubscription = this.dataStorageService.fetchRecipes().subscribe();
+
+            // clear fetching flag
             this.fetching = false;
 
-            // set the fetchSuccessful active to...
+            // set fetchSuccessful flag
             this.fetchSuccessful = true;
 
-            // display a message for three seconds
+            // clear fetchSuccessful flag in 3 seconds
             setTimeout(() => {
                 this.fetchSuccessful = false;
             }, 3000);
@@ -142,7 +126,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     }
 
-    // on logout, call service logout method
+    // on logout, call logout() authentication service method
     onLogout() {
         this.authService.logout();
     }

@@ -11,24 +11,24 @@ import { Subscription } from 'rxjs';
 })
 export class RecipeListComponent implements OnInit, OnDestroy {
 
-	// recipes copy property
+	// recipes array copy
 	recipes: Recipe[];
 
-	// subscription to recipesChanged service Subject
+	// recipes changed subscription
 	recipesChangedSubscription: Subscription;
 
-	// receive recipe service singleton from parent (RecipesComponent)
+	// inject recipe service
 	constructor(private recipeService: RecipeService) {
 
 	}
 
-	// on initialization, receive a copy of the recipes array
+	// initialization
   	ngOnInit() {
 
-		// fetch the recipes initially
+		// fetch recipes copy from service
 		this.recipes = this.recipeService.getRecipes();
 
-		// subscribe to the recipesChanged Subject to fetch the updated array each time a change occurs
+		// each time the recipes array changes, get a new copy
 		this.recipesChangedSubscription = this.recipeService.recipesChanged.subscribe(() => {
 			this.recipes = this.recipeService.getRecipes();
 		});

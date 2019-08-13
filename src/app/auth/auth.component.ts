@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
 
+// auth component
 @Component({
     selector: 'app-auth',
     templateUrl: './auth.component.html'
@@ -15,10 +16,10 @@ export class AuthComponent implements OnDestroy {
     // toggle between login and signup
     isLoginMode: boolean = true;
 
-    // flag active while loading (accessing server)
+    // flag that is active while loading data
     isLoading: boolean = false;
 
-    // error messsage property
+    // error message
     error: string = null;
 
     // get first element that implements the placeholder directive
@@ -28,28 +29,28 @@ export class AuthComponent implements OnDestroy {
     // close event emitter subscription
     private closeSubscription: Subscription;
 
-    // using the component factory resolver to let angular instantiate components
-    // we desire to add dynamically
+    // inject authentication service, router to redirect user in some cases and
+    // the component factory resolver
     constructor(private authService: AuthService,
                 private router: Router,
                 private componentFactoryResolver: ComponentFactoryResolver) {
 
     }
 
-    // toggle handler
+    // toggle handler: switch between signup and login
     onSwitchMode(): void {
         this.isLoginMode = !this.isLoginMode;
     }
 
-    // on submit
+    // on submit form handler
     onSubmit(authForm: NgForm): void {
 
-        // check if form is valid
+        // form invalid: do nothing
         if (!authForm.valid) {
             return;
         }
 
-        // get email and password from form
+        // form valid: get email and password from form
         const email = authForm.value.email;
         const password = authForm.value.password;
 
@@ -60,94 +61,85 @@ export class AuthComponent implements OnDestroy {
         // FirebaseAuthResponse = FirebaseSigninResponse | FirebaseSignupResponse
         let authAction: Observable<FirebaseAuthResponse>;
 
-        // if we are on login mode, use the login() observer
+        // login flag set:, use the login() observer
+        // login flag clear: use the signup() observer
         if (this.isLoginMode) {
             authAction = this.authService.login(email, password);
         } else {
-            // if signing up, use the signup() observer
             authAction = this.authService.signup(email, password);
         }
 
-        // on both cases, we get an observer we can subscribe to and get some response data
-        // we set the loading flag to false regardless if we get an error or not
-        // and in case of an custom error message we simply set its value to the component property
-
-        // thanks to the catchError() operator, which returns a throwError() observable so that we can still
-        // subscribe to wait for an error to pop up, we return as an argument a customized error message, not the full
-        // HttpErrorResponse object, so we can simply set the error property to the error message we get from there
+        // subscribe to final observer and get the response data from Firebase (FirebaseSigninResponse | FirebaseSignupResponse)
+        // note: not needed in this case, but placed to display we can acquire it
         authAction
+
+            // success response
             .subscribe((responseData: FirebaseAuthResponse) => {
 
-                console.log(responseData);
+                // clear loading flag
                 this.isLoading = false;
 
                 // on successful login or signup, go to /recipes
                 this.router.navigate(['/recipes']);
 
-            }, (errorMessage: string) => {
+            }, 
+            
+            // failure response: get custom error message (thanks to catchError RxJS operator)
+            (errorMessage: string) => {
 
-                this.error = errorMessage;
+                // clear loading flag
                 this.isLoading = false;
 
-                // imperative way of loading dynamic components: load it through a method
+                // load error message to property
+                this.error = errorMessage;
+
+                // call method that loads dynamic AlertComponent with message
                 this.showErrorAlert(errorMessage);
 
             });
 
+        // clear the form
         authForm.reset();
 
     }
 
-    // child event emitter handler: set error strng to null
-    onHandleError() {
-        this.error = null;
-    }
-
-    // display error alery
+    // display dynamic AlertComponent
     private showErrorAlert(message: string) {
 
-        // using the component factory resolver to create a FACTORY of alert components
-        // this object now knows how to create AlertComponents
+        // create factory of AlertComponents
         const alertComponentFactory = this
                                         .componentFactoryResolver
                                         .resolveComponentFactory(
                                             AlertComponent
                                         );
         
-        // view container reference of the first element in the DOM that has the appPlaceholder directive
-        // with this view container reference we can add components inside it (the <ng-template>)
+        // get view container reference from <ng-template> with the PlaceholderDirective
         const hostViewContainerRef = this.alertHost.viewContainerRef;
 
-        // clear all components that have been rendered before inside this component
+        // clear all components inside this <ng-template>
         hostViewContainerRef.clear();
 
-        // now the use the component factory to create a component in the view container reference
-        // get a reference to this component (type is actually ComponentRef)
+        // create a new AlertComponent through its factory and get a reference
         const componentRef = hostViewContainerRef.createComponent(alertComponentFactory);
 
-        // the instance property of this component reference allows us to have access to its properties so
-        // we can set data normally
+        // access the 'message' AlertComponent property and set it with the error message parameter value
         componentRef.instance.message = message;
 
-        // subscribe to the close event emitter
-        // basically the AlertComponent is subscribing to its own event emitter
+        // subscribe to the AlertComponent's 'close' Event Emitter, triggered when the user clicks the 'close'
+        // button on the component
+        // simply unsubscribe directly and clear all components inside the <ng-template>
         this.closeSubscription = componentRef.instance.close.subscribe(() => {
-
-            // when data is emitted, unsubscribe and clear the view container reference to delete this component
             this.closeSubscription.unsubscribe();
             hostViewContainerRef.clear();
-
         });
 
     }
 
-    // unsubscribe
+    // on destroy, unsubscribe if we were subscribed to the 'close' event emitter
     ngOnDestroy() {
-
         if (this.closeSubscription) {
             this.closeSubscription.unsubscribe();
         }
-
     }
 
 }

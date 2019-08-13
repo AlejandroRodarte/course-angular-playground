@@ -6,10 +6,11 @@ import { Directive, ElementRef, Renderer2, HostListener } from '@angular/core';
 })
 export class DropdownDirective {
 
-    // toggle
+    // toggle to know whether the dropdown is open or not
     isOpen: boolean = false;
 
-    // constructor
+    // get reference to element that has the directive on
+    // get renderer to be able to add classes to this element
     constructor(private elementRef: ElementRef, private renderer: Renderer2) {
 
     }
@@ -18,12 +19,10 @@ export class DropdownDirective {
     @HostListener('document:click', ['$event'])
     toggleOpen(event: Event): void {
 
-        // switch toggle logic: we will use event delegation
-        // we will condition if what the user clicked happens to be the first child of the html element that has this directive
-        // the first child happen to be the dropdown buttons
-        // in essence, we are asking if the user happened to click on any of the dropdown buttons
-        // if true, toggle to dropdown (open or close), if false, that means the user clicked outsite of the dropdown menu if already open
-        // so set to false
+        // switch toggle logic
+        // check if what the user clicked on the entire document (target) is the first child of
+        // the element reference that has this directive, which is the dropdown link
+        // if true: toggle the open flag, if false: clear the flag
         this.isOpen = event.target === this.elementRef.nativeElement.firstChild ? !this.isOpen : false;
 
         // if true, add the .open bootstrap class to display dropdown elements

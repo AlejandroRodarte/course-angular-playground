@@ -27,23 +27,4 @@ export class Recipe {
         this.ingredients = ingredients;
     }
 
-    // equals() method: compare two recipes and check if their primitive properties are equal
-    // equals(recipe: Recipe): boolean {
-
-    //     if (this.ingredients.length !== recipe.ingredients.length) {
-    //         return false;
-    //     }
-
-    //     this.ingredients.forEach((ingredient: Ingredient, index: number) => {
-    //         if (!ingredient.equals(recipe.ingredients[index])) {
-    //             return false;
-    //         }
-    //     });
-
-    //     return this.name === recipe.name &&
-    //     this.description === recipe.description &&
-    //     this.imagePath  === recipe.imagePath;
-
-    // }
-
 }

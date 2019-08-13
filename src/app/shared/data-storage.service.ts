@@ -1,68 +1,64 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Recipe } from '../recipes/recipe.model';
-import { map, tap, take, exhaustMap } from 'rxjs/operators'
+import { map, tap } from 'rxjs/operators'
 import { Observable } from 'rxjs';
 import { RecipeService } from '../recipes/recipe.service';
 
-// type definition for the recipe structure we get from firebase
-// we get a set of random unique keys in a string format
-// where each key has a Recipe object associated
+// definition for how we get the recipes from Firebase
 export type FirebaseRecipes = { [key: string]: Recipe };
 
-// data storage global service
+// data storage service
 @Injectable({
     providedIn: 'root'
 })
 export class DataStorageService {
 
-    // our http client dependency and recipe service dependency
+    // inject http client and recipe service
     constructor(private http: HttpClient,
                 private recipeService: RecipeService) {
 
     }
 
-    // fetch all recipes from the database
-    // our header component is interesed in the response, since it will call a recipe service method (setRecipes)
-    // to add all these recipes into the recipes array
-    // the setRecipes method emits a subject which informs other components that the array has changed and thus render the response
-    // in essence, the header will use the recipe service to make calls to a method that ultimately informs other components to render the data
-    // for the header to listen to such response we return the request observable so the component can subscribe to the response
+    // fetch recipes request
     fetchRecipes(): Observable<Recipe[]> {
 
-        // get() is a generic, and by Firebase standards, we expect to get a structure defined in the FirebaseRecipes type
-        // before actually sending the response, we will transform it by instead sending an array of Recipe objects
-
-        // the user token is not added through the interceptor
         return this.http
+
+                    // get recipes from Firebase with correct URL; expect an object of type FirebaseRecipes
                     .get<FirebaseRecipes>(
                         'https://angular-course-app-eeedb.firebaseio.com/recipes.json'
                     )
+
+                    // pipe(): transform output of response
                     .pipe(
                         
-                        // with the map() operator we will loop through all the random unique keys Firebase generates and 
-                        // extract the recipe to push it into a temporary array to return at the end of the loop
-                        // also, we desire to store this unique random Firebase id on the Recipe model so we can recognize fetched recipes from brand new recipes added by the user
-                        // and that have not been persisted yet; to do this, we simply assign the 'id' property of the recipe to the current loop value of the key
+                        // map(): work with these FirebaseRecipes
                         map((firebaseRecipes: FirebaseRecipes) => {
                                     
+                            // array of recipe models
                             const recipes: Recipe[] = [];
 
+                            // loop through each key in this object (Firebase id's)
                             for (const key in firebaseRecipes) {
 
+                                // store the recipe javascript object on a Recipe model variable
+                                // and store also the id being the current key
                                 const recipe: Recipe = firebaseRecipes[key];
                                 recipe.id = key;
 
+                                // push the new recipe model
                                 recipes.push(recipe);
 
                             }
 
+                            // return an array of Recipes
                             return recipes;
 
                         }),
 
-                        // after we get these Recipe[] array, we use the tap() intermediary to use the recipe service and set the fetched recipes into our local recipes array
-                        // this setRecipes() method triggers through the Subject our components to render them on screen
+                        // tap() middle-ware to work with the Recipe[] returned value from map():
+                        // set the array of recipes to the service
                         tap((recipes: Recipe[]) => {
                             this.recipeService.setRecipes(recipes);
                         })
@@ -71,79 +67,82 @@ export class DataStorageService {
 
     }
 
-    // saving a particular recipe
+    // post a new recipe
     saveRecipe(recipe: Recipe): void {
 
-        // regular post() observable with url and payload
-        // on success, Firebase returns a simple object with one property 'name' with the value being the random unique id for the 
-        // posted recipe
-
-        // our components are not interested in this particular response from Firebase, but we desire to use this random unique id sent
-        // by Firebase to 'mark' the posted recipe in our app to identify it has already been persisten
-
-        // to do this, we subscribe directly here to the observable, take the recipe reference and assign the 'name' property value (unique id)
-        // to its 'id' property
-
-        // remember that all these 'recipe' parameters that enter these methods are ultimately REFERENCES to the recipe element found in the recipes array
-        // on the recipeService
-
-        // in other words, the 'recipe' argument and this method and the one in the recipes array on the recipeService point to the same location in memory, so we
-        // can sasign some properties to it from here
         this.http
+
+            // post request to url and payload (recipe to upload); expect an object with the Firebase id of the
+            // posted recipe
             .post<{ name: string }>(
                 'https://angular-course-app-eeedb.firebaseio.com/recipes.json',
                 recipe
             )
+
+            // handle response
             .subscribe(
+
+                // success: store the Firebase id on the recipe (the recipe argument is a reference to the one at
+                // the recipes array on the recipe service
                 (response: { name: string }) => {
                     recipe.id = response.name;
                 },
+
+                // error: log
                 (error) => {
                     console.log(error);
                 }
+
             )
 
     }
 
-    // update an existing recipe
+    // update a recipe
     updateRecipe(updatedRecipe: Recipe): void {
 
-        // issue: when we desire to update a recipe, such recipe model has already the Firebase id contained,
-        // however, if we persist this recipe with the id included, it will save a recipe with this extra property that just
-        // serves as a 'mark' to identify persisted and non-persisted recipes
-
-        // to solve this issue, we store in a temporary variable the id of the recipe to update and then make it's id property undefined
-        // temporarily while we update the data
+        // to update a recipe, we need to clear out first the Firebase id
+        // store it temporarily on a variable and set is as undefined
         const recipeId = updatedRecipe.id;
         updatedRecipe.id = undefined;
 
-        // we make the regular PUT request with the payload (recipe with no id),
-        // and at the subscription, when we get the response, we set back the recipe's id with the help of the temporary variable
-
-        // this tweak was done in a hurry to make this work with the Firebase structure
         this.http
+
+            // put request with the correct url and payload (updated recipe)
+            // expect a response with the updated Recipe data
             .put<Recipe>(
                 `https://angular-course-app-eeedb.firebaseio.com/recipes/${recipeId}.json`,
                 updatedRecipe
             )
-            .subscribe(() => {
-                updatedRecipe.id = recipeId;
-            }, (error) => {
-                console.log(error);
-            });
+
+            // handle response
+            .subscribe(
+                
+                // success: store again the recipe's Firebase id on the recipe reference
+                () => {
+                    updatedRecipe.id = recipeId;
+                }, 
+            
+                // error: log
+                (error) => {
+                    console.log(error);
+                }
+            
+            );
 
     }
 
-    // delete a recipe: in this particular case, we do not need a payload, just the recipe Firebase id
+    // delete a recipe
     deleteRecipe(recipeId: string): void {
 
-        // we make the call, where Firebase returns a null object on success
-        // we do not plan to do anything with the response, so place an empty function
         this.http
+
+            // make the delete request on the correct url
             .delete<null>(
                 `https://angular-course-app-eeedb.firebaseio.com/recipes/${recipeId}.json`
             )
-            .subscribe(() => {});
+
+            // subscribe to just trigger the request
+            .subscribe();
 
     }
 

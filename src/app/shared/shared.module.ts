@@ -6,12 +6,9 @@ import { DropdownDirective } from './dropdown.directive';
 import { CommonModule } from '@angular/common';
 
 // shared module
-// we declare all the shared components, directives and modules
-// since we won't load these components from inside this module, but we want to make
-// these features AVAILABLE to other modules, we export these same components, directives and modules
-// so that when a module imports this shared module has access to all these components, directives and modules
 @NgModule({
 
+    // declared components and directives
     declarations: [
         AlertComponent,
         LoadingSpinnerComponent,
@@ -19,10 +16,13 @@ import { CommonModule } from '@angular/common';
         DropdownDirective
     ],
 
+    // imports: these components and directives make use of the CommonModule
     imports: [
         CommonModule
     ],
 
+    // exports: for these components and directives to be used by other modules, we also
+    // export them
     exports: [
         AlertComponent,
         LoadingSpinnerComponent,
@@ -31,6 +31,7 @@ import { CommonModule } from '@angular/common';
         CommonModule
     ],
 
+    // AlertComponent must be loaded on demand (through a factory)
     entryComponents: [
 		AlertComponent
 	]

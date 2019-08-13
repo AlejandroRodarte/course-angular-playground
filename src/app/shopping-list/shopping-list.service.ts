@@ -10,11 +10,10 @@ export class ShoppingListService {
 		new Ingredient('Tomatoes', 10)
     ];
 
-    // ingredientsChanged subject: will notify other components that the ingredients service array changed
-    // components may subscribe to this event to update their copy through the getter
+    // ingredientsChanged subject: notify components when the ingredients array has changed
     ingredientsChanged = new Subject<void>();
 
-    // subject that emits the index of a particular ingredient on the shopping list
+    // sendIngredientIndex subject: notify components the index of the latest shopping list item the user clicked
     sendIngredientIndex = new Subject<number>();
 
     // get ingredient based on index

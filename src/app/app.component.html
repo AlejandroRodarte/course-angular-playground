@@ -1,16 +1,13 @@
-<!-- root component html -->
-
-<!-- the header component -->
+<!-- header -->
 <app-header></app-header>
 
-<!-- main container -->
 <div class="container">
 
-    <!-- grid -->
     <div class="row">
 
-        <!-- first column: app-routlet, will load either RecipesComponent or ShoppingListComponent -->
-        <!-- in dependence of current route -->
+        <!-- router outlet -->
+        <!-- possible component that might appear: -->
+        <!-- RecipesComponent, ShoppingListComponent or AuthComponent -->
         <div class="col-md-12">
             <router-outlet></router-outlet>
         </div>

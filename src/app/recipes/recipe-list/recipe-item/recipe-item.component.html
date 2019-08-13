@@ -1,9 +1,6 @@
 <!-- single recipe item markup -->
 
-<!-- link -->
-<!-- when clicking on an recipe item, we will the onRecipeItemClick() method -->
-<!-- deleted href -->
-<!-- routerLink: localhost:4200/recipes/id -->
+<!-- link: go to/recipes/id -->
 <!-- add .active css class in dependence of the isSelectedRecipeItem() returned boolean -->
 <a  
     [ngClass]="{ active: isSelectedRecipeItem() }"
@@ -12,7 +9,6 @@
     class="list-group-item clearfix"
     (click)="onRecipeItemClick()">
 
-    <!-- content of link pulled to the left -->
     <div class="pull-left">
 
         <!-- recipe name -->
@@ -20,7 +16,7 @@
             {{ recipe.name }}
         </h4>
 
-        <!-- recipe list -->
+        <!-- recipe description -->
         <p class="list-group-item-text">
             {{ recipe.description }}
         </p>
@@ -28,7 +24,6 @@
     </div>
 
     <!-- recipe image -->
-    <!-- property binding: bind 'src' image property to the current recipe image path url -->
     <span class="pull-right">
 
         <img [src]="recipe.imagePath" 

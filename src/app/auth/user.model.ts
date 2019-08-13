@@ -9,7 +9,7 @@ export class UserModel {
     }
 
     // getter for the token (access it as if it were a property but the value we receive depends
-    // on this method logic)
+    // on this method's logic)
     get token() {
 
         // if the token expiration date does not even exist or it already expired, return null

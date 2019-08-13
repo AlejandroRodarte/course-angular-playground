@@ -6,7 +6,7 @@ import { UserModel } from './user.model';
 import { Router } from '@angular/router';
 import { environment } from './../../environments/environment';
 
-// when signing up with email/password on Firebase, we expect an object with these properties
+// firebase response when signing up through email/password
 export interface FirebaseSignupResponse {
     idToken: string;
     email: string;
@@ -15,7 +15,7 @@ export interface FirebaseSignupResponse {
     localId: string;
 }
 
-// firebase sign in response: same as sign up but with a registered boolean
+// firebase response when signing in same as signing up but with a registered boolean
 export interface FirebaseSigninResponse extends FirebaseSignupResponse {
     registered: boolean;
 }
@@ -29,27 +29,25 @@ export type FirebaseAuthResponse = FirebaseSignupResponse | FirebaseSignupRespon
 })
 export class AuthService {
 
-    // user behavior subject to store a user when signing up or logging in
-    // behavior subjects allow us to access the previous emitted value, this is so
-    // our data storage service can check for the last emitted user (currently active user)
-    // and attach its user token
+    // behavior subject to inform other components about the currently logged in user
     user = new BehaviorSubject<UserModel>(null);
 
     // token expiration timer
     private tokenExpirationTimer: NodeJS.Timer;
 
-    // inject the http client
+    // inject http client and router to redirect user
     constructor(private http: HttpClient,
                 private router: Router) {
 
     }
 
-    // sign up method
+    // sign up request
     signup(email: string, password: string): Observable<FirebaseSignupResponse> {
 
-        // return post() observable, post the email and password
-        // send as payload the email, password and a returnSecureToken flag set to true to get a JWT
         return this.http
+
+                    // post user email and password to required URL and with our API Key
+                    // we expect a response from Firebase of type FirebaseSignupResponse
                     .post<FirebaseSignupResponse>(
                         `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`,
                         {
@@ -58,23 +56,22 @@ export class AuthService {
                             returnSecureToken: true
                         }
                     )
+
+                    // pipe(): transform output
                     .pipe(
 
-                        // instead of inserting as an argument an arrow function to work as the handler,
-                        // we place a reference to our handleError() method (no parentheses), so that it receives
-                        // injected the HttpErrorResponse
+                        // catchError(): handle case when response is of type HttpErrorResponse 
+                        // reference handleError() method to handle such case
                         catchError(
                             this.handleError
                         ),
 
-                        // tap() to execute some middle-ware function
+                        // tap(): work with the firebase signup response
                         tap(
 
-                            // with the response data from firebase
                             (responseData: FirebaseSignupResponse) => {
 
-                                // call the authentication method and pass in the returned email, user id, token and
-                                // expiration timelapse
+                                // call handleAuthentication() to register the user on the BehaviorSubject
                                 this.handleAuthentication(
                                     responseData.email, 
                                     responseData.localId, 
@@ -90,11 +87,13 @@ export class AuthService {
 
     }
 
-    // login() observable
+    // login request
     login(email: string, password: string) {
 
-        // make the correct post() request to the correct endpoint
         return this.http
+
+                    // post user email and password to required URL and with our API Key
+                    // we expect a response from Firebase of type FirebaseSigninResponse
                     .post<FirebaseSigninResponse>(
                         `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.firebaseAPIKey}`,
                         {
@@ -103,21 +102,20 @@ export class AuthService {
                             returnSecureToken: true
                         }
                     )
+
+                    // pipe(): transform output
                     .pipe(
 
-                        // instead of inserting as an argument an arrow function to work as the handler,
-                        // we place a reference to our handleError() method (no parentheses), so that it receives
-                        // injected the HttpErrorResponse
+                        // catchError(): handle case when response is of type HttpErrorResponse 
+                        // reference handleError() method to handle such case
                         catchError(this.handleError),
 
-                        // tap() to execute some middle-ware function
+                        // tap(): work with the firebase signup response
                         tap(
 
-                            // with the response data from firebase
                             (responseData: FirebaseSigninResponse) => {
 
-                                // call the authentication method and pass in the returned email, user id, token and
-                                // expiration timelapse
+                                // call handleAuthentication() to register the user on the BehaviorSubject
                                 this.handleAuthentication(
                                     responseData.email, 
                                     responseData.localId, 
@@ -133,10 +131,10 @@ export class AuthService {
 
     }
 
-    // auto login
+    // auto-login
     autoLogin(): void {
 
-        // fetch the user from local storage
+        // attempt to fetch user data from local storage
         const user: {
             email: string,
             id: string,
@@ -144,13 +142,12 @@ export class AuthService {
             _tokenExpirationDate: string
         } = JSON.parse(localStorage.getItem('userData'));
 
-        // if null, send user to /auth
+        // if user does not exist: do nothing
         if (!user) {
-            // this.router.navigate(['/auth']);
             return;
         }
 
-        // if not null, cast JSON to a user model to access getter
+        // if user exists: use local storage data to create a new User instance
         const fetchedUser = new UserModel(
             user.email,
             user.id,
@@ -158,66 +155,59 @@ export class AuthService {
             new Date(user._tokenExpirationDate)
         )
 
-        // validate through getter if token has not expired
-        // if expired, route to /auth; if not, set the user on subject
+        // access token getter to validate its expiration date
         if (fetchedUser.token) {
 
+            // if token has not expired: submit user instance to BehaviorSubject
             this.user.next(fetchedUser);
 
-            // calculate the expiration duration by substracting the expiration date from the current date
+            // calculate remaining time in milliseconds of user token
             const expirationDuration = new Date(user._tokenExpirationDate).getTime() - new Date().getTime();
 
-            // call auto logout to set the timer
+            // trigger auto-logout with the expiration duration
             this.autoLogout(expirationDuration)
 
-        } else {
-            // this.router.navigate(['/auth']);
         }
 
     }
 
-    // logout: set user to null (disables recipes and management to user and forces to login/signup)
-    // navigate to /auth
-    // this is done in the service since we want to redirect the user no matter the component we are in
+    // logout
     logout() {
 
+        // submit a null user
         this.user.next(null);
+
+        // redirect user to /auth
         this.router.navigate(['/auth']);
 
-        // if the auto-logout timer was triggered, then clear it
+        // if the auto-logout timer was triggered before logging out, clear it
         if (this.tokenExpirationTimer) {
             clearTimeout(this.tokenExpirationTimer);
         }
 
-        // clear the user data local storage item
+        // remove user data from local storage if it exists
         localStorage.removeItem('userData');
 
     }
 
-    // auto-logout
+    // auto-logout: set timeout with an expiration duration
+    // when finished, call logout()
     autoLogout(expirationDuration: number) {
-
-        // start up directly a timeout and wait for an amount of time equivalent
-        // to the expiration duration (token expiration date minus current date)
-        // when finishing, call logout()
         this.tokenExpirationTimer = setTimeout(() => {
             this.logout();
         }, expirationDuration)
-
     }
 
-    // handler for authentication
+    // authentication handler
     private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
 
-        // the expiration date must be calculated, it must be a date in the future relative to the current time
-        // new Date().getTime() gets us the current time in milliseconds starting at some time at 1970
-        // to this, we add expiresIn, which is a time in seconds, so we multiply it by 1000 to handle the same units
+        // create a new Date based on the current time and the token duration
         const expirationDate = new Date(
             new Date().getTime() + 
             expiresIn * 1000
         ); 
 
-        // create the user model
+        // create user instance based on parameters received
         const user = new UserModel(
             email, 
             userId, 
@@ -225,37 +215,33 @@ export class AuthService {
             expirationDate
         );
 
-        // store the user for subscribers
+        // submit new user to BehaviorSubject
         this.user.next(user);
 
-        // start logout timer
+        // kickoff auto-logout timer
         this.autoLogout(expiresIn * 1000);
 
-        // save the current user object into local storage (need to convert to a string first)
+        // save user data on local storage
         localStorage.setItem('userData', JSON.stringify(user));
 
     }
     
 
-    // transform HttpErrorResponse to custom error message
-    // outsoutce the custom error message generation to this method
+    // handle HttpErrorResponse objects
     private handleError(errorResponse: HttpErrorResponse): Observable<never> {
 
-        // to customize error, we can use pipe() with the catchError() operator, which should ALWAYS return
-        // an observable under the name of throwError(), where we can pass to it as an argument whatever we want
-        // our subscribers to receive as an error indicator (in this case, a customized error message)
+        // error default message
         let errorMessage = 'An unknown error occured';
 
-        // check if the received error has the correct format from Firebase; if not, send default error message through
-        // the observable
+        // if the receiving object happens to not be of type HttpErrorResponse, return observable
+        // with default error message
         if (!errorResponse.error || !errorResponse.error.error) {
             return throwError(errorMessage);
         }
 
-        // use a switch statement that checks for the Firebase error message and...
+        // evaluate cases for the error message we get from the HttpErrorResponse object
+        // and customize our own message
         switch (errorResponse.error.error.message) {
-
-            // customize our message to send through the observable depending on each particular case
             case 'EMAIL_EXISTS':
                 errorMessage = 'This email already exists';
                 break;
@@ -268,10 +254,9 @@ export class AuthService {
             default:
                 errorMessage = 'An error occured';
                 break;
-
         }
 
-        // return an observable with the custom error message
+        // return observable with the custom error message
         return throwError(errorMessage);
 
     }

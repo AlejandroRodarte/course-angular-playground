@@ -7,11 +7,9 @@ import { FormMode } from 'src/app/shared/form-mode.enum';
 import { Store } from '@ngrx/store';
 
 import * as ShoppingListActions from '../store/shopping-list.actions';
-
-// import everything from the reducer file
-// fromShoppingList: naming convention
 import * as fromShoppingList from '../store/shopping-list.reducer';
 
+// shopping edit component
 @Component({
     selector: 'app-shopping-edit',
     templateUrl: './shopping-edit.component.html',
@@ -20,74 +18,58 @@ import * as fromShoppingList from '../store/shopping-list.reducer';
 export class ShoppingEditComponent implements OnInit, OnDestroy {
 
 	// shopping list form (static true since we use it on the ngOnInit hook)
-	@ViewChild('shoppingListForm', { static : false })
+	@ViewChild('shoppingListForm', { static : true })
 	private shoppingListForm: NgForm;
 
-	// reference to the submit button (static false since we do not use it on the ngOnInit hook)
-	@ViewChild('submitButton', { static : false })
+	// reference to the submit button (static true since we do not use it on the ngOnInit hook)
+	@ViewChild('submitButton', { static : true })
 	private submitButton: ElementRef;
 
-	// subscription to the shopping list service's sendIngredientIndex Subject
-	private sendIngredientIndexSubscription: Subscription;
+	// subscription to the shopping list state data
+	stateSubscription: Subscription;
 
 	// edit mode flag
 	editMode: boolean = false;
 
-	// field to track currently selected ingredient
+	// ingredient object to edit
+	private editedIngredient: Ingredient;
+
+	// ingredient index to edit
 	private ingredientIndex: number;
 
-	// get shopping list service singleton
-	// inject the store so we can dispatch actions
-
-	// now using the appState interface
-	constructor(private shoppingListService: ShoppingListService,
-				private store: Store<fromShoppingList.AppState>) {
+	// inject the store from the shopping list reducer perspective
+	constructor(private store: Store<fromShoppingList.AppState>) {
 
 	}
 
 	// on initialization
     ngOnInit() {
 
-		// subscribe to the sendIngredientIndex Subject and listen for sent ingredient indexes
-		this.sendIngredientIndexSubscription = this.shoppingListService.sendIngredientIndex.subscribe((index: number) => {
+		// subscribe to the shopping list state
+		this.stateSubscription = this.store.select('shoppingList').subscribe((stateData: fromShoppingList.ShoppingListReducerState) => {
 
-			// if we were not on update mode
-			if (!this.editMode) {
-
-				// set the index field to the emitted one
-				this.ingredientIndex = index;
-
-				// set the update mode (change button text and toggle the edit mode flag to true)
+			// ingredient index to edit state value is valid:
+			// set it on our property, set form mode to 'update' mode and
+			// load the form
+			if (stateData.editedIngredientIndex > -1) {
+				this.editedIngredient = stateData.editedIngredient;
 				this.setMode(FormMode.Update);
-
-				// and the load the form data
-				this.loadForm(index);
-
+				this.loadForm();
 			}
-
-			// when the emitted index becomes different than the one this component has stores
-			if (this.ingredientIndex !== index) {
-
-				// set the new index
-				this.ingredientIndex = index;
-
-				// and load the form data
-				this.loadForm(index);
-
-			}
+		
 
 		});
 
 	}
 	
-	// listener for the submission button click
+	// submission handler
 	onSubmit(): void {
 
+		// name variable
 		let name: string;
 
-		// check through the edit mode flag if we were on 'add' or 'update' mode
-		// on 'add', simply access the form value to fetch the ingredient name
-		// on 'update' access the value from the control itself (we can't access the value of disabled text fields)
+		// if not editing (add mode), extract the form value normallu
+		// if editing (update mode, input disabled), extract the value from the control
 		if (!this.editMode) {
 			name = this.shoppingListForm.form.value.name;
 		} else {
@@ -97,11 +79,8 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 		// fetch the ingredient amount
 		const amount: number = +this.shoppingListForm.form.value.amount;
 
-		// add the ingredient through the service and set information whether we are 'adding' or 'updating'
-		// this.shoppingListService.addIngredient(new Ingredient(name, amount), this.editMode);
-
-		// dispatch an AddIngredient action with the Ingredient object to add
-
+		// if editing, dispatch a new UpdateIngredient action
+		// if adding, dispatch a new AddIngredient action
 		if (this.editMode) {
 			this.store.dispatch(new ShoppingListActions.UpdateIngredient({
 				index: this.ingredientIndex,
@@ -116,21 +95,19 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 		
 	}
 
-	// when clicking the clear button, simply call the clear form method
+	// clear handler: clear the form (reset to 'add' mode and clear edit flag)
+	// and dispatch a StopEdit action to reset the editedIngredient and editedIngredientIndex values
+	// to their initial form (null and -1)
 	onClearClick(): void {
 		this.clearForm();
+		this.store.dispatch(new ShoppingListActions.StopEdit());
 	}
 
-	// when deleting, call the service delete method and pass the currently selected ingredient index
-	// also, clear the form
+	
+	// when deleting an ingredient: dispatch a DeleteIngredient action and clear the form
 	onDeleteClick(): void {
-
-		// this.shoppingListService.deleteIngredient(this.ingredientIndex);
-
 		this.store.dispatch(new ShoppingListActions.DeleteIngredient(this.ingredientIndex));
-
 		this.clearForm();
-
 	}
 
 	// clear form
@@ -144,21 +121,28 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 			'amount': 1
 		});
 
-		// set the 'add' mode (change the button text and set edit mode flag to false)
+		// set the 'add' mode
 		this.setMode(FormMode.Add);
 
 	}
 
-	// load form based on index
-	private loadForm(index: number): void {
+	// load form
+	private loadForm(): void {
 
-		// use the service and call the getter method to fetch the ingredient
-		const ingredient = this.shoppingListService.getIngredient(index);
+		// initial ingredient name and amount
+		let ingredientName: string = '';
+		let ingredientAmount: number = 1;
 
-		// set the form to the fetched ingredient fields
+		// if we have an ingredient object to edit on, set their values to the variables
+		if (this.editedIngredient) {
+			ingredientName = this.editedIngredient.name;
+			ingredientAmount = this.editedIngredient.amount;
+		}
+
+		// set the form
 		this.shoppingListForm.setValue({
-			'name': ingredient.name,
-			'amount': ingredient.amount
+			'name': ingredientName,
+			'amount': ingredientAmount
 		});
 
 	}
@@ -187,9 +171,10 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 
 	}
 
-	// when destroying the component, unsubscribe from the sendIngredientIndex subject
+	// unsubscriptions and dispatch StopEdit action for safety measures
 	ngOnDestroy(): void {
-		this.sendIngredientIndexSubscription.unsubscribe();
+		this.stateSubscription.unsubscribe();
+		this.store.dispatch(new ShoppingListActions.StopEdit());
 	}
 
 }

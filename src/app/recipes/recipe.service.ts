@@ -6,59 +6,39 @@ import { Subject, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
-
-// import everything from the reducer file
-// fromShoppingList: naming convention
 import * as fromShoppingList from '../shopping-list/store/shopping-list.reducer';
 
-// this service will receive as a dependency another service: shopping list service
-// to make it injectable, use this decorator
-
-// update: this service was destroyed when leaving the /recipes path and instantiated when going back
-// to such path; this prevented the deletion of recipes
-// to solve this, we make this service a global singleton
-// @Injectable({
-//     providedIn: 'root'
-// })
+// recipes service
 export class RecipeService implements OnDestroy {
 
-    // an array of Recipe models
+    // array of recipes
     private recipes: Recipe[] = [];
       
-    // array tracker which registers all Firebase id's of the fetched recipes that require to be updated
+    // tracker for all recipes that need to be updated on save
     private recipesToUpdate: string[] = [];
 
-    // array tracker which registers all Firebase id's of the fetched recipes that require to be deleted
+    // tracker for all recipes that need to be deleted on save
     private recipesToDelete: string[] = [];
     
-    // current recipe index
+    // currently selected recipe index
     currentRecipeIndex: number;
     
-    // selected recipe subject: emitters will send the position index where a particular recipe
-    // item is found
+    // selected recipe subject: emits index of selected recipe by user
     selectedRecipe = new Subject<number>();
 
-    // recipes changed subject: informs subscribers wheneber the array of recipes has suffered changes
+    // recipes changed subject: emits to inform whenever the recipes array has changed
     recipesChanged = new Subject<void>();
 
     // selected recipe subscription
     selectedRecipeSubscription: Subscription;
-    
-    // inject the shopping list global service
-    // inject the store
 
-    // now using the appState interface
-    constructor(private shoppingListService: ShoppingListService,
-                private store: Store<fromShoppingList.AppState>) {
+    constructor(private store: Store<fromShoppingList.AppState>) {
 
-        // make this service subscribe to its own emitter
+        // subscription to its own emitter
         this.selectedRecipeSubscription = this.selectedRecipe.subscribe((index: number) => {
 
-            // if the user selected the same recipe item
-            // make the current recipe index equal to -1 as a flag to not add the .active bootstrap class
-
-            // if the user however, selected a different recipe than the previous one, assing the new index
-            // as the current recipe index
+            // if user selected the same recipe item, make the current recipe index equal to -1 as a flag to not add the .active bootstrap class
+            // if user selcted a different recipe, then set the current recipe index property to the new index
             if (this.currentRecipeIndex === index) {
                 this.currentRecipeIndex = -1;
             } else {
@@ -75,20 +55,17 @@ export class RecipeService implements OnDestroy {
     }
 
     // get recipes
-    // this.recipes simply would return a reference to this same array
-    // so we apply an empty slice() method call to return a copy of this array
     getRecipes(): Recipe[] {
         return this.recipes.slice();
     }
 
-    // set the recipes and notify components
+    // set recipes and notify
     setRecipes(recipes: Recipe[]): void {
         this.recipes = recipes;
         this.recipesChanged.next();
     }
 
-    // get all recipes that were added by the user and have not been persisted yet
-    // from the recipes array, filter out only the ones where its id (Firebase id) is undefined
+    // get all brand new recipes by checking if their Firebase id is undefined
     getNewRecipes(): Recipe[] {
         return this.recipes.filter((recipe: Recipe) => {
             if (recipe.id === undefined) {
@@ -97,7 +74,7 @@ export class RecipeService implements OnDestroy {
         });
     }
 
-    // method that receives an array of Firebase id's and returns an array of recipes with such id's
+    // get recipes based on an array of Firebase id's
     private getRecipesByIds(idArray: string[]): Recipe[] {
 
         // array of recipes
@@ -115,7 +92,7 @@ export class RecipeService implements OnDestroy {
 
     }
 
-    // get array of recipes to update (copy, but a copy of references)
+    // get array of recipes to update
     getUpdatedRecipes(): Recipe[] {
         return this.getRecipesByIds(this.recipesToUpdate).slice();
     }
@@ -125,14 +102,13 @@ export class RecipeService implements OnDestroy {
         return this.recipesToDelete.slice();
     }
 
-    // clean array trackers that register id's of recipes to update and delete
+    // clean queues of recipes to delete and update
     flushRegisteredRecipes(): void {
         this.recipesToUpdate = [];
         this.recipesToDelete = [];
     }
 
-    // get the length of the recipes array; this method is implement to route the user
-    // to the new recipe he created once submitted
+    // get the length of the recipes array
     get length(): number {
         return this.recipes.length;
     }
@@ -140,28 +116,22 @@ export class RecipeService implements OnDestroy {
     // add or update a recipe
     addOrUpdateRecipe(recipe: Recipe, id: number): void {
 
-        // if the id is not a number, it means that we are attempting to add a new recipe, so push it to
-        // the recipes arrau
-        // if there is an id, simply replace the recipe element with the incoming one
+        // id is not a number: new recipe -> push to array
+        // id is a number -> update recipe -> replace it on array
         if (isNaN(id)) {
             this.recipes.push(recipe);
         } else {
             this.recipes[id] = recipe;
         }
 
-        // in both cases, the recipes array changed, so notify all interested subscribers
+        // notify all interested subscribers
         this.recipesChanged.next();
 
     }
 
-    // addToShoppingList() handler: delegate the task to the shopping list service
+    // add recipe ingredients to shopping list: use the AddIngredients action dispatcher
     addToShoppingList(ingredients: Ingredient[]): void {
-
-        // this.shoppingListService.addIngredients(ingredients);
-
-        // using the dispatcher to dispatch an AddIngredients action with the ingredients to add
         this.store.dispatch(new ShoppingListActions.AddIngredients(ingredients));
-
     }
 
     // delete a recipe based on id and notify subscribers
@@ -191,7 +161,7 @@ export class RecipeService implements OnDestroy {
 
     }
 
-    // unsubscribe upon service destruction
+    // unsubscriptions
     ngOnDestroy() {
         this.selectedRecipeSubscription.unsubscribe();
     }

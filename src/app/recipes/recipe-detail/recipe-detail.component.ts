@@ -4,6 +4,7 @@ import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
+// recipe detail component
 @Component({
 	selector: 'app-recipe-detail',
 	templateUrl: './recipe-detail.component.html',
@@ -11,7 +12,7 @@ import { Subscription } from 'rxjs';
 })
 export class RecipeDetailComponent implements OnInit, OnDestroy {
 
-	// current index
+	// currently selected recipe index
 	selectedIndex: number;
 
 	// render flag
@@ -20,36 +21,38 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	// property binding to receive the currently selected recipe from RecipesComponent
 	recipe: Recipe;
 
-	// selected recipe service subscription
+	// selected recipe subscription
 	selectedRecipeSubscription: Subscription;
 
 	// route parameter subscription
 	private routeParamsSubscription: Subscription;
 
-	// inject the recipe service singleton
-	// inject the router to redirect user and route to redirect based on relative path
+	// inject recipe service, router and route that loaded this component
 	constructor(private recipeService: RecipeService,
 				private router: Router,
 				private route: ActivatedRoute) {
 
 	}
 
+	// initialization
 	ngOnInit() {
 
-		// listen for each time the recipe item emits a new index and call doRender()
-		// to set the value of the render flag
+		// subscribe to the selected recipe observable to fetch the recipe index the user selected on the UI
+		// call doRender() to render or not the component
 		this.selectedRecipeSubscription = this.recipeService.selectedRecipe.subscribe((index: number) => {
 			this.doRender(index);
 		});
 
-		// subscribe to the params observable: listen for changes in the id dynamic parameter
-		// on trigger, access the params and fetch the id
-		// and use the getRecipe() method to access the recipe to load through the service
+		// subscribe to the params observable
 		this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
 
+			// get :id value
 			const id = +params['id'];
 			
+			// get recipe through service based on id and save on this property
 			this.recipe = this.recipeService.getRecipe(id);
+
+			// also, save the id on the index property
 			this.selectedIndex = id;
 
 		});
@@ -57,17 +60,16 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	}
 
 	// add ingredients to shopping list
-	// delegate the task to the recipe service
-	// we are passing a reference to the array of ingredients this particular recipe has
+	// use the service method to delegate task
 	addToShoppingList() {
 		this.recipeService.addToShoppingList(this.recipe.ingredients);
 	}
 
-	// doRender() method, ran each time we select a recipe on the UI
+	// do render?
 	doRender(index: number): void {
 
-		// check if the user is clicking on the same recipe item through the incoming index
-		// if true, toggle the render flag; if false, set the new index and set render true
+		// if user clicks on the previously selected recipe, toggle render flag
+		// if user clicks on different recipe, render the component and set the index on property
 		if (this.selectedIndex === index) {
 			this.renderFlag = !this.renderFlag;
 		} else {
@@ -77,29 +79,26 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 
 	}
 
-	// delete recipe button handler
+	// delete recipe handler
 	onDeleteRecipe(): void {
 
-		// call the delete recipe method from the service and pass the selected recipe index
+		// call service method to delegate task
 		this.recipeService.deleteRecipe(this.selectedIndex);
 
-		// check if this recipe has a Firebase id or not (brand new or fetched from the start)
-		// if it's fetched from Firebase, we will register it's id to know this recipe has been deleted by the user
-		// and should be deleted from the database once it syncs the data
+		// if recipe has a Firebase id, register as a recipe to delete on database when saving changes
 		if (this.recipe.id !== undefined) {
 			this.recipeService.registerDeletedRecipe(this.recipe.id);
 		}
 
-		// navigate on upper level than the current one
-		// when deleting a recipe, we are on path localhost:4200/recipes/id
-		// when deleting, we will go to path localhost:4200/recipes
+		// navigate on upper level than the current one, relative to current route
+		// example: /recipes/id -> /recipes
 		this.router.navigate(['..'], {
 			relativeTo: this.route
 		});
 
 	}
 
-	// unsubscribe upon component destruction
+	// unsubscriptions
 	ngOnDestroy() {
 		this.selectedRecipeSubscription.unsubscribe();
 		this.routeParamsSubscription.unsubscribe();
