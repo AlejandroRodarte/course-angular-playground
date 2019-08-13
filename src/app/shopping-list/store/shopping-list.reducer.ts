@@ -94,35 +94,41 @@ export function shoppingListReducer(
         case ShoppingListActions.UPDATE_INGREDIENT:
 
             // get a reference to the ingredient object to update
-            const ingredient = state.ingredients[action.payload.index];
+            const ingredient = state.ingredients[state.editedIngredientIndex];
 
             // create a new copy of this ingredient
             // first place the old ingredient data
             // and then overwrite it with the new payload ingredient data
             const updatedIngredient = {
                 ...ingredient,
-                ...action.payload.ingredient
+                ...action.payload
             };
 
             // get a copy of the array of ingredients of the old state
             const updatedIngredients = [...state.ingredients];
 
             // place the new ingredient on the right index of the copied array of ingredients
-            updatedIngredients[action.payload.index] = updatedIngredient;
+            updatedIngredients[state.editedIngredientIndex] = updatedIngredient;
 
             // return the old state and the updated ingredients copy with the new ingredient
+            // also, reset the edited ingredient properties
             return {
                 ...state,
-                ingredients: updatedIngredients
+                ingredients: updatedIngredients,
+                editedIngredient: null,
+                editedIngredientIndex: -1
             }
         
         // delete an ingredient: simply apply splice and delete the ingredient at that index
+        // also, reset the edited ingredient properties
         case ShoppingListActions.DELETE_INGREDIENT:
             return {
                 ...state,
                 ingredients: state.ingredients.filter((ingredient: Ingredient, index: number) => {
-                    return action.payload !== index;
-                })
+                    return state.editedIngredientIndex !== index;
+                }),
+                editedIngredient: null,
+                editedIngredientIndex: -1
             }
         
         // start editing action
@@ -152,7 +158,7 @@ export function shoppingListReducer(
 
 }
 
-// push new ingredient to array or add amount to existing one
+// helper method: push new ingredient to array or add amount to existing one
 function pushOrAddMore(ingredient: Ingredient, stateIngredients: Ingredient[]): void {
 
     // tracker flag

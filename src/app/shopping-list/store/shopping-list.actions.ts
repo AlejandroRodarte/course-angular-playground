@@ -45,26 +45,22 @@ export class AddIngredients implements Action {
 
 }
 
-// update ingredients action: we require the index of the ingredient and the new ingredient
+// update ingredients action: we have already the index of the recipe to update
+// so we just need the new ingredient information
 export class UpdateIngredient implements Action {
 
     readonly type = UPDATE_INGREDIENT;
 
-    constructor(public payload: { index: number, ingredient: Ingredient }) {
+    constructor(public payload: Ingredient) {
 
     }
 
 }
 
-// delete ingredients action: we just require the ingredient index
+// delete ingredients action: we have the index already stored in the state, so nothing
+// is required to perform this action
 export class DeleteIngredient implements Action {
-
     readonly type = DELETE_INGREDIENT;
-
-    constructor(public payload: number) {
-
-    }
-
 }
 
 // start editing action

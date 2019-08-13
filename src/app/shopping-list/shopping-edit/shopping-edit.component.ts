@@ -34,9 +34,6 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	// ingredient object to edit
 	private editedIngredient: Ingredient;
 
-	// ingredient index to edit
-	private editedIngredientIndex: number;
-
 	// inject the store from the shopping list reducer perspective
 	constructor(private store: Store<fromShoppingList.AppState>) {
 
@@ -53,11 +50,9 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 			// and load form
 			if (stateData.editedIngredientIndex > -1) {
 				this.editedIngredient = stateData.editedIngredient;
-				this.editedIngredientIndex = stateData.editedIngredientIndex;
 				this.setMode(FormMode.Update);
 				this.loadForm();
 			}
-		
 
 		});
 
@@ -83,10 +78,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 		// if editing, dispatch a new UpdateIngredient action
 		// if adding, dispatch a new AddIngredient action
 		if (this.editMode) {
-			this.store.dispatch(new ShoppingListActions.UpdateIngredient({
-				index: this.editedIngredientIndex,
-				ingredient: new Ingredient(name, amount)
-			}));
+			this.store.dispatch(new ShoppingListActions.UpdateIngredient(new Ingredient(name, amount)));
 		} else {
 			this.store.dispatch(new ShoppingListActions.AddIngredient(new Ingredient(name, amount)));
 		}
@@ -107,7 +99,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 	
 	// when deleting an ingredient: dispatch a DeleteIngredient action and clear the form
 	onDeleteClick(): void {
-		this.store.dispatch(new ShoppingListActions.DeleteIngredient(this.editedIngredientIndex));
+		this.store.dispatch(new ShoppingListActions.DeleteIngredient());
 		this.clearForm();
 	}
 
