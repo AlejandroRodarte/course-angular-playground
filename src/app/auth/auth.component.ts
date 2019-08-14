@@ -1,8 +1,6 @@
 import { Component, ComponentFactoryResolver, ViewContainerRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService, FirebaseAuthResponse } from './auth.service';
-import { Observable, Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
 
