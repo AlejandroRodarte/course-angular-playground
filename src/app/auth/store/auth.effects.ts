@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserModel } from '../user.model';
+import { AuthService } from '../auth.service';
 
 // firebase response when signing up through email/password
 export interface FirebaseSignupResponse {
@@ -125,6 +126,12 @@ export class AuthEffects {
                                         )
                                         .pipe(
 
+                                            tap(
+                                                (responseData: FirebaseSignupResponse) => {
+                                                    this.authService.setLogoutTimer(+responseData.expiresIn * 1000);
+                                                }
+                                            ),
+
                                             // map() to wrap AuthenticationSuccess action on an observable and return it
                                             // so it becomes the global observable
                                             map(
@@ -189,6 +196,13 @@ export class AuthEffects {
                                         )
                                         .pipe(
 
+                                            // set logout timer
+                                            tap(
+                                                (responseData: FirebaseSignupResponse) => {
+                                                    this.authService.setLogoutTimer(+responseData.expiresIn * 1000);
+                                                }
+                                            ),
+                                        
                                             // map(): returns an observable of what the callback returns (in this case, it becomes the
                                             // global observable)
 
@@ -251,8 +265,10 @@ export class AuthEffects {
                         ofType(AuthActions.LOGOUT),
 
                         // clear local storage and redirect user to /auth
+                        // clear logout timer
                         tap(() => {
                             localStorage.removeItem('userData');
+                            this.authService.clearLogoutTimer();
                             this.router.navigate(['/auth']);
                         })
 
@@ -293,6 +309,11 @@ export class AuthEffects {
                 // access token getter to validate its expiration date
                 if (fetchedUser.token) {
 
+                    const expirationDuration = new Date(user._tokenExpirationDate).getTime() - new Date().getTime();
+
+                    // set logout timer
+                    this.authService.setLogoutTimer(expirationDuration);
+
                     // dispatch a login action with the user information
                     return new AuthActions.AuthenticateSuccess({
                         email: fetchedUser.email,
@@ -300,12 +321,6 @@ export class AuthEffects {
                         token: fetchedUser.token,
                         expirationDate: new Date(user._tokenExpirationDate)
                     });
-
-                    // calculate remaining time in milliseconds of user token
-                    // const expirationDuration = new Date(user._tokenExpirationDate).getTime() - new Date().getTime();
-
-                    // trigger auto-logout with the expiration duration
-                    // this.autoLogout(expirationDuration);
 
                 }
 
@@ -326,7 +341,8 @@ export class AuthEffects {
     // is that we can still execute code based on action types, just as reducer functions
     constructor(private actions$: Actions,
                 private http: HttpClient,
-                private router: Router) {
+                private router: Router,
+                private authService: AuthService) {
 
     }
 
