@@ -4,6 +4,10 @@ import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
+import * as fromApp from '../../store/app.reducer';
+import * as fromRecipes from '../store/recipes.reducer';
+import { Store } from '@ngrx/store';
+
 // recipe detail component
 @Component({
 	selector: 'app-recipe-detail',
@@ -30,7 +34,8 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	// inject recipe service, router and route that loaded this component
 	constructor(private recipeService: RecipeService,
 				private router: Router,
-				private route: ActivatedRoute) {
+				private route: ActivatedRoute,
+				private store: Store<fromApp.AppState>) {
 
 	}
 
@@ -39,9 +44,16 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 
 		// subscribe to the selected recipe observable to fetch the recipe index the user selected on the UI
 		// call doRender() to render or not the component
-		this.selectedRecipeSubscription = this.recipeService.selectedRecipe.subscribe((index: number) => {
-			this.doRender(index);
+		// this.selectedRecipeSubscription = this.recipeService.selectedRecipe.subscribe((index: number) => {
+		// 	this.doRender(index);
+		// });
+
+		this.store.select('recipes').subscribe((recipesState: fromRecipes.RecipesReducerState) => {
+			this.recipe = recipesState.selectedRecipe;
+			this.selectedIndex = recipesState.selectedRecipeIndex;
+			this.doRender(recipesState.selectedRecipeIndex);
 		});
+
 
 		// subscribe to the params observable
 		this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
@@ -50,10 +62,10 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 			const id = +params['id'];
 			
 			// get recipe through service based on id and save on this property
-			this.recipe = this.recipeService.getRecipe(id);
+			// this.recipe = this.recipeService.getRecipe(id);
 
 			// also, save the id on the index property
-			this.selectedIndex = id;
+			// this.selectedIndex = id;
 
 		});
 

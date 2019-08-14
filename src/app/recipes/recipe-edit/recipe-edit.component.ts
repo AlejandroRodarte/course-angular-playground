@@ -127,7 +127,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		this.recipeForm.reset();
 
 		// route the user to the correct path
-		this.routeUser();
+		// this.routeUser();
 
 	}
 

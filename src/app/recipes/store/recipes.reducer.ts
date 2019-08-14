@@ -6,16 +6,16 @@ export interface RecipesReducerState {
     recipes: Recipe[];
     recipesToUpdate: Recipe[];
     recipesToDelete: Recipe[];
-    editedRecipe: Recipe[];
-    editedRecipeIndex: number;
+    selectedRecipe: Recipe;
+    selectedRecipeIndex: number;
 }
 
 const initialState: RecipesReducerState = {
     recipes: [],
     recipesToUpdate: [],
     recipesToDelete: [],
-    editedRecipe: null,
-    editedRecipeIndex: -1
+    selectedRecipe: null,
+    selectedRecipeIndex: -1
 }
 
 export function recipesReducer(state = initialState, action: RecipeActions.RecipeActions) {
@@ -26,6 +26,13 @@ export function recipesReducer(state = initialState, action: RecipeActions.Recip
             return {
                 ...state,
                 recipes: [...state.recipes, action.payload]
+            };
+        
+        case RecipeActions.SELECT_RECIPE:
+            return {
+                ...state,
+                selectedRecipe: {...state.recipes[action.payload]},
+                selectedRecipeIndex: action.payload
             };
 
         default:
