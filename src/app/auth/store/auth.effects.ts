@@ -6,6 +6,7 @@ import { environment } from './../../../environments/environment';
 import { of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserModel } from '../user.model';
 
 // firebase response when signing up through email/password
 export interface FirebaseSignupResponse {
@@ -35,6 +36,16 @@ const handleAuthentication = (
         new Date().getTime() + 
         expiresIn * 1000
     ); 
+
+    const user = new UserModel(
+        email,
+        userId,
+        token,
+        expirationDate
+    );
+
+    // store in local storage
+    localStorage.setItem('userData', JSON.stringify(user));
 
     // return new observable of the action we desire to dispatch (automatically handled by
     // NgRx effects through the @Effect decorator)
@@ -213,9 +224,9 @@ export class AuthEffects {
                     .actions$
                     .pipe(
 
-                        // run code only when AUTHENTICATE_SUCCESS and LOGOUT action is dispatched
+                        // run code only when AUTHENTICATE_SUCCESS action is dispatched
                         ofType(
-                            AuthActions.AUTHENTICATE_SUCCESS, 
+                            AuthActions.AUTHENTICATE_SUCCESS,
                             AuthActions.LOGOUT
                         ),
 
@@ -228,7 +239,86 @@ export class AuthEffects {
                         )
                     
                     )
-            
+
+    // logout effect
+    @Effect({
+        dispatch: false
+    })
+    authLogout = this
+                    .actions$
+                    .pipe(
+
+                        ofType(AuthActions.LOGOUT),
+
+                        // clear local storage and redirect user to /auth
+                        tap(() => {
+                            localStorage.removeItem('userData');
+                            this.router.navigate(['/auth']);
+                        })
+
+                    )
+
+    // auto login effect
+    @Effect()
+    authAutoLogin = this.actions$.pipe(
+
+        ofType(AuthActions.AUTO_LOGIN),
+
+        map(
+            () => {
+
+                // attempt to fetch user data from local storage
+                const user: {
+                    email: string,
+                    id: string,
+                    _token: string,
+                    _tokenExpirationDate: string
+                } = JSON.parse(localStorage.getItem('userData'));
+
+                // if user does not exist: return dummy action
+                if (!user) {
+                    return {
+                        type: 'DUMMY'
+                    };    
+                }
+
+                // if user exists: use local storage data to create a new User instance
+                const fetchedUser = new UserModel(
+                    user.email,
+                    user.id,
+                    user._token,
+                    new Date(user._tokenExpirationDate)
+                )
+
+                // access token getter to validate its expiration date
+                if (fetchedUser.token) {
+
+                    // dispatch a login action with the user information
+                    return new AuthActions.AuthenticateSuccess({
+                        email: fetchedUser.email,
+                        userId: fetchedUser.id,
+                        token: fetchedUser.token,
+                        expirationDate: new Date(user._tokenExpirationDate)
+                    });
+
+                    // calculate remaining time in milliseconds of user token
+                    // const expirationDuration = new Date(user._tokenExpirationDate).getTime() - new Date().getTime();
+
+                    // trigger auto-logout with the expiration duration
+                    // this.autoLogout(expirationDuration);
+
+                }
+
+                // dispatch dummy action if user has expired token
+                return {
+                    type: 'DUMMY'
+                };
+
+            }
+        
+        )
+
+    )
 
     // actions ($ is a convention to mark the variable as an observable)
     // huge observable that gives us access to all dispatch actions so that we
