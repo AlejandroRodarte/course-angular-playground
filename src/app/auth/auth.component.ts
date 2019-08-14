@@ -6,6 +6,10 @@ import { Router } from '@angular/router';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
 
+import * as fromApp from '../store/app.reducer';
+import * as AuthActions from './store/auth.actions';
+import { Store } from '@ngrx/store';
+
 // auth component
 @Component({
     selector: 'app-auth',
@@ -31,9 +35,11 @@ export class AuthComponent implements OnDestroy {
 
     // inject authentication service, router to redirect user in some cases and
     // the component factory resolver
+    // inject the store
     constructor(private authService: AuthService,
                 private router: Router,
-                private componentFactoryResolver: ComponentFactoryResolver) {
+                private componentFactoryResolver: ComponentFactoryResolver,
+                private store: Store<fromApp.AppState>) {
 
     }
 
@@ -64,7 +70,14 @@ export class AuthComponent implements OnDestroy {
         // login flag set:, use the login() observer
         // login flag clear: use the signup() observer
         if (this.isLoginMode) {
-            authAction = this.authService.login(email, password);
+
+            // dispatch LoginStart action (reaches AuthEffects and runs side-effect code, which in the end
+            // dispatches a Login action for the reducer to work on)
+            this.store.dispatch(new AuthActions.LoginStart({
+                email,
+                password
+            }));
+
         } else {
             authAction = this.authService.signup(email, password);
         }

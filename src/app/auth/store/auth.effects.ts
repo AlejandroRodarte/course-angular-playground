@@ -4,6 +4,7 @@ import { switchMap, catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from './../../../environments/environment';
 import { of } from 'rxjs';
+import { Injectable } from '@angular/core';
 
 // firebase response when signing up through email/password
 export interface FirebaseSignupResponse {
@@ -23,6 +24,9 @@ export interface FirebaseSigninResponse extends FirebaseSignupResponse {
 export type FirebaseAuthResponse = FirebaseSignupResponse | FirebaseSignupResponse;
 
 // effects are organized in classes
+// to make effects valid, we need to use @Injectable so that actions and the http client can be injected
+// into this class
+@Injectable()
 export class AuthEffects {
 
     // action handler: defined as a regular property
@@ -62,16 +66,39 @@ export class AuthEffects {
                                         )
                                         .pipe(
 
-                                            // catchError(): must NOT return an error observable, since it would become the new
-                                            // global observable and would kill the 'actions' observable
-                                            // solution: use of()
-                                            catchError((error: HttpErrorResponse) => {
-                                                of();
+                                            // map(): use of() to return a new observable that is not an error observable so that
+                                            // it becomes the new global observable
+                                            map((responseData: FirebaseSigninResponse) => {
+
+                                                // calculate expiration data
+                                                const expirationDate = new Date(
+                                                    new Date().getTime() + 
+                                                    +responseData.expiresIn * 1000
+                                                ); 
+
+                                                // return new observable of the action we desire to dispatch (automatically handled by
+                                                // NgRx effects through the @Effect decorator)
+                                                // dispatch the Login action to set the new user on the auth state
+                                                // this is an example on how after some side effect code using an @Effect we can then
+                                                // dispatch an action for a reducer to handle now to update some state
+
+                                                // this would become the global observable
+                                                return of(
+                                                    new AuthActions.Login({
+                                                        email: responseData.email,
+                                                        userId: responseData.localId,
+                                                        token: responseData.idToken,
+                                                        expirationDate: expirationDate
+                                                    })
+                                                );
+
                                             }),
 
-                                            // map(): use of() to return a new observable
-                                            map((responseData: FirebaseSigninResponse) => {
-                                                of();
+                                            // catchError(): must NOT return an error observable, since it would become the new
+                                            // global observable and would kill the 'actions' observable
+                                            // solution: use of() to create new non-error observable (empty observable, for now)
+                                            catchError((error: HttpErrorResponse) => {
+                                                return of();
                                             })
 
                                         )

@@ -10,6 +10,8 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 
 import { appReducer } from './store/app.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthEffects } from './auth/store/auth.effects';
 
 // app module
 @NgModule({
@@ -23,11 +25,17 @@ import { appReducer } from './store/app.reducer';
 	// imports: main routing module, http client, NgRx store (add Action-Reducer Map),
 	// shared module and core module for services
 	// to declare the ActionReducerMap, we access its definition found on the app.reducer.ts file
+
+	// EffectsModule: use @Effects for side effect code to work
+	// use forRoot() to register all Effect classes
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
 		HttpClientModule,
 		StoreModule.forRoot(appReducer),
+		EffectsModule.forRoot([
+			AuthEffects
+		]),
 		SharedModule,
 		CoreModule
 	],
