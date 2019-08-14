@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, ViewContainerRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ComponentFactoryResolver, ViewContainerRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService, FirebaseAuthResponse } from './auth.service';
 import { Observable, Subscription } from 'rxjs';
@@ -9,13 +9,14 @@ import { PlaceholderDirective } from './../shared/placeholder/placeholder.direct
 import * as fromApp from '../store/app.reducer';
 import * as AuthActions from './store/auth.actions';
 import { Store } from '@ngrx/store';
+import { AuthReducerState } from './store/auth.reducer';
 
 // auth component
 @Component({
     selector: 'app-auth',
     templateUrl: './auth.component.html'
 })
-export class AuthComponent implements OnDestroy {
+export class AuthComponent implements OnInit, OnDestroy {
 
     // toggle between login and signup
     isLoginMode: boolean = true;
@@ -33,6 +34,9 @@ export class AuthComponent implements OnDestroy {
     // close event emitter subscription
     private closeSubscription: Subscription;
 
+    // store subscription
+    private subscription: Subscription;
+
     // inject authentication service, router to redirect user in some cases and
     // the component factory resolver
     // inject the store
@@ -40,6 +44,18 @@ export class AuthComponent implements OnDestroy {
                 private router: Router,
                 private componentFactoryResolver: ComponentFactoryResolver,
                 private store: Store<fromApp.AppState>) {
+
+    }
+
+    // initialization
+    ngOnInit(): void {
+
+        // susbscribe to the 'auth' slice of the store and dynamically change the component properties
+        // in dependence of the state
+        this.subscription = this.store.select('auth').subscribe((authState: AuthReducerState) => {
+            this.isLoading = authState.loading;
+            this.error = authState.authError;
+        });
 
     }
 
@@ -84,32 +100,32 @@ export class AuthComponent implements OnDestroy {
 
         // subscribe to final observer and get the response data from Firebase (FirebaseSigninResponse | FirebaseSignupResponse)
         // note: not needed in this case, but placed to display we can acquire it
-        authAction
+        // authAction
 
-            // success response
-            .subscribe((responseData: FirebaseAuthResponse) => {
+        //     // success response
+        //     .subscribe((responseData: FirebaseAuthResponse) => {
 
-                // clear loading flag
-                this.isLoading = false;
+        //         // clear loading flag
+        //         this.isLoading = false;
 
-                // on successful login or signup, go to /recipes
-                this.router.navigate(['/recipes']);
+        //         // on successful login or signup, go to /recipes
+        //         this.router.navigate(['/recipes']);
 
-            }, 
+        //     }, 
             
-            // failure response: get custom error message (thanks to catchError RxJS operator)
-            (errorMessage: string) => {
+        //     // failure response: get custom error message (thanks to catchError RxJS operator)
+        //     (errorMessage: string) => {
 
-                // clear loading flag
-                this.isLoading = false;
+        //         // clear loading flag
+        //         this.isLoading = false;
 
-                // load error message to property
-                this.error = errorMessage;
+        //         // load error message to property
+        //         this.error = errorMessage;
 
-                // call method that loads dynamic AlertComponent with message
-                this.showErrorAlert(errorMessage);
+        //         // call method that loads dynamic AlertComponent with message
+        //         this.showErrorAlert(errorMessage);
 
-            });
+        //     });
 
         // clear the form
         authForm.reset();
@@ -150,9 +166,13 @@ export class AuthComponent implements OnDestroy {
 
     // on destroy, unsubscribe if we were subscribed to the 'close' event emitter
     ngOnDestroy() {
+
         if (this.closeSubscription) {
             this.closeSubscription.unsubscribe();
         }
+
+        this.subscription.unsubscribe();
+
     }
 
 }
