@@ -24,6 +24,67 @@ export interface FirebaseSigninResponse extends FirebaseSignupResponse {
 // union type for all types of responses (signin and signup)
 export type FirebaseAuthResponse = FirebaseSignupResponse | FirebaseSignupResponse;
 
+const handleAuthentication = (
+    email: string, 
+    userId: string, 
+    token: string, 
+    expiresIn: number) => {
+
+    // calculate expiration data
+    const expirationDate = new Date(
+        new Date().getTime() + 
+        expiresIn * 1000
+    ); 
+
+    // return new observable of the action we desire to dispatch (automatically handled by
+    // NgRx effects through the @Effect decorator)
+    // dispatch the Login action to set the new user on the auth state
+    // this is an example on how after some side effect code using an @Effect we can then
+    // dispatch an action for a reducer to handle now to update some state
+
+    // this would become the global observable
+    return new AuthActions.AuthenticateSuccess({
+        email,
+        userId,
+        token,
+        expirationDate
+    });
+
+};
+
+const handleError = (errorResponse: HttpErrorResponse) => {
+
+    // error default message
+    let errorMessage = 'An unknown error occured';
+
+    // throwError() cant be used since we should never return en error observable since
+    // it kills the actions$ observable
+
+    // evaluate cases for the error message we get from the HttpErrorResponse object
+    // and customize our own message
+    switch (errorResponse.error.error.message) {
+        case 'EMAIL_EXISTS':
+            errorMessage = 'This email already exists';
+            break;
+        case 'EMAIL_NOT_FOUND':
+            errorMessage = 'This email does not exist';
+            break;
+        case 'INVALID_PASSWORD':
+            errorMessage = 'This password is not correct';
+            break;
+        default:
+            errorMessage = 'An error occured';
+            break;
+    }
+
+    // return new observable with of() which wraps the LoginFail (now AuthenticateFail) action which will be
+    // dispatched automatically by NgRx
+    return of(
+        new AuthActions.AuthenticateFail(errorMessage)
+    );
+
+};
+
 // effects are organized in classes
 // to make effects valid, we need to use @Injectable so that actions and the http client can be injected
 // into this class
@@ -35,9 +96,48 @@ export class AuthEffects {
                     .actions$
                     .pipe(
                         
+                        // listen for SIGNUP_START action
                         ofType(AuthActions.SIGNUP_START),
 
-                        
+                        // switch observable to whatever the callback returns
+                        switchMap((signupData: AuthActions.SignupStart) => {
+
+                            // post the user to register, expect an FirebaseSignupResponse observable
+                            return this.http
+                                        .post<FirebaseSignupResponse>(
+                                            `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`,
+                                            {
+                                                email: signupData.payload.email,
+                                                password: signupData.payload.password,
+                                                returnSecureToken: true
+                                            }
+                                        )
+                                        .pipe(
+
+                                            // map() to wrap AuthenticationSuccess action on an observable and return it
+                                            // so it becomes the global observable
+                                            map(
+
+                                                (responseData: FirebaseSignupResponse) => {
+                                                    return handleAuthentication(
+                                                        responseData.email,
+                                                        responseData.localId,
+                                                        responseData.idToken,
+                                                        +responseData.expiresIn
+                                                    );
+                                                }
+
+                                            ),
+
+                                            // error handling managed by outer function, return of() observable with
+                                            // custom error message
+                                            catchError((errorResponse: HttpErrorResponse) => {
+                                                return handleError(errorResponse);
+                                            })
+
+                                        );
+
+                        })
                         
                     )
 
@@ -56,8 +156,7 @@ export class AuthEffects {
                         // comma-separated values for multiple actions
 
                         // ofType(AuthActions.LOGIN_START): observable of AuthActions.LoginStart action payload
-                        // now LOGIN_START is AUTHENTICATE_SUCCESS
-                        ofType(AuthActions.AUTHENTICATE_SUCCESS),
+                        ofType(AuthActions.LOGIN_START),
 
                         // switchMap(): create a new observable based on another observable's data
                         // from an observable of actions to an observable that will resolve the FirebaseSigninResponse response
@@ -84,62 +183,19 @@ export class AuthEffects {
 
                                             // map() automatically wraps whatever it returns into an observable
                                             map((responseData: FirebaseSigninResponse) => {
-
-                                                // calculate expiration data
-                                                const expirationDate = new Date(
-                                                    new Date().getTime() + 
-                                                    +responseData.expiresIn * 1000
-                                                ); 
-
-                                                // return new observable of the action we desire to dispatch (automatically handled by
-                                                // NgRx effects through the @Effect decorator)
-                                                // dispatch the Login action to set the new user on the auth state
-                                                // this is an example on how after some side effect code using an @Effect we can then
-                                                // dispatch an action for a reducer to handle now to update some state
-
-                                                // this would become the global observable
-                                                return new AuthActions.AuthenticateSuccess({
-                                                    email: responseData.email,
-                                                    userId: responseData.localId,
-                                                    token: responseData.idToken,
-                                                    expirationDate: expirationDate
-                                                });
-
+                                                return handleAuthentication(
+                                                    responseData.email,
+                                                    responseData.localId,
+                                                    responseData.idToken,
+                                                    +responseData.expiresIn
+                                                );
                                             }),
 
                                             // catchError(): must NOT return an error observable, since it would become the new
                                             // global observable and would kill the 'actions' observable
                                             // solution: use of() to create new non-error observable (empty observable, for now)
                                             catchError((errorResponse: HttpErrorResponse) => {
-
-                                                // error default message
-                                                let errorMessage = 'An unknown error occured';
-
-                                                // throwError() cant be used since we should never return en error observable since
-                                                // it kills the actions$ observable
-
-                                                // evaluate cases for the error message we get from the HttpErrorResponse object
-                                                // and customize our own message
-                                                switch (errorResponse.error.error.message) {
-                                                    case 'EMAIL_EXISTS':
-                                                        errorMessage = 'This email already exists';
-                                                        break;
-                                                    case 'EMAIL_NOT_FOUND':
-                                                        errorMessage = 'This email does not exist';
-                                                        break;
-                                                    case 'INVALID_PASSWORD':
-                                                        errorMessage = 'This password is not correct';
-                                                        break;
-                                                    default:
-                                                        errorMessage = 'An error occured';
-                                                        break;
-                                                }
-
-                                                // return new observable with of() which wraps the LoginFail (now AuthenticateFail) action which will be
-                                                // dispatched automatically by NgRx
-                                                return of(
-                                                    new AuthActions.AuthenticateFail(errorMessage)
-                                                );
+                                                return handleError(errorResponse);
                                             })
 
                                         )

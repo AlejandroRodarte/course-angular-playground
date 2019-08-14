@@ -40,9 +40,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     // inject authentication service, router to redirect user in some cases and
     // the component factory resolver
     // inject the store
-    constructor(private authService: AuthService,
-                private router: Router,
-                private componentFactoryResolver: ComponentFactoryResolver,
+    constructor(private componentFactoryResolver: ComponentFactoryResolver,
                 private store: Store<fromApp.AppState>) {
 
     }
@@ -86,12 +84,8 @@ export class AuthComponent implements OnInit, OnDestroy {
         // set loading flag
         this.isLoading = true;
 
-        // authentication action, login() or signup() observable
-        // FirebaseAuthResponse = FirebaseSigninResponse | FirebaseSignupResponse
-        let authAction: Observable<FirebaseAuthResponse>;
-
-        // login flag set:, use the login() observer
-        // login flag clear: use the signup() observer
+        // login flag set:, dispatch LoginStart action
+        // login flag clear, dispatch SignupStart action
         if (this.isLoginMode) {
 
             // dispatch LoginStart action (reaches AuthEffects and runs side-effect code, which in the end
@@ -102,37 +96,14 @@ export class AuthComponent implements OnInit, OnDestroy {
             }));
 
         } else {
-            authAction = this.authService.signup(email, password);
+
+            // dispatch SignupStart action
+            this.store.dispatch(new AuthActions.SignupStart({
+                email,
+                password
+            }));
+
         }
-
-        // subscribe to final observer and get the response data from Firebase (FirebaseSigninResponse | FirebaseSignupResponse)
-        // note: not needed in this case, but placed to display we can acquire it
-        // authAction
-
-        //     // success response
-        //     .subscribe((responseData: FirebaseAuthResponse) => {
-
-        //         // clear loading flag
-        //         this.isLoading = false;
-
-        //         // on successful login or signup, go to /recipes
-        //         this.router.navigate(['/recipes']);
-
-        //     }, 
-            
-        //     // failure response: get custom error message (thanks to catchError RxJS operator)
-        //     (errorMessage: string) => {
-
-        //         // clear loading flag
-        //         this.isLoading = false;
-
-        //         // load error message to property
-        //         this.error = errorMessage;
-
-        //         // call method that loads dynamic AlertComponent with message
-        //         this.showErrorAlert(errorMessage);
-
-        //     });
 
         // clear the form
         authForm.reset();
