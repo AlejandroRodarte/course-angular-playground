@@ -37,29 +37,63 @@ export function recipesReducer(state = initialState, action: RecipeActions.Recip
         
         case RecipeActions.UPDATE_RECIPE:
 
-            const finalState = {
+            const updateRecipeFinalState = {
                 ...state
             };
 
             const updateRecipeRecipesCopy = [...state.recipes];
             updateRecipeRecipesCopy[state.selectedRecipeIndex] = action.payload;
 
-            finalState.recipes = updateRecipeRecipesCopy;
+            updateRecipeFinalState.recipes = updateRecipeRecipesCopy;
 
             if (action.payload.id !== undefined) {
 
                 const updateRecipeRecipesToUpdateCopy = [...state.recipesToUpdate];
                 updateRecipeRecipesToUpdateCopy.push(action.payload.id);
 
-                finalState.recipesToUpdate = updateRecipeRecipesToUpdateCopy;
+                updateRecipeFinalState.recipesToUpdate = updateRecipeRecipesToUpdateCopy;
                 
             }
             
-            finalState.selectedRecipe = null;
-            finalState.selectedRecipeIndex = -1;
+            updateRecipeFinalState.selectedRecipe = null;
+            updateRecipeFinalState.selectedRecipeIndex = -1;
 
-            return finalState;
-            
+            return updateRecipeFinalState;
+        
+        case RecipeActions.REMOVE_RECIPE:
+
+            const removeRecipeFinalState = {
+                ...state,
+                recipes: state.recipes.filter((recipe: Recipe, index: number) => {
+                    return state.selectedRecipeIndex !== index;
+                }),
+                selectedRecipe: null,
+                selectedRecipeIndex: -1
+            }
+
+            if (state.selectedRecipe.id !== undefined) {
+
+                const removeRecipeRecipestoDeleteCopy = [...state.recipesToDelete];
+                removeRecipeRecipestoDeleteCopy.push(state.selectedRecipe.id);
+
+                removeRecipeFinalState.recipesToDelete = removeRecipeRecipestoDeleteCopy;
+
+                const recipeToUpdateIndex = state.recipesToUpdate.indexOf(state.recipes[state.selectedRecipeIndex].id);
+
+                if (recipeToUpdateIndex !== null) {
+
+                    const removeRecipeRecipestoUpdateCopy = [...state.recipesToUpdate];
+                    removeRecipeRecipestoUpdateCopy.splice(recipeToUpdateIndex, 1);
+
+                    removeRecipeFinalState.recipesToUpdate = removeRecipeRecipestoUpdateCopy;
+
+                }
+
+            }
+
+            return removeRecipeFinalState;
+
+
         default:
             return state;
 

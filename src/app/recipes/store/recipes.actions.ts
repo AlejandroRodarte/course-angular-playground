@@ -4,8 +4,9 @@ import { Recipe } from '../recipe.model';
 export const ADD_RECIPE = '[Recipes] Add Recipe';
 export const SELECT_RECIPE = '[Recipes] Select Recipe';
 export const UPDATE_RECIPE = '[Recipes] Update Recipe';
+export const REMOVE_RECIPE = '[Recipes] Remove Recipe';
 
-export type RecipeActions = AddRecipe | SelectRecipe | UpdateRecipe;
+export type RecipeActions = AddRecipe | SelectRecipe | UpdateRecipe | RemoveRecipe;
 
 export class AddRecipe implements Action {
 
@@ -35,4 +36,8 @@ export class UpdateRecipe implements Action {
 
     }
 
+}
+
+export class RemoveRecipe implements Action {
+    readonly type = REMOVE_RECIPE;
 }

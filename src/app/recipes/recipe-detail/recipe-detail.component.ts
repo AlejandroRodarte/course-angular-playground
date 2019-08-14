@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import * as fromApp from '../../store/app.reducer';
 import * as fromRecipes from '../store/recipes.reducer';
 import * as ShoppingListActions from '../../shopping-list/store/shopping-list.actions';
+import * as RecipeActions from '../store/recipes.actions';
 import { Store } from '@ngrx/store';
 
 // recipe detail component
@@ -96,18 +97,20 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	onDeleteRecipe(): void {
 
 		// call service method to delegate task
-		this.recipeService.deleteRecipe(this.selectedIndex);
+		// this.recipeService.deleteRecipe(this.selectedIndex);
 
 		// if recipe has a Firebase id, register as a recipe to delete on database when saving changes
-		if (this.recipe.id !== undefined) {
-			this.recipeService.registerDeletedRecipe(this.recipe.id);
-		}
+		// if (this.recipe.id !== undefined) {
+		// 	this.recipeService.registerDeletedRecipe(this.recipe.id);
+		// }
+
+		this.store.dispatch(new RecipeActions.RemoveRecipe());
 
 		// navigate on upper level than the current one, relative to current route
 		// example: /recipes/id -> /recipes
-		this.router.navigate(['..'], {
-			relativeTo: this.route
-		});
+		// this.router.navigate(['..'], {
+		// 	relativeTo: this.route
+		// });
 
 	}
 
