@@ -60,7 +60,7 @@ export class RecipeService implements OnDestroy {
 
     // set recipes and notify
     setRecipes(recipes: Recipe[]): void {
-        this.recipes = recipes;
+        this.recipes = [...this.recipes, ...recipes];
         this.recipesChanged.next();
     }
 

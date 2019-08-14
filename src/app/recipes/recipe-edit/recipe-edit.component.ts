@@ -5,6 +5,10 @@ import { RecipeService } from '../recipe.service';
 import { FormGroup, FormControl, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { FormMode } from 'src/app/shared/form-mode.enum';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+
+import * as fromApp from '../../store/app.reducer';
+import * as RecipeActions from '../store/recipes.actions';
 
 // recipe edit component
 @Component({
@@ -45,7 +49,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// inject recipe service, router and route that loaded this component
 	constructor(private recipeService: RecipeService,
 				private router: Router,
-				private route: ActivatedRoute) {
+				private route: ActivatedRoute,
+				private store: Store<fromApp.AppState>) {
 
 	}
 
@@ -115,7 +120,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		// use service to add or update recipe on UI with the recipe form value and the calculated if (undefined or a string)
 		// note: we can pass a javascript object and not an instance of the Recipe class since the final object resembles
 		// the Recipe model
-		this.recipeService.addOrUpdateRecipe({ ...this.recipeForm.value, id: recipeId }, this.id);
+		// this.recipeService.addOrUpdateRecipe({ ...this.recipeForm.value, id: recipeId }, this.id);
+		this.store.dispatch(new RecipeActions.AddRecipe({ ...this.recipeForm.value, id: recipeId }));
 
 		// clear the form
 		this.recipeForm.reset();

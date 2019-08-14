@@ -1,5 +1,6 @@
 import * as fromShoppingList from '../shopping-list/store/shopping-list.reducer';
 import * as fromAuth from '../auth/store/auth.reducer';
+import * as fromRecipes from '../recipes/store/recipes.reducer';
 import { ActionReducerMap } from '@ngrx/store';
 
 // global app state
@@ -7,7 +8,8 @@ import { ActionReducerMap } from '@ngrx/store';
 // values -> reducer state definitions
 export interface AppState {
     shoppingList: fromShoppingList.ShoppingListReducerState;
-    auth: fromAuth.AuthReducerState
+    auth: fromAuth.AuthReducerState;
+    recipes: fromRecipes.RecipesReducerState;
 }
 
 // action reducer map: resolves the global applicaion state
@@ -15,5 +17,6 @@ export interface AppState {
 // values -> reducer functions
 export const appReducer: ActionReducerMap<AppState> = {
     shoppingList: fromShoppingList.shoppingListReducer,
-    auth: fromAuth.authReducer
+    auth: fromAuth.authReducer,
+    recipes: fromRecipes.recipesReducer
 }
