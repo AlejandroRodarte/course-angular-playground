@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 
 import * as fromApp from '../../store/app.reducer';
 import * as fromRecipes from '../store/recipes.reducer';
+import * as ShoppingListActions from '../../shopping-list/store/shopping-list.actions';
 import { Store } from '@ngrx/store';
 
 // recipe detail component
@@ -74,7 +75,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	// add ingredients to shopping list
 	// use the service method to delegate task
 	addToShoppingList() {
-		this.recipeService.addToShoppingList(this.recipe.ingredients);
+		this.store.dispatch(new ShoppingListActions.AddIngredients(this.recipe.ingredients));
 	}
 
 	// do render?
@@ -112,8 +113,15 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 
 	// unsubscriptions
 	ngOnDestroy() {
-		this.selectedRecipeSubscription.unsubscribe();
-		this.routeParamsSubscription.unsubscribe();
+
+		if (this.selectedRecipeSubscription) {
+			this.selectedRecipeSubscription.unsubscribe();
+		}
+
+		if (this.routeParamsSubscription) {
+			this.routeParamsSubscription.unsubscribe();
+		}
+
 	}
 
 }

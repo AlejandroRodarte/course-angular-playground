@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import * as fromApp from '../../store/app.reducer';
+import * as fromRecipes from '../store/recipes.reducer';
 import * as RecipeActions from '../store/recipes.actions';
 
 // recipe edit component
@@ -46,6 +47,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// image path control subscrption
 	private imagePathSubscription: Subscription;
 
+	private subscription: Subscription;
+
 	// inject recipe service, router and route that loaded this component
 	constructor(private recipeService: RecipeService,
 				private router: Router,
@@ -57,6 +60,18 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// initialization
 	ngOnInit() {
 
+		this.subscription = this.store.select('recipes').subscribe((recipesState: fromRecipes.RecipesReducerState) => {
+
+			if (recipesState.selectedRecipeIndex > -1) {
+				this.id = recipesState.selectedRecipeIndex;
+				this.recipe = recipesState.selectedRecipe;
+				this.setMode(FormMode.Update);
+			}
+
+			this.loadForm();
+
+		});
+
 		// subscribe to the current route parameters
 		this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
 
@@ -65,14 +80,14 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 			// index exists -> user is on /recipes/id/edit -> set 'update' recipe mode
 			// index does not exist -> user is on /recipes/new -> set 'add' recipe mode
-			if (!isNaN(this.id)) {
-				this.setMode(FormMode.Update);
-			} else {
-				this.setMode(FormMode.Add);
-			}
+			// if (!isNaN(this.id)) {
+			// 	this.setMode(FormMode.Update);
+			// } else {
+			// 	this.setMode(FormMode.Add);
+			// }
 
 			// load recipe form
-			this.loadForm();
+			// this.loadForm();
 
 		});
 
@@ -170,7 +185,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		if (this.editMode) {
 
 			// fetch the recipe to edit
-			this.recipe = this.recipeService.getRecipe(this.id);
+			// this.recipe = this.recipeService.getRecipe(this.id);
 
 			// save its name, description and image path
 			recipeName = this.recipe.name;
@@ -248,8 +263,19 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	// unsubscriptions
 	ngOnDestroy(): void {
-		this.routeParamsSubscription.unsubscribe();
-		this.imagePathSubscription.unsubscribe();
+
+		if (this.routeParamsSubscription) {
+			this.routeParamsSubscription.unsubscribe();
+		}
+
+		if (this.imagePathSubscription) {
+			this.imagePathSubscription.unsubscribe();
+		}
+
+		if (this.subscription) {
+			this.subscription.unsubscribe();
+		}
+
 	}
 
 }
