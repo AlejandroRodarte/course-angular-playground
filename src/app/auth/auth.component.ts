@@ -53,8 +53,15 @@ export class AuthComponent implements OnInit, OnDestroy {
         // susbscribe to the 'auth' slice of the store and dynamically change the component properties
         // in dependence of the state
         this.subscription = this.store.select('auth').subscribe((authState: AuthReducerState) => {
+
             this.isLoading = authState.loading;
             this.error = authState.authError;
+
+            // in case of error, display AlertComponent
+            if (this.error) {
+                this.showErrorAlert(this.error);
+            }
+
         });
 
     }

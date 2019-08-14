@@ -1,10 +1,11 @@
 import { Actions, ofType, Effect } from '@ngrx/effects'
 import * as AuthActions from './auth.actions';
-import { switchMap, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, map, tap } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from './../../../environments/environment';
 import { of } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 // firebase response when signing up through email/password
 export interface FirebaseSignupResponse {
@@ -66,8 +67,10 @@ export class AuthEffects {
                                         )
                                         .pipe(
 
-                                            // map(): use of() to return a new observable that is not an error observable so that
-                                            // it becomes the new global observable
+                                            // map(): returns an observable of what the callback returns (in this case, it becomes the
+                                            // global observable)
+
+                                            // map() automatically wraps whatever it returns into an observable
                                             map((responseData: FirebaseSigninResponse) => {
 
                                                 // calculate expiration data
@@ -83,22 +86,48 @@ export class AuthEffects {
                                                 // dispatch an action for a reducer to handle now to update some state
 
                                                 // this would become the global observable
-                                                return of(
-                                                    new AuthActions.Login({
-                                                        email: responseData.email,
-                                                        userId: responseData.localId,
-                                                        token: responseData.idToken,
-                                                        expirationDate: expirationDate
-                                                    })
-                                                );
+                                                return new AuthActions.Login({
+                                                    email: responseData.email,
+                                                    userId: responseData.localId,
+                                                    token: responseData.idToken,
+                                                    expirationDate: expirationDate
+                                                });
 
                                             }),
 
                                             // catchError(): must NOT return an error observable, since it would become the new
                                             // global observable and would kill the 'actions' observable
                                             // solution: use of() to create new non-error observable (empty observable, for now)
-                                            catchError((error: HttpErrorResponse) => {
-                                                return of();
+                                            catchError((errorResponse: HttpErrorResponse) => {
+
+                                                // error default message
+                                                let errorMessage = 'An unknown error occured';
+
+                                                // throwError() cant be used since we should never return en error observable since
+                                                // it kills the actions$ observable
+
+                                                // evaluate cases for the error message we get from the HttpErrorResponse object
+                                                // and customize our own message
+                                                switch (errorResponse.error.error.message) {
+                                                    case 'EMAIL_EXISTS':
+                                                        errorMessage = 'This email already exists';
+                                                        break;
+                                                    case 'EMAIL_NOT_FOUND':
+                                                        errorMessage = 'This email does not exist';
+                                                        break;
+                                                    case 'INVALID_PASSWORD':
+                                                        errorMessage = 'This password is not correct';
+                                                        break;
+                                                    default:
+                                                        errorMessage = 'An error occured';
+                                                        break;
+                                                }
+
+                                                // return new observable with of() which wraps the LoginFail action which will be
+                                                // dispatched automatically by NgRx
+                                                return of(
+                                                    new AuthActions.LoginFail(errorMessage)
+                                                );
                                             })
 
                                         )
@@ -106,13 +135,34 @@ export class AuthEffects {
                         }),
 
                     );
+    
+    // dispatch: false -> notify NgRx this effect will not dispatch an action at the end of the code
+    // just route the user man
+    @Effect({
+        dispatch: false
+    })
+    authSuccess = this
+                    .actions$
+                    .pipe(
+
+                        ofType(AuthActions.LOGIN),
+
+                        tap(
+                            () => {
+                                this.router.navigate(['/']);
+                            }
+                        )
+                    
+                    )
+            
 
     // actions ($ is a convention to mark the variable as an observable)
     // huge observable that gives us access to all dispatch actions so that we
     // we do not change any state (since side effect code should not), but the idea of this
     // is that we can still execute code based on action types, just as reducer functions
     constructor(private actions$: Actions,
-                private http: HttpClient) {
+                private http: HttpClient,
+                private router: Router) {
 
     }
 
