@@ -28,6 +28,12 @@ export function recipesReducer(state = initialState, action: RecipeActions.Recip
                 recipes: [...state.recipes, action.payload]
             };
         
+        case RecipeActions.ADD_RECIPES:
+            return {
+                ...state,
+                recipes: [...state.recipes, ...action.payload]
+            }
+        
         case RecipeActions.SELECT_RECIPE:
             return {
                 ...state,

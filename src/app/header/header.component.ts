@@ -12,6 +12,7 @@ import { Store } from '@ngrx/store';
 import { AuthReducerState } from '../auth/store/auth.reducer';
 import { map } from 'rxjs/operators';
 import * as AuthActions from '../auth/store/auth.actions';
+import * as RecipeActions from '../recipes/store/recipes.actions';
 
 // header component
 @Component({
@@ -52,6 +53,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // initialization
     // access auth state, extract the user property and check if null or not to define authentication
     ngOnInit(): void {
+
         this.userSubscription = this
                                     .store
                                     .select('auth')
@@ -124,7 +126,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
             this.fetching = true;
 
             // subscribe to the fetchRecipes() returned observable to trigger request (not interested in response)
-            this.fetchRecipesSubscription = this.dataStorageService.fetchRecipes().subscribe();
+            // this.fetchRecipesSubscription = this.dataStorageService.fetchRecipes().subscribe();
+
+            this.store.dispatch(new RecipeActions.GetRecipes());
 
             // clear fetching flag
             this.fetching = false;
