@@ -25,7 +25,7 @@ export function authReducer(
     switch (action.type) {
 
         // login case
-        case AuthActions.LOGIN:
+        case AuthActions.AUTHENTICATE_SUCCESS:
 
             // with payload, create new user instance
             const user: UserModel = new UserModel(
@@ -66,7 +66,7 @@ export function authReducer(
         // login payload case
         // set user to null and error message with payload
         // and set loading flag to false since process ended due to error
-        case AuthActions.LOGIN_FAIL:
+        case AuthActions.AUTHENTICATE_FAIL:
             return {
                 ...state,
                 user: null,

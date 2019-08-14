@@ -30,6 +30,17 @@ export type FirebaseAuthResponse = FirebaseSignupResponse | FirebaseSignupRespon
 @Injectable()
 export class AuthEffects {
 
+    @Effect()
+    authSignup = this
+                    .actions$
+                    .pipe(
+                        
+                        ofType(AuthActions.SIGNUP_START),
+
+                        
+                        
+                    )
+
     // action handler: defined as a regular property
     // subscribe to the observable of actions to listen to action dispatches from components/services
     // (similar to reducers)
@@ -45,7 +56,8 @@ export class AuthEffects {
                         // comma-separated values for multiple actions
 
                         // ofType(AuthActions.LOGIN_START): observable of AuthActions.LoginStart action payload
-                        ofType(AuthActions.LOGIN_START),
+                        // now LOGIN_START is AUTHENTICATE_SUCCESS
+                        ofType(AuthActions.AUTHENTICATE_SUCCESS),
 
                         // switchMap(): create a new observable based on another observable's data
                         // from an observable of actions to an observable that will resolve the FirebaseSigninResponse response
@@ -86,7 +98,7 @@ export class AuthEffects {
                                                 // dispatch an action for a reducer to handle now to update some state
 
                                                 // this would become the global observable
-                                                return new AuthActions.Login({
+                                                return new AuthActions.AuthenticateSuccess({
                                                     email: responseData.email,
                                                     userId: responseData.localId,
                                                     token: responseData.idToken,
@@ -123,10 +135,10 @@ export class AuthEffects {
                                                         break;
                                                 }
 
-                                                // return new observable with of() which wraps the LoginFail action which will be
+                                                // return new observable with of() which wraps the LoginFail (now AuthenticateFail) action which will be
                                                 // dispatched automatically by NgRx
                                                 return of(
-                                                    new AuthActions.LoginFail(errorMessage)
+                                                    new AuthActions.AuthenticateFail(errorMessage)
                                                 );
                                             })
 
@@ -145,8 +157,11 @@ export class AuthEffects {
                     .actions$
                     .pipe(
 
-                        ofType(AuthActions.LOGIN),
+                        // run code only when LOGIN action is dispatched
+                        ofType(AuthActions.AUTHENTICATE_SUCCESS),
 
+                        // tap(): execute middleware function
+                        // route user to root
                         tap(
                             () => {
                                 this.router.navigate(['/']);

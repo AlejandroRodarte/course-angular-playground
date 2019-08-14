@@ -160,7 +160,7 @@ export class AuthService {
         if (fetchedUser.token) {
 
             // dispatch a login action with the user information
-            this.store.dispatch(new AuthActions.Login({
+            this.store.dispatch(new AuthActions.AuthenticateSuccess({
                 email: fetchedUser.email,
                 userId: fetchedUser.id,
                 token: fetchedUser.token,
@@ -222,7 +222,7 @@ export class AuthService {
         );
 
         // dispatch the login action
-        this.store.dispatch(new AuthActions.Login({
+        this.store.dispatch(new AuthActions.AuthenticateSuccess({
             email: email,
             userId: userId,
             token: token,
