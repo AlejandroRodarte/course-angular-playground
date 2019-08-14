@@ -11,6 +11,7 @@ import * as fromAuth from '../auth/store/auth.reducer';
 import { Store } from '@ngrx/store';
 import { AuthReducerState } from '../auth/store/auth.reducer';
 import { map } from 'rxjs/operators';
+import * as AuthActions from '../auth/store/auth.actions';
 
 // header component
 @Component({
@@ -142,7 +143,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     // on logout, call logout() authentication service method
     onLogout() {
-        this.authService.logout();
+        this.store.dispatch(new AuthActions.Logout());
     }
 
     // unsubscriptions

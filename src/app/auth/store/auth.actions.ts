@@ -8,8 +8,10 @@ export const AUTHENTICATE_SUCCESS = '[Auth] Authenticate Success';
 export const AUTHENTICATE_FAIL = '[Auth] Authenticate Fail';
 export const SIGNUP_START = '[Auth] Signup Start';
 
+export const CLEAR_ERROR = '[Auth] Clear Error'
+
 // union type to define all possible auth actions
-export type AuthActions = LoginStart | Logout | AuthenticateSuccess | AuthenticateFail | SignupStart;
+export type AuthActions = LoginStart | Logout | AuthenticateSuccess | AuthenticateFail | SignupStart | ClearError;
 
 // login action
 export class AuthenticateSuccess implements Action {
@@ -73,4 +75,8 @@ export class SignupStart implements Action {
         
     }
 
+}
+
+export class ClearError implements Action {
+    readonly type = CLEAR_ERROR;
 }

@@ -180,12 +180,6 @@ export class AuthService {
     // logout
     logout() {
 
-        // dispatch the logout action
-        this.store.dispatch(new AuthActions.Logout());
-
-        // redirect user to /auth
-        this.router.navigate(['/auth']);
-
         // if the auto-logout timer was triggered before logging out, clear it
         if (this.tokenExpirationTimer) {
             clearTimeout(this.tokenExpirationTimer);

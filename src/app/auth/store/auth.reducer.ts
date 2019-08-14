@@ -56,7 +56,9 @@ export function authReducer(
         // login start case (side effect code is also ran when this action is dispatched)
         // set error message to null since we are attempting to login again and set the loading flag
         // since we kickstarted the login process
+        // execute same code when SIGNUP_START is dispatched
         case AuthActions.LOGIN_START:
+        case AuthActions.SIGNUP_START:
             return {
                 ...state,
                 authError: null,
@@ -73,6 +75,13 @@ export function authReducer(
                 authError: action.payload,
                 loading: false
             };
+        
+        // clear error state, set error message to null
+        case AuthActions.CLEAR_ERROR:
+            return {
+                ...state,
+                authError: null
+            }   
 
         // proper state initialization
         default:

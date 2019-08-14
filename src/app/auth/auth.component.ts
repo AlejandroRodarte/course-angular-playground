@@ -138,6 +138,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.closeSubscription = componentRef.instance.close.subscribe(() => {
             this.closeSubscription.unsubscribe();
             hostViewContainerRef.clear();
+            this.store.dispatch(new AuthActions.ClearError());
         });
 
     }
@@ -149,6 +150,7 @@ export class AuthComponent implements OnInit, OnDestroy {
             this.closeSubscription.unsubscribe();
         }
 
+        // unsubscribe from store
         this.subscription.unsubscribe();
 
     }

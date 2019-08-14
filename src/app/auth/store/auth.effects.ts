@@ -209,12 +209,15 @@ export class AuthEffects {
     @Effect({
         dispatch: false
     })
-    authSuccess = this
+    authRedirect = this
                     .actions$
                     .pipe(
 
-                        // run code only when LOGIN action is dispatched
-                        ofType(AuthActions.AUTHENTICATE_SUCCESS),
+                        // run code only when AUTHENTICATE_SUCCESS and LOGOUT action is dispatched
+                        ofType(
+                            AuthActions.AUTHENTICATE_SUCCESS, 
+                            AuthActions.LOGOUT
+                        ),
 
                         // tap(): execute middleware function
                         // route user to root
