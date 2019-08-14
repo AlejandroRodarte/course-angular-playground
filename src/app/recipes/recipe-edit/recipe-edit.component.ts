@@ -115,28 +115,33 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	onSubmit(): void {
 
 		// recipe Firebase id
-		let recipeId: string = '';
+		// let recipeId: string = '';
 
 		// if editing an existing recipe: assign to variable the recipe's current Firebase id
 		// (undefined if not persisted yet or a string if already persisted)
 		// if adding a new recipe: set recipe id to undefined
-		if (this.editMode) {
-			recipeId = this.recipe.id;
-		} else {
-			recipeId = undefined;
-		}
+		// if (this.editMode) {
+		// 	recipeId = this.recipe.id;
+		// } else {
+		// 	recipeId = undefined;
+		// }
 
 		// if recipe id is not undefined, it means the user edited a fetched recipe,
 		// so register as a recipe to update on database when saving changes
-		if (recipeId !== undefined) {
-			this.recipeService.registerUpdatedRecipe(this.recipe.id);
-		}
+		// if (recipeId !== undefined) {
+		// 	this.recipeService.registerUpdatedRecipe(this.recipe.id);
+		// }
 
 		// use service to add or update recipe on UI with the recipe form value and the calculated if (undefined or a string)
 		// note: we can pass a javascript object and not an instance of the Recipe class since the final object resembles
 		// the Recipe model
 		// this.recipeService.addOrUpdateRecipe({ ...this.recipeForm.value, id: recipeId }, this.id);
-		this.store.dispatch(new RecipeActions.AddRecipe({ ...this.recipeForm.value, id: recipeId }));
+
+		if (!this.editMode) {
+			this.store.dispatch(new RecipeActions.AddRecipe({ ...this.recipeForm.value, id: undefined }));
+		} else {
+			this.store.dispatch(new RecipeActions.UpdateRecipe({ ...this.recipeForm.value, id: this.recipe.id }));
+		}
 
 		// clear the form
 		this.recipeForm.reset();
