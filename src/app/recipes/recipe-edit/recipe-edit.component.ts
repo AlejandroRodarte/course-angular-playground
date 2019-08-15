@@ -6,10 +6,10 @@ import { FormGroup, FormControl, Validators, FormArray, AbstractControl } from '
 import { FormMode } from 'src/app/shared/form-mode.enum';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
-
 import * as fromApp from '../../store/app.reducer';
 import * as fromRecipes from '../store/recipes.reducer';
 import * as RecipeActions from '../store/recipes.actions';
+import { tap, map } from 'rxjs/operators';
 
 // recipe edit component
 @Component({
@@ -18,9 +18,6 @@ import * as RecipeActions from '../store/recipes.actions';
 	styleUrls: ['./recipe-edit.component.css']
 })
 export class RecipeEditComponent implements OnInit, OnDestroy {
-
-	// recipe index
-	id: number;
 
 	// recipe object reference
 	recipe: Recipe;
@@ -47,11 +44,11 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// image path control subscrption
 	private imagePathSubscription: Subscription;
 
-	private subscription: Subscription;
+	// recipe reducer state subscription
+	private recipeSubscription: Subscription;
 
-	// inject recipe service, router and route that loaded this component
+	// inject recipe service, route and store
 	constructor(private recipeService: RecipeService,
-				private router: Router,
 				private route: ActivatedRoute,
 				private store: Store<fromApp.AppState>) {
 
@@ -60,47 +57,85 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// initialization
 	ngOnInit() {
 
-		this.subscription = this.store.select('recipes').subscribe((recipesState: fromRecipes.RecipesReducerState) => {
+		this.recipeSubscription = 
+		
+			// subscribe to the recipe reducer state
+			this
+				.store
+				.select('recipes')
+				.pipe(
 
-			if (recipesState.selectedRecipeIndex > -1) {
-				this.id = recipesState.selectedRecipeIndex;
-				this.recipe = recipesState.selectedRecipe;
-				this.setMode(FormMode.Update);
-			}
+					// map(): observe only the selected recipe and its index
+					map(
+						(recipesState: fromRecipes.RecipesReducerState) => {
+							return {
+								selectedRecipe: recipesState.selectedRecipe,
+								selectedRecipeIndex: recipesState.selectedRecipeIndex
+							};
+						}
+					),
 
-			this.loadForm();
+					// tap(): test the index to decide whether or now we hace a recipe on store
+					// if we have one, set mode to update; if not, set mode to add
+					tap(
+						(recipeData: {selectedRecipe: Recipe, selectedRecipeIndex: number}) => {
 
-		});
+							if (recipeData.selectedRecipeIndex > -1) {
+								this.recipe = recipeData.selectedRecipe;
+								this.setMode(FormMode.Update);
+							} else {
+								this.setMode(FormMode.Add);
+							}
 
-		// subscribe to the current route parameters
-		this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
+						}
+					)
 
-			// fetch recipe index
-			this.id = +params['id'];
+				)
+				.subscribe();
+			
+		// route params subscription
+		this.routeParamsSubscription = 
 
-			this.recipeService.currentRoute = this.route;
+			this
+				.route
+				.params
+				.pipe(
 
-			// index exists -> user is on /recipes/id/edit -> set 'update' recipe mode
-			// index does not exist -> user is on /recipes/new -> set 'add' recipe mode
-			// if (!isNaN(this.id)) {
-			// 	this.setMode(FormMode.Update);
-			// } else {
-			// 	this.setMode(FormMode.Add);
-			// }
+					// tap(): each time parameters on route change, store newest route on service
+					tap(
+						() => {
+							this.recipeService.currentRoute = this.route;
+						}
+					)
 
-			// load recipe form
-			// this.loadForm();
+				)
+				.subscribe();
 
-		});
+		// load the form
+		this.loadForm();
 
 		// initialize current image path property to the one in the form input
 		this.currentImagePath = this.recipeForm.value.imagePath;
 
 		// image preview logic: subscribe to value changes on the recipe image path
 		// and assign its value to the currentImagePath property
-		this.imagePathSubscription = this.recipeForm.controls['imagePath'].valueChanges.subscribe((url: string) => {
-			this.currentImagePath = url;
-		});
+		this.imagePathSubscription = 
+
+			this
+				.recipeForm
+				.controls['imagePath']
+				.valueChanges
+				.pipe(
+
+					// tap(): store the changed url in the component property
+					tap(
+						(url: string) => {
+							this.currentImagePath = url;
+						}
+					)
+
+				)
+				.subscribe();
 
 	}
 
@@ -116,29 +151,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// submission handler
 	onSubmit(): void {
 
-		// recipe Firebase id
-		// let recipeId: string = '';
-
-		// if editing an existing recipe: assign to variable the recipe's current Firebase id
-		// (undefined if not persisted yet or a string if already persisted)
-		// if adding a new recipe: set recipe id to undefined
-		// if (this.editMode) {
-		// 	recipeId = this.recipe.id;
-		// } else {
-		// 	recipeId = undefined;
-		// }
-
-		// if recipe id is not undefined, it means the user edited a fetched recipe,
-		// so register as a recipe to update on database when saving changes
-		// if (recipeId !== undefined) {
-		// 	this.recipeService.registerUpdatedRecipe(this.recipe.id);
-		// }
-
-		// use service to add or update recipe on UI with the recipe form value and the calculated if (undefined or a string)
-		// note: we can pass a javascript object and not an instance of the Recipe class since the final object resembles
-		// the Recipe model
-		// this.recipeService.addOrUpdateRecipe({ ...this.recipeForm.value, id: recipeId }, this.id);
-
+		// if we are on add mode -> action dispatch: add the recipe with an undefined Firebase id
+		// if we are on update mode -> action dispatch: update the recipe with the recipe's Firebase id
 		if (!this.editMode) {
 			this.store.dispatch(new RecipeActions.AddRecipe({ ...this.recipeForm.value, id: undefined }));
 		} else {
@@ -148,16 +162,16 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		// clear the form
 		this.recipeForm.reset();
 
+		// set mode to add
 		this.setMode(FormMode.Add);
-
-		// route the user to the correct path
-		// this.routeUser();
 
 	}
 
-	// on cancel, reset the form and redirect user
+	// on cancel, reset the form
+	// action dispatch: cancel recipe (route user back one level)
 	onCancel(): void {
 		this.recipeForm.reset();
+		this.store.dispatch(new RecipeActions.CancelRecipe());
 	}
 
 	// delete recipe ingredient FormGroup
@@ -191,9 +205,6 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 		// if editing
 		if (this.editMode) {
-
-			// fetch the recipe to edit
-			// this.recipe = this.recipeService.getRecipe(this.id);
 
 			// save its name, description and image path
 			recipeName = this.recipe.name;
@@ -250,25 +261,6 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	}
 
-	// route user when adding/updating/canceling a form
-	private routeUser(): void {
-
-		// if user added a brand new recipe, go to its recipe details by moving from
-		// /recipes/new -> /recipes/id
-		// if user edited a recipe, simply go up one level
-		// /recipes/id/edit -> /recipes/id
-		if (!this.editMode) {
-			this.router.navigate(['..'], {
-				relativeTo: this.route
-			});
-		} else {
-			this.router.navigate(['..'], {
-				relativeTo: this.route
-			});
-		}
-
-	}
-
 	// unsubscriptions
 	ngOnDestroy(): void {
 
@@ -280,8 +272,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			this.imagePathSubscription.unsubscribe();
 		}
 
-		if (this.subscription) {
-			this.subscription.unsubscribe();
+		if (this.recipeSubscription) {
+			this.recipeSubscription.unsubscribe();
 		}
 
 	}

@@ -4,7 +4,8 @@
 
         <!-- add new recipe: /recipes/new -->
         <button class="btn btn-success"
-                [routerLink]="['new']">
+                [routerLink]="['new']"
+                (click)="onNewRecipe()">
             New Recipe
         </button>
 

@@ -3,8 +3,8 @@
 <!-- link: go to/recipes/id -->
 <!-- add .active css class in dependence of the isSelectedRecipeItem() returned boolean -->
 <a  
-    [ngClass]="{ active: isSelectedRecipeItem() }"
     [routerLink]="[index]"
+    [routerLinkActive]="'active'"
     style="cursor: pointer;"
     class="list-group-item clearfix"
     (click)="onRecipeItemClick()">

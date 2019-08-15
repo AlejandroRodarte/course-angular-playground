@@ -1,20 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RecipeService } from '../recipes/recipe.service';
-import { Recipe } from '../recipes/recipe.model';
-import { DataStorageService } from '../shared/data-storage.service';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
 import { UserModel } from '../auth/user.model';
 
 import * as fromApp from '../store/app.reducer'
 import * as fromAuth from '../auth/store/auth.reducer';
 import { Store } from '@ngrx/store';
-import { AuthReducerState } from '../auth/store/auth.reducer';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import * as AuthActions from '../auth/store/auth.actions';
 import * as RecipeActions from '../recipes/store/recipes.actions';
-import * as fromRecipes from '../recipes/store/recipes.reducer';
-import { Router } from '@angular/router';
 
 // header component
 @Component({
@@ -44,16 +38,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // user data subscription
     private userSubscription: Subscription;
 
-    private recipesSubscription: Subscription;
-
-    private readyToUpdate: boolean = false;
-
-    // inject data storage service, recipe service and authentication service
-    constructor(private dataStorageService: DataStorageService,
-                private recipeService: RecipeService,
-                private authService: AuthService,
-                private store: Store<fromApp.AppState>,
-                private router: Router) {
+    // inject recipe service and store
+    constructor(private recipeService: RecipeService,
+                private store: Store<fromApp.AppState>) {
 
     }
 
@@ -61,17 +48,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // access auth state, extract the user property and check if null or not to define authentication
     ngOnInit(): void {
 
-        this.userSubscription = this
-                                    .store
-                                    .select('auth')
-                                    .pipe(
-                                        map((authState: fromAuth.AuthReducerState) => {
-                                            return authState.user;
-                                        })
-                                    )
-                                    .subscribe((user: UserModel) => {
-                                        this.isAuthenticated = !user ? false : true;
-                                    });
+        this.userSubscription = 
+
+            this.store
+                .select('auth')
+                .pipe(
+                    map((authState: fromAuth.AuthReducerState) => {
+                        return authState.user;
+                    })
+                )
+                .subscribe((user: UserModel) => {
+                    this.isAuthenticated = !user ? false : true;
+                });
 
     }
 
@@ -81,15 +69,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
         // set the 'saving' flag to true
         this.saving = true;
 
+        // get a snaphost of our current store to fetch the recipes we require to add, update
+        // and delete
         this.recipeService.storeSnaphsot();
 
-        // this.recipeService.recipesToUpdate.forEach((recipeData: {recipe: Recipe, id: string}) => {
-        //     this.store.dispatch(new RecipeActions.PutRecipe(recipeData));
-        // });
-
+        // action dispatch: Post all recipes stored temporarily in the service
+        // a series of PostRecipe actions are dispatched in sequence
         this.store.dispatch(new RecipeActions.PostRecipes(this.recipeService.recipesToAdd));
+
+        // action dispatch: Delete all recipes stored temporarily in the service
+        // a series of DeleteRecipe actions are dispatched in sequence
         this.store.dispatch(new RecipeActions.DeleteRecipes(this.recipeService.recipesToDelete));
+
+        // action dispatch: Update all recipes stored temporarily in the service
+        // a series of UpdateRecipe actions are dispatched in sequence
         this.store.dispatch(new RecipeActions.PutRecipes(this.recipeService.recipesToUpdate));
+
+        // a note about the dispatches above:
+        // dispatches are async in nature, so they will all run simultaneously and wait for their own resolve
+        // so a mass of PostRecipe, DeleteRecipe and PutRecipe actions will be executed at the same time
+        // we dispatch the aftermath actions (AttachId, ClearUpdate and ClearDelete) independently when each PostRecipe,
+        // DeleteRecipe and PutRecipe is executed also with the dispatch() method, and they will most likely run after all the
+        // http operations end
 
         // clear the saving flag
         this.saving = false;
@@ -116,6 +117,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             // set fetching flag
             this.fetching = true;
             
+            // action dispatch: get all recipes from the database and save them on the store
             this.store.dispatch(new RecipeActions.GetRecipes());
 
             // clear fetching flag
@@ -133,15 +135,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     }
 
-    // on logout, call logout() authentication service method
+    // action dispatch: logout
     onLogout() {
         this.store.dispatch(new AuthActions.Logout());
     }
 
     // unsubscriptions
     ngOnDestroy(): void {
-        this.fetchRecipesSubscription.unsubscribe();
-        this.userSubscription.unsubscribe();
+
+        if (this.userSubscription) {
+            this.userSubscription.unsubscribe();
+        }
+
     }
 
 }

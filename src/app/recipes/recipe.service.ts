@@ -1,9 +1,6 @@
 import { Recipe } from './recipe.model';
-import { OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
-import { Subject, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
-
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
 import * as fromApp from '../store/app.reducer'
 import { take, tap } from 'rxjs/operators';
@@ -11,7 +8,7 @@ import * as fromRecipes from './store/recipes.reducer';
 import { ActivatedRoute } from '@angular/router';
 
 // recipes service
-export class RecipeService implements OnDestroy {
+export class RecipeService {
 
     // array of recipes
     recipesToAdd: {recipe: Recipe, index: number}[] = [];
@@ -22,54 +19,39 @@ export class RecipeService implements OnDestroy {
     // tracker for all recipes that need to be deleted on save
     recipesToDelete: string[] = [];
 
-    readyToUpdate: boolean = false;
-    
-    // currently selected recipe index
-    currentRecipeIndex: number;
-    
-    // selected recipe subject: emits index of selected recipe by user
-    selectedRecipe = new Subject<number>();
-
-    // recipes changed subject: emits to inform whenever the recipes array has changed
-    recipesChanged = new Subject<void>();
-
-    // selected recipe subscription
-    selectedRecipeSubscription: Subscription;
-
+    // current route that user is in
     currentRoute: ActivatedRoute;
 
+    // inject the store
     constructor(private store: Store<fromApp.AppState>) {
 
     }
 
+    // store snapshot
     storeSnaphsot() {
 
+        // access the recipes reducer state
         this
             .store
             .select('recipes')
             .pipe(
 
-                take(1),
-
+                // tap(): execute some middleware function
                 tap(
 
+                    // with the recipe reducer state
                     (recipesState: fromRecipes.RecipesReducerState) => {
 
-                        console.log(recipesState);
-
+                        // get the recipes we need to add, update and delete when we persist to the database
                         this.recipesToAdd = this.getNewRecipes(recipesState.recipes);
                         this.recipesToUpdate = this.getUpdatedRecipes(recipesState.recipesToUpdate, recipesState.recipes);
                         this.recipesToDelete = [...recipesState.recipesToDelete];
 
-                        if (this.currentRecipeIndex === recipesState.selectedRecipeIndex) {
-                            this.currentRecipeIndex = -1;
-                        } else {
-                            this.currentRecipeIndex = recipesState.selectedRecipeIndex;
-                        }
-
                     }
 
                 )
+
+                // subscribe and unsubscribe since it's a snapshot of what we have in the store
 
             )
             .subscribe()
@@ -78,14 +60,19 @@ export class RecipeService implements OnDestroy {
     }
 
 
+    // get all recipes that have not been persisted
     private getNewRecipes(storeRecipes: Recipe[]): {recipe: Recipe, index: number}[] {
 
+        // initial array
         const recipesToPost: {recipe: Recipe, index: number}[] = [];
 
+        // loop through all recipes inside the store
         storeRecipes.forEach((recipe: Recipe, index: number) => {
 
+            // if the current recipe has an undefined Firebase id
             if (recipe.id === undefined) {
 
+                // push a BRAND NEW recipe (deep copy) and the index (primitive value)
                 recipesToPost.push({
                     recipe: new Recipe(
                         recipe.name,
@@ -104,16 +91,23 @@ export class RecipeService implements OnDestroy {
 
     }
 
+    // get recipe objects we require to update
     private getUpdatedRecipes(recipeIds: string[], storeRecipes: Recipe[]): {recipe: Recipe, id: string}[] {
 
+        // initial array
         const recipesToUpdate: {recipe: Recipe, id: string}[] = [];
 
+        // for each Firebase id
         recipeIds.forEach((id: string) => {
 
+            // loop through all the recipes in the store
             storeRecipes.forEach((recipe: Recipe) => {
 
+                // and search for a recipe that has a Firebase id and that matches the current one we
+                // are looking for
                 if (recipe.id !== undefined && recipe.id === id) {
 
+                    // on match, push to the array a BRAND NEW recipe with its Firebase id 
                     recipesToUpdate.push({
                         recipe: new Recipe(
                             recipe.name,
@@ -134,12 +128,9 @@ export class RecipeService implements OnDestroy {
 
     }
 
+    // action dispatch: add recipe ingredients
     addToShoppingList(ingredients: Ingredient[]): void {
         this.store.dispatch(new ShoppingListActions.AddIngredients(ingredients));
-    }
-
-    ngOnDestroy() {
-        // this.selectedRecipeSubscription.unsubscribe();
     }
 
 }

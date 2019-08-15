@@ -1,9 +1,8 @@
-import { Component, ComponentFactoryResolver, ViewContainerRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
-
 import * as fromApp from '../store/app.reducer';
 import * as AuthActions from './store/auth.actions';
 import { Store } from '@ngrx/store';

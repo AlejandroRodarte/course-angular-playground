@@ -3,7 +3,6 @@ import { UserModel } from './user.model';
 import { map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-
 import * as fromApp from '../store/app.reducer'
 import * as fromAuth from './store/auth.reducer';
 import { Store } from '@ngrx/store';

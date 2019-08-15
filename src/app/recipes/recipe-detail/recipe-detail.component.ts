@@ -3,12 +3,12 @@ import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
 import * as fromApp from '../../store/app.reducer';
 import * as fromRecipes from '../store/recipes.reducer';
 import * as ShoppingListActions from '../../shopping-list/store/shopping-list.actions';
 import * as RecipeActions from '../store/recipes.actions';
 import { Store } from '@ngrx/store';
+import { map, tap } from 'rxjs/operators';
 
 // recipe detail component
 @Component({
@@ -18,24 +18,17 @@ import { Store } from '@ngrx/store';
 })
 export class RecipeDetailComponent implements OnInit, OnDestroy {
 
-	// currently selected recipe index
-	selectedIndex: number;
-
-	// render flag
-	renderFlag: boolean = true;
-
 	// property binding to receive the currently selected recipe from RecipesComponent
 	recipe: Recipe;
 
-	// selected recipe subscription
-	selectedRecipeSubscription: Subscription;
+	// recipes reducer state subscription
+	private recipesSubscription: Subscription;
 
 	// route parameter subscription
 	private routeParamsSubscription: Subscription;
 
-	// inject recipe service, router and route that loaded this component
+	// inject recipe service, route and store
 	constructor(private recipeService: RecipeService,
-				private router: Router,
 				private route: ActivatedRoute,
 				private store: Store<fromApp.AppState>) {
 
@@ -44,83 +37,70 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 	// initialization
 	ngOnInit() {
 
-		// subscribe to the selected recipe observable to fetch the recipe index the user selected on the UI
-		// call doRender() to render or not the component
-		// this.selectedRecipeSubscription = this.recipeService.selectedRecipe.subscribe((index: number) => {
-		// 	this.doRender(index);
-		// });
+		this.recipesSubscription = 
 
-		this.store.select('recipes').subscribe((recipesState: fromRecipes.RecipesReducerState) => {
-			this.recipe = recipesState.selectedRecipe;
-			this.selectedIndex = recipesState.selectedRecipeIndex;
-			this.doRender(recipesState.selectedRecipeIndex);
-		});
+			// subscribe to the 'recipes' reducer state part of the store
+			this
+				.store
+				.select('recipes')
+				.pipe(
+
+					// map(): convert the observable of the recipe reducer state
+					// into an observable of the selected recipe property of that reducer state
+					map(
+						(recipesState: fromRecipes.RecipesReducerState) => {
+							return recipesState.selectedRecipe;
+						}
+					),
+
+					// tap(): middle-ware code -> store the current selected recipe on the store in the
+					// component property (reference)
+					tap(
+						(selectedRecipe: Recipe) => {
+							this.recipe = selectedRecipe;
+						}
+					)
+
+				)
+				.subscribe();
 
 
-		// subscribe to the params observable
-		this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
+		// route parameters subscription
+		this.routeParamsSubscription = 
 
-			// get :id value
-			const id = +params['id'];
+			this
+				.route
+				.params
+				.pipe(
 
-			this.recipeService.currentRoute = this.route;
-			
-			// get recipe through service based on id and save on this property
-			// this.recipe = this.recipeService.getRecipe(id);
+					// tap(): each time the route params change, store the currently
+					// activated route in the service
+					tap(
+						() => {
+							this.recipeService.currentRoute = this.route;
+						}
+					)
 
-			// also, save the id on the index property
-			// this.selectedIndex = id;
-
-		});
+				)
+				.subscribe();
 
 	}
 
-	// add ingredients to shopping list
-	// use the service method to delegate task
+	// dispatch action: add recipe ingredients
 	addToShoppingList() {
 		this.store.dispatch(new ShoppingListActions.AddIngredients(this.recipe.ingredients));
 	}
 
-	// do render?
-	doRender(index: number): void {
-
-		// if user clicks on the previously selected recipe, toggle render flag
-		// if user clicks on different recipe, render the component and set the index on property
-		if (this.selectedIndex === index) {
-			this.renderFlag = !this.renderFlag;
-		} else {
-			this.selectedIndex = index;
-			this.renderFlag = true;
-		}
-
-	}
-
-	// delete recipe handler
+	// dispatch action: remove the currently selected recipe
 	onDeleteRecipe(): void {
-
-		// call service method to delegate task
-		// this.recipeService.deleteRecipe(this.selectedIndex);
-
-		// if recipe has a Firebase id, register as a recipe to delete on database when saving changes
-		// if (this.recipe.id !== undefined) {
-		// 	this.recipeService.registerDeletedRecipe(this.recipe.id);
-		// }
-
 		this.store.dispatch(new RecipeActions.RemoveRecipe());
-
-		// navigate on upper level than the current one, relative to current route
-		// example: /recipes/id -> /recipes
-		// this.router.navigate(['..'], {
-		// 	relativeTo: this.route
-		// });
-
 	}
 
 	// unsubscriptions
 	ngOnDestroy() {
 
-		if (this.selectedRecipeSubscription) {
-			this.selectedRecipeSubscription.unsubscribe();
+		if (this.recipesSubscription) {
+			this.recipesSubscription.unsubscribe();
 		}
 
 		if (this.routeParamsSubscription) {
