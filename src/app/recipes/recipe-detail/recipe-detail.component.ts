@@ -62,6 +62,8 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 
 			// get :id value
 			const id = +params['id'];
+
+			this.recipeService.currentRoute = this.route;
 			
 			// get recipe through service based on id and save on this property
 			// this.recipe = this.recipeService.getRecipe(id);

@@ -5,10 +5,12 @@ import { HttpClient } from '@angular/common/http';
 import * as RecipeActions from './recipes.actions';
 import { switchMap, map, tap, mergeMap, take } from 'rxjs/operators';
 import { Recipe } from '../recipe.model';
-import { RecipeService } from '../recipe.service';
 import { of, from, Subscription } from 'rxjs';
 import * as fromApp from './../../store/app.reducer';
 import { Store } from '@ngrx/store';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Route } from '@angular/compiler/src/core';
+import { RecipeService } from './../recipe.service';
 
 export type FirebaseRecipes = { [key: string]: Recipe };
 
@@ -113,13 +115,9 @@ export class RecipesEffects {
             ofType(RecipeActions.POST_RECIPES),
 
             switchMap(
-
                 (recipesData: RecipeActions.PostRecipes) => {
-
                     return from(recipesData.payload);
-
                 }
-
             ),
 
             map(
@@ -263,8 +261,29 @@ export class RecipesEffects {
 
     constructor(private actions$: Actions,
                 private http: HttpClient,
-                private store: Store<fromApp.AppState>) {
+                private store: Store<fromApp.AppState>,
+                private recipeService: RecipeService,
+                private router: Router) {
 
     }
+
+    @Effect({
+        dispatch: false
+    })
+    recipesRedirect = this
+                        .actions$
+                        .pipe(
+                            
+                            ofType(RecipeActions.ADD_RECIPE, RecipeActions.UPDATE_RECIPE, RecipeActions.REMOVE_RECIPE),
+
+                            tap(
+                                () => {
+                                    this.router.navigate(['../'], {
+                                        relativeTo: this.recipeService.currentRoute
+                                    })
+                                }
+                            )
+                            
+                        )
 
 }

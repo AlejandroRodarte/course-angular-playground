@@ -25,6 +25,8 @@ export class RecipeResolverService implements Resolve<void> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): void | Observable<void> | Promise<void> {
 
+        console.log(1);
+
         this
             .store
             .select('recipes')

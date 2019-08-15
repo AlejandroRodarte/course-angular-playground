@@ -115,10 +115,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
             // set fetching flag
             this.fetching = true;
-
-            // subscribe to the fetchRecipes() returned observable to trigger request (not interested in response)
-            // this.fetchRecipesSubscription = this.dataStorageService.fetchRecipes().subscribe();
-
+            
             this.store.dispatch(new RecipeActions.GetRecipes());
 
             // clear fetching flag

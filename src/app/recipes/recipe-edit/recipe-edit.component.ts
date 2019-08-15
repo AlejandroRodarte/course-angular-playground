@@ -78,6 +78,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			// fetch recipe index
 			this.id = +params['id'];
 
+			this.recipeService.currentRoute = this.route;
+
 			// index exists -> user is on /recipes/id/edit -> set 'update' recipe mode
 			// index does not exist -> user is on /recipes/new -> set 'add' recipe mode
 			// if (!isNaN(this.id)) {
@@ -156,7 +158,6 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// on cancel, reset the form and redirect user
 	onCancel(): void {
 		this.recipeForm.reset();
-		this.routeUser();
 	}
 
 	// delete recipe ingredient FormGroup

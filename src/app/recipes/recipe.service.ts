@@ -8,6 +8,7 @@ import * as ShoppingListActions from '../shopping-list/store/shopping-list.actio
 import * as fromApp from '../store/app.reducer'
 import { take, tap } from 'rxjs/operators';
 import * as fromRecipes from './store/recipes.reducer';
+import { ActivatedRoute } from '@angular/router';
 
 // recipes service
 export class RecipeService implements OnDestroy {
@@ -35,20 +36,9 @@ export class RecipeService implements OnDestroy {
     // selected recipe subscription
     selectedRecipeSubscription: Subscription;
 
+    currentRoute: ActivatedRoute;
+
     constructor(private store: Store<fromApp.AppState>) {
-
-        // subscription to its own emitter
-        this.selectedRecipeSubscription = this.selectedRecipe.subscribe((index: number) => {
-
-            // if user selected the same recipe item, make the current recipe index equal to -1 as a flag to not add the .active bootstrap class
-            // if user selcted a different recipe, then set the current recipe index property to the new index
-            if (this.currentRecipeIndex === index) {
-                this.currentRecipeIndex = -1;
-            } else {
-                this.currentRecipeIndex = index;
-            }
-            
-        });
 
     }
 
@@ -70,6 +60,12 @@ export class RecipeService implements OnDestroy {
                         this.recipesToAdd = this.getNewRecipes(recipesState.recipes);
                         this.recipesToUpdate = this.getUpdatedRecipes(recipesState.recipesToUpdate, recipesState.recipes);
                         this.recipesToDelete = [...recipesState.recipesToDelete];
+
+                        if (this.currentRecipeIndex === recipesState.selectedRecipeIndex) {
+                            this.currentRecipeIndex = -1;
+                        } else {
+                            this.currentRecipeIndex = recipesState.selectedRecipeIndex;
+                        }
 
                     }
 
