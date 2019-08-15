@@ -34,12 +34,10 @@ export class RecipeResolverService implements Resolve<void> {
                             this.store.dispatch(new RecipeActions.GetRecipes());
                         }
 
-                        // unsubscribe
-                        recipesSubscription.unsubscribe();
-
                     }
 
-                );
+                )
+                .unsubscribe();
 
     }
 
