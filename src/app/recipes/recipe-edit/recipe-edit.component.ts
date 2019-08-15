@@ -146,6 +146,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		// clear the form
 		this.recipeForm.reset();
 
+		this.setMode(FormMode.Add);
+
 		// route the user to the correct path
 		// this.routeUser();
 
@@ -255,7 +257,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		// if user edited a recipe, simply go up one level
 		// /recipes/id/edit -> /recipes/id
 		if (!this.editMode) {
-			this.router.navigate(['..', this.recipeService.length - 1], {
+			this.router.navigate(['..'], {
 				relativeTo: this.route
 			});
 		} else {

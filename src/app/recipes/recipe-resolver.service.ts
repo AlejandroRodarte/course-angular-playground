@@ -4,32 +4,42 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { RecipeService } from './recipe.service';
 import { DataStorageService } from '../shared/data-storage.service';
+import { Store } from '@ngrx/store';
+
+import * as fromApp from '../store/app.reducer';
+import * as RecipeActions from './store/recipes.actions';
+import * as fromRecipes from './store/recipes.reducer';
 
 // recipe resolver service to load recipes before accessing some routes
 @Injectable({
     providedIn: 'root'
 })
-export class RecipeResolverService implements Resolve<Recipe[]> {
+export class RecipeResolverService implements Resolve<void> {
 
     // inject data storage and recipe services
     constructor(private dataStorageService: DataStorageService,
-                private recipeService: RecipeService) {
+                private recipeService: RecipeService,
+                private store: Store<fromApp.AppState>) {
 
     }
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Recipe[] | Observable<Recipe[]> | Promise<Recipe[]> {
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): void | Observable<void> | Promise<void> {
 
-        // get a recipes copy array
-        const recipes = this.recipeService.getRecipes();
+        this
+            .store
+            .select('recipes')
+            .subscribe(
 
-        // if the array is empty, it means the user has not fetched any data yet, so
-        // fetch them through the data storage service and store them in the array
-        if (recipes.length === 0) {
-            return this.dataStorageService.fetchRecipes();
-        }
+                (recipeState: fromRecipes.RecipesReducerState) => {
 
-        // if not empty, then we are good
-        return recipes;
+                    if (recipeState.recipes.length === 0) {
+                        this.store.dispatch(new RecipeActions.GetRecipes());
+                    }
+
+                }
+
+            )
+            .unsubscribe();
 
     }
 

@@ -8,6 +8,8 @@ export interface RecipesReducerState {
     recipesToDelete: string[];
     selectedRecipe: Recipe;
     selectedRecipeIndex: number;
+    readyToUpdate: boolean;
+    readyToDelete: boolean;
 }
 
 const initialState: RecipesReducerState = {
@@ -15,7 +17,9 @@ const initialState: RecipesReducerState = {
     recipesToUpdate: [],
     recipesToDelete: [],
     selectedRecipe: null,
-    selectedRecipeIndex: -1
+    selectedRecipeIndex: -1,
+    readyToUpdate: false,
+    readyToDelete: false
 }
 
 export function recipesReducer(state = initialState, action: RecipeActions.RecipeActions) {
@@ -64,6 +68,8 @@ export function recipesReducer(state = initialState, action: RecipeActions.Recip
             updateRecipeFinalState.selectedRecipe = null;
             updateRecipeFinalState.selectedRecipeIndex = -1;
 
+            console.log(updateRecipeFinalState);
+
             return updateRecipeFinalState;
         
         case RecipeActions.REMOVE_RECIPE:
@@ -86,7 +92,7 @@ export function recipesReducer(state = initialState, action: RecipeActions.Recip
 
                 const recipeToUpdateIndex = state.recipesToUpdate.indexOf(state.recipes[state.selectedRecipeIndex].id);
 
-                if (recipeToUpdateIndex !== null) {
+                if (recipeToUpdateIndex !== -1) {
 
                     const removeRecipeRecipestoUpdateCopy = [...state.recipesToUpdate];
                     removeRecipeRecipestoUpdateCopy.splice(recipeToUpdateIndex, 1);
@@ -98,7 +104,68 @@ export function recipesReducer(state = initialState, action: RecipeActions.Recip
             }
 
             return removeRecipeFinalState;
+        
+        case RecipeActions.ATTACH_ID:
 
+            const attachIdRecipesCopy = [...state.recipes];
+
+            attachIdRecipesCopy[action.payload.recipeIndex].id = action.payload.recipeId;
+
+            return {
+                ...state,
+                recipes: attachIdRecipesCopy
+            }
+        
+        case RecipeActions.CLEAR_UPDATE:
+
+            const clearUpdateFinalState = {
+                ...state
+            }
+
+            const clearUpdateRecipesToUpdateCopy = [...state.recipesToUpdate];
+
+            const updateIdFoundIndex = clearUpdateRecipesToUpdateCopy.indexOf(action.payload);
+
+            console.log(clearUpdateRecipesToUpdateCopy);
+            console.log(action.payload);
+
+            if (updateIdFoundIndex !== -1) {
+                clearUpdateRecipesToUpdateCopy.splice(updateIdFoundIndex, 1);
+                clearUpdateFinalState.recipesToUpdate = clearUpdateRecipesToUpdateCopy;
+            }
+
+            clearUpdateFinalState.readyToUpdate = true;
+
+            return clearUpdateFinalState;
+
+        case RecipeActions.CLEAR_DELETE:
+
+            const clearDeleteFinalState = {
+                ...state
+            }
+
+            const clearDeleteRecipesToDeleteCopy = [...state.recipesToDelete];
+
+            const deleteIdFoundIndex = clearDeleteRecipesToDeleteCopy.indexOf(action.payload);
+
+            if (deleteIdFoundIndex !== -1) {
+                clearDeleteRecipesToDeleteCopy.splice(deleteIdFoundIndex, 1);
+                clearDeleteFinalState.recipesToDelete = clearDeleteRecipesToDeleteCopy;
+            }
+
+            return clearDeleteFinalState;
+
+        case RecipeActions.DENY_UPDATE:
+            return {
+                ...state,
+                readyToUpdate: false
+            };
+
+        case RecipeActions.ALLOW_UPDATE:
+            return {
+                ...state,
+                readyToUpdate: true
+            };
 
         default:
             return state;

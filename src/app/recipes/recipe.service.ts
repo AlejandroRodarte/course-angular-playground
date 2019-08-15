@@ -6,18 +6,22 @@ import { Store } from '@ngrx/store';
 
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
 import * as fromApp from '../store/app.reducer'
+import { take, tap } from 'rxjs/operators';
+import * as fromRecipes from './store/recipes.reducer';
 
 // recipes service
 export class RecipeService implements OnDestroy {
 
     // array of recipes
-    private recipes: Recipe[] = [];
+    recipesToAdd: {recipe: Recipe, index: number}[] = [];
       
     // tracker for all recipes that need to be updated on save
-    private recipesToUpdate: string[] = [];
+    recipesToUpdate: {recipe: Recipe, id: string}[] = [];
 
     // tracker for all recipes that need to be deleted on save
-    private recipesToDelete: string[] = [];
+    recipesToDelete: string[] = [];
+
+    readyToUpdate: boolean = false;
     
     // currently selected recipe index
     currentRecipeIndex: number;
@@ -48,121 +52,98 @@ export class RecipeService implements OnDestroy {
 
     }
 
-    // get recipe based on id
-    getRecipe(index: number): Recipe {
-        return this.recipes[index];
+    storeSnaphsot() {
+
+        this
+            .store
+            .select('recipes')
+            .pipe(
+
+                take(1),
+
+                tap(
+
+                    (recipesState: fromRecipes.RecipesReducerState) => {
+
+                        console.log(recipesState);
+
+                        this.recipesToAdd = this.getNewRecipes(recipesState.recipes);
+                        this.recipesToUpdate = this.getUpdatedRecipes(recipesState.recipesToUpdate, recipesState.recipes);
+                        this.recipesToDelete = [...recipesState.recipesToDelete];
+
+                    }
+
+                )
+
+            )
+            .subscribe()
+            .unsubscribe();
+
     }
 
-    // get recipes
-    getRecipes(): Recipe[] {
-        return this.recipes.slice();
-    }
 
-    // set recipes and notify
-    setRecipes(recipes: Recipe[]): void {
-        this.recipes = [...this.recipes, ...recipes];
-        this.recipesChanged.next();
-    }
+    private getNewRecipes(storeRecipes: Recipe[]): {recipe: Recipe, index: number}[] {
 
-    // get all brand new recipes by checking if their Firebase id is undefined
-    getNewRecipes(): Recipe[] {
-        return this.recipes.filter((recipe: Recipe) => {
+        const recipesToPost: {recipe: Recipe, index: number}[] = [];
+
+        storeRecipes.forEach((recipe: Recipe, index: number) => {
+
             if (recipe.id === undefined) {
-                return recipe;
+
+                recipesToPost.push({
+                    recipe: new Recipe(
+                        recipe.name,
+                        recipe.description,
+                        recipe.imagePath,
+                        recipe.ingredients
+                    ),
+                    index
+                })
+
             }
-        });
-    }
 
-    // get recipes based on an array of Firebase id's
-    private getRecipesByIds(idArray: string[]): Recipe[] {
-
-        // array of recipes
-        const recipes: Recipe[] = [];
-
-        // for each Firebase id, push into the recipes array the first element (recipe) that has such same
-        // id as its property (assuming all Firebase id's are unique)
-        idArray.forEach((id: string) => {
-            recipes.push(this.recipes.find((recipe: Recipe) => {
-                return recipe.id === id;
-            }));
         });
 
-        return recipes;
+        return recipesToPost;
 
     }
 
-    // get array of recipes to update
-    getUpdatedRecipes(): Recipe[] {
-        return this.getRecipesByIds(this.recipesToUpdate).slice();
-    }
+    private getUpdatedRecipes(recipeIds: string[], storeRecipes: Recipe[]): {recipe: Recipe, id: string}[] {
 
-    // get array of Firebase id's of recipes to delete
-    getDeletedRecipes(): string[] {
-        return this.recipesToDelete.slice();
-    }
+        const recipesToUpdate: {recipe: Recipe, id: string}[] = [];
 
-    // clean queues of recipes to delete and update
-    flushRegisteredRecipes(): void {
-        this.recipesToUpdate = [];
-        this.recipesToDelete = [];
-    }
+        recipeIds.forEach((id: string) => {
 
-    // get the length of the recipes array
-    get length(): number {
-        return this.recipes.length;
-    }
+            storeRecipes.forEach((recipe: Recipe) => {
 
-    // add or update a recipe
-    addOrUpdateRecipe(recipe: Recipe, id: number): void {
+                if (recipe.id !== undefined && recipe.id === id) {
 
-        // id is not a number: new recipe -> push to array
-        // id is a number -> update recipe -> replace it on array
-        if (isNaN(id)) {
-            this.recipes.push(recipe);
-        } else {
-            this.recipes[id] = recipe;
-        }
+                    recipesToUpdate.push({
+                        recipe: new Recipe(
+                            recipe.name,
+                            recipe.description,
+                            recipe.imagePath,
+                            recipe.ingredients
+                        ),
+                        id
+                    });
 
-        // notify all interested subscribers
-        this.recipesChanged.next();
+                }
+                
+            });
+
+        });
+
+        return recipesToUpdate;
 
     }
 
-    // add recipe ingredients to shopping list: use the AddIngredients action dispatcher
     addToShoppingList(ingredients: Ingredient[]): void {
         this.store.dispatch(new ShoppingListActions.AddIngredients(ingredients));
     }
 
-    // delete a recipe based on id and notify subscribers
-    deleteRecipe(index: number): void {
-        this.recipes.splice(index, 1);
-        this.recipesChanged.next();
-    }
-
-    // register a new recipe into the array that tracks all id's of recipes to update
-    registerUpdatedRecipe(recipeId: string): void {
-        this.recipesToUpdate.push(recipeId);
-    }
-
-    // register a new recipe into the array that tracks all id's of recipes to delete
-    registerDeletedRecipe(recipeId: string): void {
-
-        // register
-        this.recipesToDelete.push(recipeId);
-
-        // check if such recipe id is on the update tracker array
-        const recipeToUpdateIndex = this.recipesToUpdate.indexOf(recipeId);
-
-        // if it is also on the to-update array, delete it since deletion comes first before update
-        if (recipeToUpdateIndex !== -1) {
-            this.recipesToUpdate.splice(recipeToUpdateIndex, 1);
-        }
-
-    }
-
-    // unsubscriptions
     ngOnDestroy() {
-        this.selectedRecipeSubscription.unsubscribe();
+        // this.selectedRecipeSubscription.unsubscribe();
     }
 
 }

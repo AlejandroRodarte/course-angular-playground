@@ -60,7 +60,7 @@ export class DataStorageService {
                         // tap() middle-ware to work with the Recipe[] returned value from map():
                         // set the array of recipes to the service
                         tap((recipes: Recipe[]) => {
-                            this.recipeService.setRecipes(recipes);
+                            // this.recipeService.setRecipes(recipes);
                         })
 
                     );

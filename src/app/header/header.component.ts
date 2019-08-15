@@ -10,9 +10,11 @@ import * as fromApp from '../store/app.reducer'
 import * as fromAuth from '../auth/store/auth.reducer';
 import { Store } from '@ngrx/store';
 import { AuthReducerState } from '../auth/store/auth.reducer';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import * as AuthActions from '../auth/store/auth.actions';
 import * as RecipeActions from '../recipes/store/recipes.actions';
+import * as fromRecipes from '../recipes/store/recipes.reducer';
+import { Router } from '@angular/router';
 
 // header component
 @Component({
@@ -42,11 +44,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // user data subscription
     private userSubscription: Subscription;
 
+    private recipesSubscription: Subscription;
+
+    private readyToUpdate: boolean = false;
+
     // inject data storage service, recipe service and authentication service
     constructor(private dataStorageService: DataStorageService,
                 private recipeService: RecipeService,
                 private authService: AuthService,
-                private store: Store<fromApp.AppState>) {
+                private store: Store<fromApp.AppState>,
+                private router: Router) {
 
     }
 
@@ -65,6 +72,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
                                     .subscribe((user: UserModel) => {
                                         this.isAuthenticated = !user ? false : true;
                                     });
+
     }
 
     // 'Save Recipes' button handler
@@ -73,32 +81,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
         // set the 'saving' flag to true
         this.saving = true;
 
-        // fetch new recipes added by user before saving
-        const newRecipes = this.recipeService.getNewRecipes();
+        this.recipeService.storeSnaphsot();
 
-        // fetch existing recipes that got updated by user before saving
-        const updatedRecipes = this.recipeService.getUpdatedRecipes();
+        // this.recipeService.recipesToUpdate.forEach((recipeData: {recipe: Recipe, id: string}) => {
+        //     this.store.dispatch(new RecipeActions.PutRecipe(recipeData));
+        // });
 
-        // fetch recipe id's that got deleted by user before saving
-        const deletedRecipes = this.recipeService.getDeletedRecipes();
-
-        // burst of POST requests to add all new recipes
-        newRecipes.forEach((newRecipe: Recipe) => {
-            this.dataStorageService.saveRecipe(newRecipe);
-        });
-
-        // burst of DELETE requests to delete existing recipes
-        deletedRecipes.forEach((recipeId: string) => {
-            this.dataStorageService.deleteRecipe(recipeId);
-        });
-
-        // burst of PUT requests to update existing recipes
-        updatedRecipes.forEach((updatedRecipe: Recipe) => {
-            this.dataStorageService.updateRecipe(updatedRecipe);
-        });
-
-        // clear update and delete queued tasks
-        this.recipeService.flushRegisteredRecipes();
+        this.store.dispatch(new RecipeActions.PostRecipes(this.recipeService.recipesToAdd));
+        this.store.dispatch(new RecipeActions.DeleteRecipes(this.recipeService.recipesToDelete));
+        this.store.dispatch(new RecipeActions.PutRecipes(this.recipeService.recipesToUpdate));
 
         // clear the saving flag
         this.saving = false;
