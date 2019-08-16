@@ -4,8 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import * as RecipeActions from './recipes.actions';
 import { switchMap, map, tap, mergeMap } from 'rxjs/operators';
 import { Recipe } from '../recipe.model';
-import * as fromApp from './../../store/app.reducer';
-import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { RecipeService } from './../recipe.service';
 
@@ -19,7 +17,6 @@ export class RecipesEffects {
     // inject the actions listener, the http client, the store, the recipe service and the router
     constructor(private actions$: Actions,
                 private http: HttpClient,
-                private store: Store<fromApp.AppState>,
                 private recipeService: RecipeService,
                 private router: Router) {
 
@@ -37,14 +34,16 @@ export class RecipesEffects {
                     RecipeActions.GET_RECIPES
                 ),
 
-                // switchMap(): switch final observable to observable returned in callback
+                // switchMap(): inner observable strategy
+                // subscribe to the inner observable (http get request)
+                // if another GetRecipes action is triggered, it will cancel/kill the previous subscription
+                // and switch to the new http observable
                 switchMap(
 
                     // no argument on function since no payload is given
                     () => {
 
-                        // return an http get request observable
-                        // for now, the global observable would resolve the FirebaseRecipes
+                        // the inner observable: subscribed automatically by switchMap() which will trigger the response
                         return this
                                     .http
                                     .get<FirebaseRecipes>(
@@ -52,7 +51,7 @@ export class RecipesEffects {
                                     )
                                     .pipe(
 
-                                        // map() change the returned observable to what the callback returns
+                                        // map(): parse the Firebase recipes into an array of recipes
                                         map(
 
                                             // argument: the resolved FirebaseRecipes
@@ -73,11 +72,8 @@ export class RecipesEffects {
 
                                                 }
 
-                                                // return an action dispatch: Add Recipes
-                                                // @Effect automatically wraps this into an observable, so no need
-                                                // to wrap on an of() operator
-                                                // this observable becomes the final returned observable so
-                                                // fetchRecipes: Observable<RecipeActions.AddRecipes>
+                                                // dispatch a new AddRecipes action to add the recipes to the store
+                                                // final sequence of events: GetRecipes -> AddRecipes
                                                 return new RecipeActions.AddRecipes(recipes);
 
                                             }
@@ -93,11 +89,7 @@ export class RecipesEffects {
             );
     
     // post a single recipe
-    // will not explicitly dispatch an action at the end of this code, but use the store
-    // to dispatch some aftermath actions
-    @Effect({
-        dispatch: false
-    })
+    @Effect()
     postRecipe = 
         this
             .actions$
@@ -106,64 +98,56 @@ export class RecipesEffects {
                 // filter: code run on action PostRecipe
                 ofType(RecipeActions.POST_RECIPE),
 
-                // tap(): execute some generic middle-ware code
-                tap(
+                // mergeMap(): inner observable strategy
+                // subscribe to the inner observable (http post request)
+                // if another PostRecipe action is dispatched, a new subscription will be made, leaving the unresolved ones
+                // still working
+
+                // mergeMap() allows us to work with http requests that can be sent simultaneously 
+                // using swithMap() in this case would actually cause the second PostRecipe subscription cancel the first one, thus
+                // cancelling the whole request
+
+                // concatMap() would make the second PostRecipe request wait for the first subscription (http post request) to end (get a response)
+                // creating a queue if multiple PostRecipe actions are emitted, each subscription being handled one after the other
+
+                // mergeMap() allows us to create multiple subscriptions if multiple PostRecipe actions are dispatched
+                mergeMap(
 
                     // arguments: the PostRecipe payload (object with the recipe object and its index)
                     (recipeData: RecipeActions.PostRecipe) => {
 
-                        // execute a post request and subscribe to it to trigger the request immediately
-                        const subscription = 
-                            this.http
-                                .post<{ name: string }>(
-                                    'https://angular-course-app-eeedb.firebaseio.com/recipes.json',
-                                    recipeData.payload.recipe
-                                )
-                                .pipe(
-
-                                    // tap(): execute some middle-ware code
-                                    tap(
-
-                                        // resolved post observable data: the Firebase id of the new recipe
-                                        (firebaseId: {name: string}) => {
-
-                                            // action dispatch: attach the Firebase id to the recently persisted recipe
-
-                                            // one big note:
-                                            // our first attempt was to actually dispatch this action like how we did it on the
-                                            // fetchRecipes handler, but it failed, why?
-                                            // such method would have made the action handler an observer of that http aftermath action
-                                            // example: in this case, postRecipe = Observable<RecipeActions.AttachId>
-
-                                            // this means that, whenever this effect runs, it will actually be resolved until the AttachId action ends
-                                            // however, since dispatches are async, a chain of PostRecipe actions would make the second one overcome
-                                            // immediately the first one, unabling it to wait for the AttachId resolve, making the last one the only one
-                                            // to resolve it
-
-                                            // by dispatching from the store, we are decoupling in essence the PostRecipe action from its AttachId aftermath action so when
-                                            // a second PostRecipe action comes in after the first one ends, the AttachId action will still be in queue and not be cancelled
-
-                                            // In other words, a chain of PostRecipe actions will certainly follow the normal order: the second PostRecipe will not run
-                                            // until the first one finishes, but by dispatching a new action inside it and waiting for it to be resolved like we attempted
-                                            // on the first time was not respected by the subsequent PostRecipe actions, cancelling all requests since they never got
-                                            // fully completed except for the last one
-                                            this.store.dispatch(new RecipeActions.AttachId({
-                                                recipeIndex: recipeData.payload.index,
-                                                recipeId: firebaseId.name
-                                            }));
-
-                                        }
+                        // the inner observable (http post observable): subscribed automatically by the mergeMap() strategy
+                        return this
+                                    .http
+                                    .post<{ name: string }>(
+                                        'https://angular-course-app-eeedb.firebaseio.com/recipes.json',
+                                        recipeData.payload.recipe
                                     )
+                                    .pipe(
 
-                                )
-                                .subscribe(
+                                        // map(): take advantage that the returned value is wrapped automatically in an
+                                        // observable (requirement for @Effects that dispatch actions)
+                                        map(
 
-                                    // once we get a response from the server, unsubscribe
-                                    () => {
-                                        subscription.unsubscribe();
-                                    }
+                                            (firebaseId: {name: string}) => {
 
-                                )
+                                                // dispatch an AttachId action to attach the response (Firebase id) into the recently
+                                                // persisted recipe
+
+                                                // mergeMap() allows us to create a continous streams of PostRecipe actions and since they are all executed
+                                                // very quickly, these store-related actions are left at last
+
+                                                // if concatMap() is used, we would create a big chain of synchronous events
+                                                // PostRecipe -> AttachId -> PostRecipe -> AttachId -> PostRecipe -> Attach Id -> ...and so on
+                                                return new RecipeActions.AttachId({
+                                                    recipeIndex: recipeData.payload.index,
+                                                    recipeId: firebaseId.name
+                                                });
+
+                                            }
+                                        )
+
+                                    );
 
                     }
 
@@ -174,80 +158,77 @@ export class RecipesEffects {
     
     // post recipes
     @Effect()
-    postRecipes = this
-        .actions$
-        .pipe(
+    postRecipes = 
+        this
+            .actions$
+            .pipe(
 
-            // filter: only runs on PostRecipes action
-            ofType(RecipeActions.POST_RECIPES),
+                // filter: only runs on PostRecipes action
+                ofType(RecipeActions.POST_RECIPES),
 
-            // switchMap(): switch current observable with returned observable
-            switchMap(
+                // switchMap(): inner observable strategy
+                // subscribe to the inner observable (array of actions)
+                // if another PostRecipes action comes along, it will cancel/kill the subscription and
+                // start the incoming one
+                switchMap(
 
-                // get the payload (list of recipes)
-                (recipesData: RecipeActions.PostRecipes) => {
-    
-                    // create an array of actions to commit sequentially (not waiting for aftermath)
-                    const actionArr: RecipeActions.PostRecipe[] = [];
-
-                    // for each recipe to post in the payload, add a new PostRecipe action to dispatch
-                    recipesData.payload.forEach((recipeData: {recipe: Recipe, index: number}) => {
-                        actionArr.push(new RecipeActions.PostRecipe(recipeData));
-                    });
-
-                    // return the array of actions, @Effect wraps it inside an observable so that they are executed
-                    // in sequence
-                    return actionArr;
+                    // get the payload (list of recipes)
+                    (recipesData: RecipeActions.PostRecipes) => {
         
-                }
+                        // create an array of actions to commit sequentially
+                        const actionArr: RecipeActions.PostRecipe[] = [];
 
-            )
+                        // for each recipe to post in the payload, add a new PostRecipe action to dispatch
+                        recipesData.payload.forEach((recipeData: {recipe: Recipe, index: number}) => {
+                            actionArr.push(new RecipeActions.PostRecipe(recipeData));
+                        });
 
-        );
+                        // return the array of actions, @Effect wraps it inside an observable so that they are executed
+                        // in sequence
+                        return actionArr;
+            
+                    }
+
+                )
+
+            );
 
 
-        // update recipe: same story as post recipe, just that we execute a put request and the aftermath action is
-        // the ClearUpdate action
-        @Effect({
-            dispatch: false
-        })
-        updateRecipe = 
-            this
-                .actions$
-                .pipe(
+    // update recipe: same story as post recipe, just that we execute a put request and the aftermath action is
+    // the ClearUpdate action
+    @Effect()
+    updateRecipe = 
+        this
+            .actions$
+            .pipe(
 
-                    ofType(RecipeActions.PUT_RECIPE),
+                ofType(RecipeActions.PUT_RECIPE),
 
-                    tap(
-                        
-                        (recipeData: RecipeActions.PutRecipe) => {
+                mergeMap(
 
-                            const subscription = this.http
+                    (recipeData: RecipeActions.PutRecipe) => {
+
+                        return this
+                                    .http
                                     .put<Recipe>(
                                         `https://angular-course-app-eeedb.firebaseio.com/recipes/${recipeData.payload.id}.json`,
                                         recipeData.payload.recipe
                                     )
                                     .pipe(
 
-                                        tap(
-                                            (recipe: Recipe) => {
-                                                this.store.dispatch(new RecipeActions.ClearUpdate(recipeData.payload.id));
+                                        map(
+                                            () => {
+                                                return new RecipeActions.ClearUpdate(recipeData.payload.id);
                                             }
                                         )
 
-                                    ).subscribe(
-
-                                        () => {
-                                            subscription.unsubscribe();
-                                        }
-
                                     );
-                                    
-                        }
 
-                    )
-                    
-                );
+                    }
+
+                )
+                
+            );
     
     // update recipes: same story as post recipes, but working with put requests
     @Effect()
@@ -278,9 +259,7 @@ export class RecipesEffects {
 
     // delete recipe: same story as post recipe and put recipe, just working now with delete requests and the
     // ClearDelete aftermath action
-    @Effect({
-        dispatch: false
-    })
+    @Effect()
     deleteRecipe = 
         this
             .actions$
@@ -288,29 +267,23 @@ export class RecipesEffects {
 
                 ofType(RecipeActions.DELETE_RECIPE),
 
-                tap(
+                mergeMap(
 
                     (recipeData: RecipeActions.DeleteRecipe) => {
 
-                        const subscription = this.http
+                        return this.http
                             .delete<null>(
                                 `https://angular-course-app-eeedb.firebaseio.com/recipes/${recipeData.payload}.json`
                             )
                             .pipe(
                             
-                                tap(
+                                map(
                                     () => {
-                                        this.store.dispatch(new RecipeActions.ClearDelete(recipeData.payload));
+                                        return new RecipeActions.ClearDelete(recipeData.payload);
                                     }
                                 )
                                 
-                            )
-                            .subscribe(
-                                () => {
-                                    subscription.unsubscribe();
-                                }
-
-                            )
+                            );
 
                     }
 
