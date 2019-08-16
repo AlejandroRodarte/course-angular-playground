@@ -2,13 +2,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RecipeService } from '../recipes/recipe.service';
 import { Subscription } from 'rxjs';
 import { UserModel } from '../auth/user.model';
-
 import * as fromApp from '../store/app.reducer'
 import * as fromAuth from '../auth/store/auth.reducer';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import * as AuthActions from '../auth/store/auth.actions';
 import * as RecipeActions from '../recipes/store/recipes.actions';
+import * as fromRecipes from '../recipes/store/recipes.reducer';
+import { Recipe } from '../recipes/recipe.model';
 
 // header component
 @Component({
@@ -31,9 +32,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     // authentication flag
     isAuthenticated: boolean = false;
-
-    // fetch recipes subscription
-    private fetchRecipesSubscription: Subscription;
 
     // user data subscription
     private userSubscription: Subscription;
@@ -110,6 +108,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
         // check if first time
         if (!this.alreadyFetched) {
+            
+            // check if recipes have been already loaded (by the resolver, for example)
+            // if so, set the one-time flag and return
+            if (this.areRecipesLoaded()) {
+                this.alreadyFetched = true;
+                return;
+            }
 
             // set first-time flag to never fetch again
             this.alreadyFetched = true;
@@ -138,6 +143,47 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // action dispatch: logout
     onLogout() {
         this.store.dispatch(new AuthActions.Logout());
+    }
+
+    // check if recipes are already loaded
+    private areRecipesLoaded(): boolean {
+
+        // final judgement
+        let result: boolean = false;
+
+        // snapshot of the recipes reducer state
+        this
+            .store
+            .select('recipes')
+            .pipe(
+
+                // get only the recipes array
+                map(
+                    (recipesState: fromRecipes.RecipesReducerState) => {
+                        return recipesState.recipes;
+                    }
+                ),
+
+                tap(
+
+                    // if recipes are not empty, it means that the user already has in its UI
+                    // the fetched recipes
+                    (recipes: Recipe[]) => {
+                        if (recipes.length > 0) {
+                            result = true;
+                        } else {
+                            result = false;
+                        }
+                    }
+
+                )
+
+            )
+            .subscribe()
+            .unsubscribe();
+
+        return result;
+
     }
 
     // unsubscriptions

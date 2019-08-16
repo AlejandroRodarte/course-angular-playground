@@ -59,7 +59,8 @@ const handleAuthentication = (
         email,
         userId,
         token,
-        expirationDate
+        expirationDate,
+        redirect: true
     });
 
 };
@@ -240,15 +241,20 @@ export class AuthEffects {
 
                         // run code only when AUTHENTICATE_SUCCESS action is dispatched
                         ofType(
-                            AuthActions.AUTHENTICATE_SUCCESS,
-                            AuthActions.LOGOUT
+                            AuthActions.AUTHENTICATE_SUCCESS
                         ),
 
                         // tap(): execute middleware function
                         // route user to root
                         tap(
-                            () => {
-                                this.router.navigate(['/']);
+                            (authData: AuthActions.AuthenticateSuccess) => {
+
+                                // if the authentication data has the 'redirect' data set,
+                                // redirect
+                                if (authData.payload.redirect) {
+                                    this.router.navigate(['/']);
+                                }
+
                             }
                         )
                     
@@ -319,7 +325,8 @@ export class AuthEffects {
                         email: fetchedUser.email,
                         userId: fetchedUser.id,
                         token: fetchedUser.token,
-                        expirationDate: new Date(user._tokenExpirationDate)
+                        expirationDate: new Date(user._tokenExpirationDate),
+                        redirect: false
                     });
 
                 }
