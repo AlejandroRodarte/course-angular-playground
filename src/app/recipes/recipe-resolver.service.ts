@@ -106,7 +106,7 @@ export class RecipeResolverService implements Resolve<Recipe[]> {
         
         // if the user forcefully entered an index that is superior to the recipe's length (invalid index)
         // route the user to the first recipe by default
-        else if (index > recipes.length - 1) {
+        else if (index < 0 || index > recipes.length - 1) {
             this.store.dispatch(new RecipeActions.SelectRecipe(0));
             this.router.navigate(['/recipes', 0]);
         }

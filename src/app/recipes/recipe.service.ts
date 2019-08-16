@@ -128,9 +128,4 @@ export class RecipeService {
 
     }
 
-    // action dispatch: add recipe ingredients
-    addToShoppingList(ingredients: Ingredient[]): void {
-        this.store.dispatch(new ShoppingListActions.AddIngredients(ingredients));
-    }
-
 }
