@@ -101,18 +101,21 @@ export class RecipeResolverService implements Resolve<Recipe[]> {
         // if the store recipes list is still empty after fetching, do not load this route's component
         // but redirect to /recipes/new to invite the user to add a new recipe
         if (recipes.length === 0) {
+            console.log(1);
             this.router.navigate(['/recipes/new']);
         } 
         
         // if the user forcefully entered an index that is superior to the recipe's length (invalid index)
         // route the user to the first recipe by default
         else if (index < 0 || index > recipes.length - 1) {
+            console.log(2);
             this.store.dispatch(new RecipeActions.SelectRecipe(0));
             this.router.navigate(['/recipes', 0]);
         }
 
         // if the index is correct, simply dispatch the select recipe action on the correct index
         else {
+            console.log(3);
             this.store.dispatch(new RecipeActions.SelectRecipe(index));
         }
 

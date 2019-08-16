@@ -46,15 +46,23 @@ const updateRecipe = function(state: RecipesReducerState, payload: Recipe) {
     // if the recipe has not an undefined Firebase id (persisted)
     if (payload.id !== undefined) {
 
-        // get a copy of the recipes to update tracker list
-        const recipesToUpdateCopy = [...state.recipesToUpdate];
+        // check if the recipe has already been marked as one to update
+        const recipeToUpdateIndex = state.recipesToUpdate.indexOf(payload.id);
 
-        // push into the copy the recipe id to mark as a to-do task (to-update)
-        recipesToUpdateCopy.push(payload.id);
+        // if not
+        if (recipeToUpdateIndex === -1) {
 
-        // use the copied list to set the final state
-        finalState.recipesToUpdate = recipesToUpdateCopy;
-        
+            // get a copy of the recipes to update tracker list
+            const recipesToUpdateCopy = [...state.recipesToUpdate];
+    
+            // push into the copy the recipe id to mark as a to-do task (to-update)
+            recipesToUpdateCopy.push(payload.id);
+    
+            // use the copied list to set the final state
+            finalState.recipesToUpdate = recipesToUpdateCopy;
+
+        }
+
     }
     
     // set the final state selected recipe to the updated recipe
