@@ -1,112 +1,137 @@
 import { Resolve, RouterStateSnapshot, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../store/app.reducer';
 import * as RecipeActions from './store/recipes.actions';
 import * as fromRecipes from './store/recipes.reducer';
 import { Actions, ofType } from '@ngrx/effects';
-import { take, tap, map } from 'rxjs/operators';
+import { take, tap, map, switchMap, concatMap } from 'rxjs/operators';
 import { Recipe } from './recipe.model';
 
-// recipe resolver service to load recipes before accessing some routes
+// recipe resolver service
 @Injectable({
     providedIn: 'root'
 })
-export class RecipeResolverService implements Resolve<Recipe[]> {
+export class RecipeResolverService implements Resolve<number> {
 
-    // inject the store and the actions observable
+    // inject the store, actions observable and the router
     constructor(private store: Store<fromApp.AppState>,
                 private actions$: Actions,
                 private router: Router) {
 
     }
     
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Recipe[] | Observable<Recipe[]> | Promise<Recipe[]> {
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): number | Observable<number> | Promise<number> {
 
-        let recipesExist: boolean = false;
-        let recipes: Recipe[] = [];
+        // return an observable that, at the end of the big chain, will resolve a number
 
-        // get a snapshot of the recipes state
-        this
-            .store
-            .select('recipes')
-            .pipe(
-
-                // tap(): middle-ware code
-                tap(
-
-                    (recipesState: fromRecipes.RecipesReducerState) => {
-
-                        // if the store's recipes array is not empty, simply get a copy
-                        // and mark the 'recipes exist' flag
-                        if (recipesState.recipes.length > 0) {
-                            recipes = [...recipesState.recipes];
-                            recipesExist = true;
-                        }
-
-                    }
-
-                )
-
-            )
-            .subscribe()
-            .unsubscribe();
-        
-        // if the store's recipes array is empty (they have not been fetched from the user)
-        if (!recipesExist) {
-
-            // action dispatch: get the recipes (http request and dispatct AddRecipes action)
-            this.store.dispatch(new RecipeActions.GetRecipes());
-
-            // return the observable of the AddRecipes payload, which is the array of recipes to add
-            return this
-                    .actions$
+        // subscribe to the recipes state
+        return this
+                    .store
+                    .select('recipes')
                     .pipe(
 
-                        ofType(RecipeActions.ADD_RECIPES),
-
+                        // we are only interested in the first emission of the observable once we subscribe to it
+                        // (subscription managed by the resolver)
                         take(1),
 
-                        // map(): extract the payload from the action data
+                        // map(): from an observable of the full state to an observable of the recipes
                         map(
-                            (recipeData: RecipeActions.AddRecipes) => {
-                                return recipeData.payload;
+                            (recipesState: fromRecipes.RecipesReducerState) => {
+                                return recipesState.recipes;
                             }
                         ),
 
-                        // tap(): execute some middle-ware
-                        tap(
+                        // switchMap(): return an inner observable that will become the final, global observable
+                        // enables also the automatic subscription to the inner observable
+                        switchMap(
 
-                            // with the fetched recipes: validate the route the user wrote
                             (recipes: Recipe[]) => {
-                                this.handleSelection(recipes, +route.params['id']);
+
+                                // check if state recipes are empty
+                                if (recipes.length === 0) {
+
+                                    // if so, fetch them from the database
+                                    this.store.dispatch(new RecipeActions.GetRecipes());
+
+                                    // our inner observable to return in this case
+                                    // subscribe to the actions observable
+                                    return this
+                                                .actions$
+                                                .pipe(
+
+                                                    // wait for the AddRecipes action to be triggered and...
+                                                    ofType(RecipeActions.ADD_RECIPES),
+
+                                                    // we are only interesed in its first (and only) emission
+                                                    take(1),
+
+                                                    // map(): parse from recipes to its length
+                                                    map(
+                                                        (recipeData: RecipeActions.AddRecipes) => {
+                                                            return recipeData.payload.length;
+                                                        }
+                                                    ),
+
+                                                    // tap(): execute the handle selection code validate the 'id' param
+                                                    // the user entered
+                                                    tap(
+                                                        (length: number) => {
+                                                            this.handleSelection(length, +route.params['id']);
+                                                        }
+                                                    )
+
+                                                );
+
+                                } else {
+                                    
+                                    // if not empty, simply return the recipes wrapped in an observable and...
+                                    return of(recipes)
+                                                .pipe(
+
+                                                    // take its first (and only) emission
+                                                    take(1),
+
+                                                    // map(): parse from recipes to length
+                                                    map(
+                                                        (recipes: Recipe[]) => {
+                                                            return recipes.length;
+                                                        }
+                                                    ),
+
+                                                    // tap(): execute the handle selection code validate the 'id' param
+                                                    // the user entered
+                                                    tap(
+                                                        (length: number) => {
+                                                            this.handleSelection(length, +route.params['id']);
+                                                        }
+                                                    )
+
+                                                );
+
+                                }
+
                             }
 
                         )
 
                     );
 
-        // if not empty, simply return the current store's recipes and validate the route
-        } else {
-            this.handleSelection(recipes, +route.params['id']);
-            return recipes;
-        }
-
     }
 
     // route validation
-    private handleSelection(recipes: Recipe[], index: number) {
+    private handleSelection(length: number, index: number) {
 
         // if the store recipes list is still empty after fetching, do not load this route's component
         // but redirect to /recipes/new to invite the user to add a new recipe
-        if (recipes.length === 0) {
+        if (length === 0) {
             this.router.navigate(['/recipes/new']);
         } 
         
         // if the user forcefully entered an index that is superior to the recipe's length (invalid index)
         // route the user to the first recipe by default
-        else if (index < 0 || index > recipes.length - 1) {
+        else if (index < 0 || index > length - 1) {
             this.store.dispatch(new RecipeActions.SelectRecipe(0));
             this.router.navigate(['/recipes', 0]);
         }
