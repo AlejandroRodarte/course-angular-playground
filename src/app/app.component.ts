@@ -72,6 +72,33 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 
         ]),
 
+        // list item trigger
+        // just one state: 'in' which is really a dummy state since it's never declared in the component class
+        // void: built-in state in @angular/animations to represent the case where the html element that has the trigger attached
+        // is not even on the DOM yet
+        // void => *: transition from a state of nothingness (html element is about to be created) to any state
+        // (the 'in' state in this case)
+        // since we start from void, we need to kick off with a starting style() animation to be able to transition to such 'in' state
+        // * => void: transition from any state to nothingness (html element is about to be deleted)
+        // here we place our typical animate() method with its style() method to transition into nothingness
+        trigger('list1', [
+            state('in', style({
+                opacity: '1',
+                transform: 'translateX(0)'
+            })),
+            transition('void => *', [
+                style({
+                    opacity: 0,
+                    transform: 'translateX(-100px)'
+                }),
+                animate(300)
+            ]),
+            transition('* => void', animate(300, style({
+                transform: 'translateX(100px)',
+                opacity: 0
+            })))
+        ])
+
     ]
 
 })
