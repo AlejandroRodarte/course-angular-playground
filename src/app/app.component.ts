@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import {animate, keyframes, state, style, transition, trigger} from '@angular/animations';
 
 // animations property: set animations on the component
 
@@ -92,6 +92,45 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
                     transform: 'translateX(-100px)'
                 }),
                 animate(300)
+            ]),
+            transition('* => void', animate(300, style({
+                transform: 'translateX(100px)',
+                opacity: 0
+            })))
+        ]),
+
+        // keyframes(): array of steps to apply some styles at certain points of the animate() time lapse (1000 ms)
+        // 1. offset 0: style applied at 0 ms (start)
+        // 1. offset 0.3: style applied at 300 ms
+        // 1. offset 0.8: style applied at 800 ms
+        // 1. offset 1: style applied at 1000 ms (end)
+        trigger('list2', [
+            state('in', style({
+                opacity: '1',
+                transform: 'translateX(0)'
+            })),
+            transition('void => *', [
+                animate(1000, keyframes([
+                    style({
+                        transform: 'translateX(-100px)',
+                        opacity: 0,
+                        offset: 0
+                    }),
+                    style({
+                        transform: 'translateX(-50px)',
+                        opacity: 0.5,
+                        offset: 0.3
+                    }),
+                    style({
+                        transform: 'translateX(-20px)',
+                        opacity: 1,
+                        offset: 0.8
+                    }),
+                    style({
+                        transform: 'translateX(0)',
+                        offset: 1
+                    })
+                ]))
             ]),
             transition('* => void', animate(300, style({
                 transform: 'translateX(100px)',
