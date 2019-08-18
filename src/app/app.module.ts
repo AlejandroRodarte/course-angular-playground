@@ -16,6 +16,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './auth/store/auth.effects';
 import { environment } from '../environments/environment';
 import { RecipesEffects } from './recipes/store/recipes.effects';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // app module
 @NgModule({
@@ -34,6 +35,8 @@ import { RecipesEffects } from './recipes/store/recipes.effects';
 	// use forRoot() to register all Effect classes
 
 	// added the StoreDevtoolsModule with .instrument() to inform we want to log only during development
+
+	// BrowserAnimationsModule: module to enable Angular animations
 	imports: [
 		BrowserModule.withServerTransition({ appId: 'serverApp' }),
 		AppRoutingModule,
@@ -48,7 +51,8 @@ import { RecipesEffects } from './recipes/store/recipes.effects';
 			RecipesEffects
 		]),
 		SharedModule,
-		CoreModule
+		CoreModule,
+		BrowserAnimationsModule
 	],
 
 	bootstrap: [
