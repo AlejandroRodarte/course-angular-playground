@@ -8,8 +8,5 @@ if (environment.production) {
   enableProdMode();
 }
 
-// first code ever ran : bootstrap the app module by reading app.module.ts
-document.addEventListener('DOMContentLoaded', () => {
-                                                                              platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
-                                                                            });
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.log(err));
