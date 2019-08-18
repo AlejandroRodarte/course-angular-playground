@@ -21,7 +21,11 @@
             <hr>
 
             <!-- div to animate: tag it with the animation selector (trigger name) -->
+            <!-- (@divState.start): listener for when animation starts -->
+            <!-- (@divState.done): listener for when animation ends -->
             <div [@divState]="state"
+                 (@divState.start)="animationStarted($event)"
+                 (@divState.done)="animationDone($event)"
                  style="width: 100px; height: 100px;">
 
             </div>
