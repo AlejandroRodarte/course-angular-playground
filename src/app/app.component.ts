@@ -1,31 +1,48 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Component } from '@angular/core';
+import {state, style, trigger} from '@angular/animations';
 
-import * as fromApp from './store/app.reducer';
-import * as AuthActions from './auth/store/auth.actions';
-import {isPlatformBrowser} from '@angular/common';
+// animations property: set animations on the component
 
-// app component
+// trigger
+// name: selector that go attached to html elements to animate
+// definitions: array of states
+
+// state
+// name: state name (initialized as an expression on the html element that has the trigger name)
+// style: CSS styling for that state
+
+// on the example; we set a 'divState' trigger for html elements
+// they will be initialized on the 'normal' state with some CSS styling and transition to the 'highlighted' station with some
+// final CSS properties
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    animations: [
+        trigger('divState', [
+            state('normal', style({
+                'background-color': 'red',
+                transform: 'translateX(0)'
+            })),
+            state('highlighted', style({
+                'background-color': 'blue',
+                transform: 'translate(100px)'
+            }))
+        ])
+    ]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
-    // inject authentication service
-    // inject the platform id (server or browser)
-    constructor(private store: Store<fromApp.AppState>,
-                @Inject(PLATFORM_ID) private platformId) {
+    // divState states
+    state = 'normal';
 
+    list = ['Milk', 'Sugar', 'Bread'];
+
+    onAdd(item) {
+        this.list.push(item);
     }
 
-    // when loading the whole app, attempt to login
-    // apply isPlatformBrowser() to determine whether code is ran on the browser or on the server
-    ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.store.dispatch(new AuthActions.AutoLogin());
-        }
+    onDelete(item: string) {
+        this.list.splice(this.list.indexOf(item), 1);
     }
 
 }
