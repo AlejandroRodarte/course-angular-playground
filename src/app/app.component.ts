@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from './auth/auth.service';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import * as fromApp from './store/app.reducer';
 import * as AuthActions from './auth/store/auth.actions';
+import {isPlatformBrowser} from '@angular/common';
 
 // app component
 @Component({
@@ -14,14 +14,18 @@ import * as AuthActions from './auth/store/auth.actions';
 export class AppComponent implements OnInit {
 
     // inject authentication service
-    constructor(private store: Store<fromApp.AppState>) {
+    // inject the platform id (server or browser)
+    constructor(private store: Store<fromApp.AppState>,
+                @Inject(PLATFORM_ID) private platformId) {
 
     }
 
     // when loading the whole app, attempt to login
+    // apply isPlatformBrowser() to determine whether code is ran on the browser or on the server
     ngOnInit() {
-        this.store.dispatch(new AuthActions.AutoLogin());
+        if (isPlatformBrowser(this.platformId)) {
+            this.store.dispatch(new AuthActions.AutoLogin());
+        }
     }
-
 
 }

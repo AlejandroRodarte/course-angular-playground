@@ -5,8 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
 import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools'
-import { StoreRouterConnectingModule } from '@ngrx/router-store'
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -35,7 +35,7 @@ import { RecipesEffects } from './recipes/store/recipes.effects';
 
 	// added the StoreDevtoolsModule with .instrument() to inform we want to log only during development
 	imports: [
-		BrowserModule,
+		BrowserModule.withServerTransition({ appId: 'serverApp' }),
 		AppRoutingModule,
 		HttpClientModule,
 		StoreModule.forRoot(appReducer),

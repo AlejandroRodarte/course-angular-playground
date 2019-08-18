@@ -9,5 +9,7 @@ if (environment.production) {
 }
 
 // first code ever ran : bootstrap the app module by reading app.module.ts
-platformBrowserDynamic().bootstrapModule(AppModule)
+document.addEventListener('DOMContentLoaded', () => {
+                                                                              platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
+                                                                            });
