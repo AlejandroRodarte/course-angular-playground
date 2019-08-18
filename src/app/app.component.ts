@@ -55,7 +55,20 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
             transition('highlighted => normal', animate(800)),
 
             // from the shrunken state to ANY state and from ANY state to the shrunken state
-            transition('shrunken <=> *', animate(500))
+
+            // lone style(): jump directly to initial styling
+            // animate() with a timer and a style(): execute middle-ware styling and apply a transition timing
+            // lone animate(): transition to final state
+            transition('shrunken <=> *', [
+                style({
+                    'background-color': 'orange',
+                    'border-radius': '0'
+                }),
+                animate(1000, style({
+                    'border-radius': '50px'
+                })),
+                animate(500)
+            ])
 
         ]),
 
