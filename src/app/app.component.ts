@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {animate, keyframes, state, style, transition, trigger} from '@angular/animations';
+import {animate, group, keyframes, state, style, transition, trigger} from '@angular/animations';
 
 // animations property: set animations on the component
 
@@ -132,10 +132,19 @@ import {animate, keyframes, state, style, transition, trigger} from '@angular/an
                     })
                 ]))
             ]),
-            transition('* => void', animate(300, style({
-                transform: 'translateX(100px)',
-                opacity: 0
-            })))
+
+            // group(): allows us to kickstart two animate() animations at the same time (with different time durations if we want)
+            transition('* => void', [
+                group([
+                    animate(800, style({
+                        transform: 'translateX(100px)',
+                        opacity: 0
+                    })),
+                    animate(300, style({
+                        color: 'red'
+                    }))
+                ])
+            ])
         ])
 
     ]
