@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserComponent } from './user.component';
 import { UserService } from './user.service';
+import {DataService} from '../shared/data.service';
 
 // user component testing environment
 describe('UserComponent', () => {
@@ -78,5 +79,46 @@ describe('UserComponent', () => {
         expect(compiled.querySelector('p').textContent).not.toContain(app.user.name);
 
     });
+
+    // 4. test that data should not be fetched if we do not use the async() method
+    it('should not fetch data if not called asynchronously', () => {
+
+        // create component and instance
+        const fixture = TestBed.createComponent(UserComponent);
+        const app = fixture.debugElement.componentInstance;
+
+        // inject the data service
+        const dataService = fixture.debugElement.injector.get(DataService);
+
+        // spy (not execute) on the getDetails() method, which should returned a Promise wrapper of the data it should return
+        const spy = spyOn(dataService, 'getDetails').and.returnValue(Promise.resolve('Data'));
+
+        // update our component with changes
+        fixture.detectChanges();
+
+        // we expect our data on the component to actually be undefined since this code is synchronous and will not wait for async tasks
+        // to be resolved
+        expect(app.data).toBe(undefined);
+
+    });
+
+    // 5. test that data should be fetched now that we use the async() test method wrapper
+    it('should fetch data if called asynchronously', async(() => {
+
+        // same as test 4.
+        const fixture = TestBed.createComponent(UserComponent);
+        const app = fixture.debugElement.componentInstance;
+        const dataService = fixture.debugElement.injector.get(DataService);
+        const spy = spyOn(dataService, 'getDetails').and.returnValue(Promise.resolve('Data'));
+        fixture.detectChanges();
+
+        // whenStable() allows us to access the component once it is 'stable' (async tasks where already executed
+        // after all component's promises where resolved, then apply the expect() judgement
+        fixture.whenStable().then(() => {
+            expect(app.data).toBe('Data');
+        });
+
+
+    }));
 
 });
