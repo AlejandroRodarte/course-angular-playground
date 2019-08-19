@@ -1,8 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
-import { UserComponent } from './user/user.component';
-import {ReversePipe} from './shared/reverse.pipe';
 
 
 // app module
@@ -10,9 +8,7 @@ import {ReversePipe} from './shared/reverse.pipe';
 
     // requires components
     declarations: [
-        AppComponent,
-        UserComponent,
-        ReversePipe
+        AppComponent
     ],
 
     imports: [
