@@ -1,0 +1,24 @@
+<!-- dark overlay -->
+<div class="backdrop"
+     (click)="onClose()">
+
+</div>
+
+<!-- main alert box -->
+<div class="alert-box">
+
+    <!-- message -->
+    <p>
+        {{ message }}
+    </p>
+
+    <!-- button -->
+    <div class="alert-box-actions">
+        <div class="btn btn-primary"
+             type="button"
+             (click)="onClose()">
+            Close
+        </div>
+    </div>
+
+</div>

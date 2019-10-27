@@ -1,0 +1,161 @@
+<!-- header component html -->
+
+<!-- main nav -->
+<nav class="navbar navbar-default">
+
+    <!-- navbar container -->
+    <div class="container-fluid">
+
+        <!-- navbar header: link to root (redirect to /recipes) -->
+        <div class="navbar-header">
+            <a  [routerLink]="['/']" 
+                class="navbar-brand">
+                Recipe Book
+            </a>
+        </div>
+
+        <!-- collapsed navbar (?) -->
+        <div class="collapse navbar-collapse">
+
+            <!-- first list, links to the recipes and the shopping list -->
+            <ul class="nav navbar-nav">
+
+                <!-- link to /recipes -->
+                <!-- when active, add .active bootstrap class -->
+                <!-- the /recipes link will disappear if the user is not authenticated -->
+                <li routerLinkActive="active"
+                    *ngIf="isAuthenticated">
+                    <a [routerLink]="['/recipes']">
+                        Recipes
+                    </a>
+                </li>
+
+                <!-- link to /shopping-list -->
+                <!-- when active, add .active bootstrap class -->
+                <li routerLinkActive="active">
+                    <a [routerLink]="['/shopping-list']">
+                        Shopping List
+                    </a>
+                </li>
+
+                <!-- link to /auth -->
+                <!-- when active, add .active bootstrap class -->
+                <!-- the authenticate link will disappear if the user is authenticated -->
+                <li routerLinkActive="active"
+                    *ngIf="!isAuthenticated">
+                    <a [routerLink]="['/auth']">
+                        Authenticate
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- second list, pushed to the right -->
+            <ul class="nav navbar-nav navbar-right">
+
+                <!-- list item to place messages about interaction with database to user -->
+                <!-- all these database images and blocks will disappear if the user is not authenticated -->
+                <li *ngIf="isAuthenticated">
+
+                    <!-- loading gif; renders while fetching or saving -->
+                    <img src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/09b24e31234507.564a1d23c07b4.gif" 
+                            alt="Loading..."
+                            *ngIf="fetching || saving"
+                            style="width: 40px;">
+                    
+                    <!-- alert user we are fetching data: active while the 'fetching' component flag is active -->
+                    <div class="alert alert-info"
+                         *ngIf="fetching"
+                         style="display: inline-block; margin: 0 10px 0 10px">
+                        <strong>
+                            Fetching from Database...
+                        </strong>
+                    </div>
+
+                    <!-- alert user we are saving data: active while the 'saving' component flag is active -->
+                    <div class="alert alert-info"
+                         *ngIf="saving"
+                         style="display: inline-block; margin: 0 10px 0 10px">
+                        <strong>
+                            Saving to Database...
+                        </strong>
+                    </div>
+
+                    <!-- inform user we successfully fetched the data: display while the 'fetchSuccessful' is active -->
+                    <div class="alert alert-success"
+                         *ngIf="fetchSuccessful"
+                         style="display: inline-block; margin: 0 10px 0 10px">
+                        <strong>
+                            Recipes Fetched!
+                        </strong>
+                    </div>
+
+                    <!-- inform user we successfully saved the data: display while the 'saveSuccessful' is active -->
+                    <div class="alert alert-success"
+                         *ngIf="saveSuccessful"
+                         style="display: inline-block; margin: 0 10px 0 10px">
+                        <strong>
+                            Recipes Saved!
+                        </strong>
+                    </div>
+
+                </li>
+
+                <!-- the logout button will appear if the user is authenticated -->
+                <li *ngIf="isAuthenticated">
+
+                    <a  style="cursor: pointer;"
+                        (click)="onLogout()">
+                        Logout
+                    </a>
+
+                </li>
+
+                <!-- first list item: a dropdown menu -->
+                <!-- the whole dropdown won't appear if the user is not authenticated -->
+                <li class="dropdown"
+                    appDropdown
+                    *ngIf="isAuthenticated">
+
+                    <!-- link to display the dropdown menu -->
+                    <!-- deleted href -->
+                    <a  style="cursor: pointer;" 
+                        class="dropdown-toggle" 
+                        role="button">
+                        Manage <span class="caret"></span>
+                    </a>
+
+                    <!-- dropdown menu: links to save data and fetch data -->
+                    <ul class="dropdown-menu">
+
+                        <!-- link to save data -->
+                        <!-- deleted href -->
+                        <!-- handler to save recipes -->
+                        <li>
+                            <a  style="cursor: pointer;"
+                                (click)="onSaveRecipes()">
+                                Save Data
+                            </a>
+                        </li>
+
+                        <!-- link to fetch data -->
+                        <!-- deleted href -->
+                        <!-- handler to fetch recipes -->
+                        <li>
+                            <a  style="cursor: pointer;"
+                                (click)="onFetchRecipes()">
+                                Fetch Data
+                            </a>
+                        </li>
+                        
+                    </ul>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>

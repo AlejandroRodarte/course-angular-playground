@@ -1,0 +1,96 @@
+<div class="row">
+
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+
+        <!-- display error message component if the error string is not null -->
+        <!-- ngIf approach to load dynamic components: use the child event emitter to call handler -->
+        <!-- <app-alert  *ngIf="error"
+                    [message]="error"
+                    (close)="onHandleError()">
+            
+        </app-alert> -->
+
+        <!-- imperative way to load dynamic components -->
+        <!-- ng-template to not render in the browser but stil manipulate it here -->
+        <!-- we append the the appPlaceholder so we can get a direct view container reference and access it -->
+        <!-- through ViewChild on this AuthComponent -->
+        <!-- it does not necessarily have to be here -->
+        <ng-template appPlaceholder>
+
+        </ng-template>
+
+        <!-- display the loading spinner component if the isLoading flag is true -->
+        <div *ngIf="isLoading"
+              style="text-align: center;">
+            <app-loading-spinner></app-loading-spinner>
+        </div>
+
+        <!-- auth form -->
+        <!-- use template-driven approach -->
+        <form   class="form"
+                #authForm="ngForm"
+                (ngSubmit)="onSubmit(authForm)"
+                *ngIf="!isLoading">
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <!-- email -->
+                <!-- required and email validators -->
+                <input  type="email" 
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        ngModel
+                        required
+                        email>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <!-- password -->
+                <!-- required and minimum length validators -->
+                <input  type="password" 
+                        class="form-control"
+                        id="password"
+                        name="password"
+                        ngModel
+                        required
+                        minlength="6">
+
+            </div>
+
+            <div>
+
+                <!-- sign up button -->
+                <!-- disable if form is unvalid -->
+                <button class="btn btn-primary"
+                        type="submit"
+                        [disabled]="!authForm.valid">
+                    {{ isLoginMode ? 'Login' : 'Sign Up' }}
+                </button>
+
+                |
+
+                <!-- toggle button to either login or signup -->
+                <button class="btn btn-primary"
+                        (click)="onSwitchMode()"
+                        type="button">
+                    Switch to {{ isLoginMode ? 'Sign Up' : 'Login' }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

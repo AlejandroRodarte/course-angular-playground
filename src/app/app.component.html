@@ -1,10 +1,20 @@
-<!--<app-alert-->
-<!--    [message]="'This is a normal Angular component.'">-->
+<!-- root component html -->
 
-<!--</app-alert>-->
+<!-- the header component -->
+<app-header></app-header>
 
-<!-- div which will receive the html injection with the dynamic Angular Element -->
-<div
-    [innerHTML]="content">
+<!-- main container -->
+<div class="container">
+
+    <!-- grid -->
+    <div class="row">
+
+        <!-- first column: app-routlet, will load either RecipesComponent or ShoppingListComponent -->
+        <!-- in dependence of current route -->
+        <div class="col-md-12">
+            <router-outlet></router-outlet>
+        </div>
+
+    </div>
 
 </div>

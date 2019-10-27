@@ -1,0 +1,41 @@
+/* dark overlay */
+.backdrop {
+
+    /* positioning it */
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    /* make it take all browser screen */
+    width: 100vw;
+    height: 100vh;
+
+    /* dark transparent background */
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 50;
+
+}
+
+/* alert box */
+.alert-box {
+
+    /* positioning it */
+    position: fixed;
+    top: 30vh;
+    left: 20vw;
+
+    /* size */
+    width: 60vw;
+
+    /* padding and background */
+    padding: 16px;
+    z-index: 100;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+
+}
+
+/* move button to right */
+.alert-box-actions {
+    text-align: right;
+}
